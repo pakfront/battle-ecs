@@ -120,7 +120,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &160569508
+--- !u!1 &159915901
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -128,39 +128,43 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 160569510}
-  - component: {fileID: 160569509}
+  - component: {fileID: 159915903}
+  - component: {fileID: 159915902}
   m_Layer: 0
-  m_Name: AgentSpawn
+  m_Name: UnitSpawn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &160569509
+--- !u!114 &159915902
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 160569508}
+  m_GameObject: {fileID: 159915901}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 08446dc60685946f38fd93927b41996d, type: 3}
+  m_Script: {fileID: 11500000, guid: 96d04011612b5469b87cf3561f366900, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  count: 10
-  agentPrefab: {fileID: 4574393103844495989, guid: 8073a763f7b654e3cbeb52c2c078dfd4,
+  agentCountX: 6
+  agentCountY: 2
+  unitIndex: 0
+  unitPrefab: {fileID: 4950615352860273327, guid: d1ee9e243f3227748bc3c84dee76c97f,
     type: 3}
---- !u!4 &160569510
+  agentPrefab: {fileID: 8478563898956065711, guid: 8073a763f7b654e3cbeb52c2c078dfd4,
+    type: 3}
+--- !u!4 &159915903
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 160569508}
+  m_GameObject: {fileID: 159915901}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4, y: 0, z: 4}
+  m_LocalPosition: {x: 0, y: 0, z: 2.02}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
