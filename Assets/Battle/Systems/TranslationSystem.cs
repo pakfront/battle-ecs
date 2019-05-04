@@ -35,7 +35,7 @@ namespace UnitAgent
 
             public void Execute(ref Translation translation, [ReadOnly] ref Rotation rotation, [ReadOnly] ref TranslationSpeed translationSpeed)
             {
-                translation.Value += math.mul(rotation.Value, forward ) * translationSpeed.unitsPerSecond * DeltaTime;
+                translation.Value += math.mul(rotation.Value, forward ) * translationSpeed.UnitsPerSecond * DeltaTime;
             }
         }
 

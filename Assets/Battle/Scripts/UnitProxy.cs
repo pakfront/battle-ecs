@@ -13,7 +13,6 @@ namespace UnitAgent
         {
             dstManager.AddComponentData(entity, new Unit {} );
             dstManager.AddComponentData(entity, new UnitId { Value = 0 });
-            dstManager.AddComponentData(entity, new TranslationSpeed { unitsPerSecond = 1 });
         }
     }
 }

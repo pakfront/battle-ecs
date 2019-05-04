@@ -42,8 +42,12 @@ namespace UnitAgent
 
             public void Execute([ReadOnly] ref UnitId unitId, [ReadOnly] ref Translation translation)
             {
-                // SortedDictionary what if it fails?
-                targets.TryAdd(unitId.Value,translation.Value);
+                // can't remove from Concurrent
+                // targets.Remove(unitId.Value);
+                if (! targets.TryAdd(unitId.Value,translation.Value))
+                {
+                    Debug.LogError("Failed to add value for key "+unitId.Value);
+                }
             }
         }
 
@@ -83,17 +87,12 @@ namespace UnitAgent
 
         protected override JobHandle OnUpdate(JobHandle inputDependencies)
         {
-            // intermediate storage for unit position so they can be read by agents
-            // Unity.Collections.NativeHashMap<int, float3> targets; 
-            // targets.Clear();
-            
-            int unitCount = m_UnitGroup.CalculateLength();
-            Debug.Log("Creating OnUpdate "+unitCount);
-
             var rotationType = GetArchetypeChunkComponentType<Rotation>(false); 
             var translationType = GetArchetypeChunkComponentType<Translation>(true);
             var unitIdType = GetArchetypeChunkComponentType<UnitId>(true);
 
+            // Need to clear so we can write new values this update
+            targets.Clear();
             var targetJob = new TargetJob()
             {
                 targets = targets.ToConcurrent()
