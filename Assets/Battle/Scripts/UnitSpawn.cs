@@ -38,14 +38,13 @@ namespace UnitAgent
             // Place the instantiated entity in a grid with some noise
             var position = transform.TransformPoint(new float3(0,0,0));
             entityManager.SetComponentData(unit, new Translation { Value = position });
-            entityManager.SetComponentData(unit, new UnitId { Value = unitIndex });
             entityManager.AddComponentData(unit, new TranslationSpeed { UnitsPerSecond = translationUnitsPerSecond });
-            SpawnAgents();
+            SpawnAgents(unit);
         }
 
 
         // spawn multiple agents taht follow this unit
-        void SpawnAgents()
+        void SpawnAgents(Entity unit)
         {
             Entity prefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(agentPrefab.gameObject, World.Active);
             int count = agentCountX * agentCountY;
@@ -55,7 +54,7 @@ namespace UnitAgent
             entityManager.Instantiate(prefab, agents);
 
             // SharedComponent placed on Agents o we can process by chunk
-            var unitMembership = new UnitMembership { Value = unitIndex };
+            // var unitMembership = new UnitMembership { Value = unit };
 
             for (int x = 0; x < agentCountX; x++)
             {
@@ -63,15 +62,12 @@ namespace UnitAgent
                 {
                     int i = x * agentCountY + y;
                     var position = transform.TransformPoint(new float3(x * 1.3F, 0, y * 1.3F));
+                    entityManager.SetComponentData(agents[i], new Agent { Unit = unit });
                     entityManager.SetComponentData(agents[i], new Translation { Value = position });
                     entityManager.SetComponentData(agents[i], new Rotation { Value = Quaternion.identity });
 
                     // creates a chunk per unitId, but data is not accessible in job
-                    entityManager.AddSharedComponentData(agents[i], unitMembership);
-
-                    // since we can't access the UnitMembership in the JobChunk, 
-                    // create an index local to the agent  
-                    entityManager.AddComponentData(agents[i], new UnitId { Value = unitIndex });
+                    // entityManager.AddSharedComponentData(agents[i], unitMembership);
                 }
             }
             agents.Dispose();

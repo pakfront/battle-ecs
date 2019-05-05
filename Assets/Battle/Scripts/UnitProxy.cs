@@ -12,7 +12,6 @@ namespace UnitAgent
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
             dstManager.AddComponentData(entity, new Unit {} );
-            dstManager.AddComponentData(entity, new UnitId { Value = 0 });
         }
     }
 }
