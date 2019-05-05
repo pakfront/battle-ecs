@@ -9,7 +9,8 @@ using UnityEngine;
 
 namespace UnitAgent
 {
-    public class TranslationSystem : JobComponentSystem
+    [UpdateBefore(typeof(TransformSystemGroup))]
+    public class TranslationSpeedSystem : JobComponentSystem
     {
 
         [ReadOnly] static float3 forward = new float3(0,0,1);
@@ -35,7 +36,7 @@ namespace UnitAgent
 
             public void Execute(ref Translation translation, [ReadOnly] ref Rotation rotation, [ReadOnly] ref TranslationSpeed translationSpeed)
             {
-                translation.Value += math.mul(rotation.Value, forward ) * translationSpeed.UnitsPerSecond * DeltaTime;
+                translation.Value += math.mul(rotation.Value, forward) * translationSpeed.UnitsPerSecond * DeltaTime;
             }
         }
 

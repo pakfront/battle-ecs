@@ -69,7 +69,6 @@ namespace Samples.Common
                         spawnInstances[spawnIndex] = spawnInstance;
                         spawnIndex++;
                     }
-
                     entities.Dispose();
                     localToWorld.Dispose();
                 }
