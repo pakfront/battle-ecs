@@ -16,12 +16,14 @@ namespace UnitAgent
         [BurstCompile]
         struct RotationJob : IJobForEach<Rotation, Translation, Agent >
         {
-            [ReadOnly] public ComponentDataFromEntity<Translation> Targets;
+            [ReadOnly] public ComponentDataFromEntity<LocalToWorld> Targets;
             public void Execute(ref Rotation rotation, [ReadOnly] ref Translation translation, [ReadOnly] ref Agent agent)
             {
-                // float3 target = new float3(0,0,0);
                 Entity e = agent.Unit;
-                float3 target = Targets[e].Value;
+                // float3 target = Targets[e].Value;
+                float4x4 xform = Targets[e].Value;
+                float3 target = new float3(0,0,0);
+                target = math.mul (xform, new float4 (target, 1f)).xyz;
                 float3 heading = target - translation.Value;
                 heading.y = 0;
                 rotation.Value = quaternion.LookRotation(heading, math.up());                   
@@ -32,7 +34,7 @@ namespace UnitAgent
         {
             var job = new RotationJob()
             {
-                Targets = GetComponentDataFromEntity<Translation>(true)
+                Targets = GetComponentDataFromEntity<LocalToWorld>(true)
             };
 
             return job.Schedule(this, inputDependencies);
