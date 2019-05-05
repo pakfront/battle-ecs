@@ -11,8 +11,10 @@ namespace UnitAgent
 
     [Serializable] public struct Unit : IComponentData { }
     
+    // UnitId and UnitMembership are set when the unit and it's agents are spawned.
+    // It is unique per unit, but all agents 'attached' to a unit have the same value as the unit
     [Serializable] public struct UnitId : IComponentData { public int Value;}
-    
+    //using SCD triggers chunking per unit
     [Serializable] public struct UnitMembership : ISharedComponentData { public int Value;}
 
 }
