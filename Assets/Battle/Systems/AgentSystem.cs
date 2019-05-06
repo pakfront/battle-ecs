@@ -15,6 +15,7 @@ namespace UnitAgent
     public class AgentSystem : JobComponentSystem
     {
 
+        // TODO run only when unit has moved
         [BurstCompile]
         struct SetGoalJob : IJobForEach<Goal, Agent, FormationElement>
         {
@@ -24,8 +25,8 @@ namespace UnitAgent
                 Entity e = agent.Unit;
                 float4x4 xform = Units[e].Value;
                 goal.Position = math.mul (xform, formationElement.Position).xyz;
-                // goal.Position = math.mul (xform, new float4 (0,0,0,1f)).xyz;
-                //TODO set goal rotation from formation too
+                // heterogenous as it's a direction vector;
+                goal.Heading = math.mul( xform, new float4(0,0,1,0) ).xyz;
             }
         }
 

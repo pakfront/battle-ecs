@@ -36,7 +36,7 @@ namespace UnitAgent
                 if (moveThisTick * 2 > distance)
                 {
                     //TODO use goalForward
-                    desiredForward = new float3(0,0,1);
+                    desiredForward = goal.Heading;
                     atGoal = true;
                 }
                 else {

@@ -25,12 +25,10 @@ namespace UnitAgent
 
         public AgentProxy agentPrefab;
 
-        Unity.Mathematics.Random random;
 
 
         void Start()
         {
-            random = new Unity.Mathematics.Random( (uint) gameObject.GetInstanceID());
             SpawnUnit();
         }
 
@@ -53,39 +51,74 @@ namespace UnitAgent
         // spawn multiple agents taht follow this unit
         void SpawnAgents(Entity unit)
         {
-            Entity prefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(agentPrefab.gameObject, World.Active);
-            int count = agentCountX * agentCountY;
 
-            NativeArray<Entity> agents = new NativeArray<Entity>(count, Allocator.Temp);
+            Entity prefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(agentPrefab.gameObject, World.Active);
+            // int count = agentCountX * agentCountY;
+            float3 [] formationPositions = GetFormationPositions();
+            float3 [] spawnPositions = GetSpawnPositions(formationPositions);
+            int count = formationPositions.Length;
+
+            NativeArray<Entity> agents = new NativeArray<Entity>(formationPositions.Length, Allocator.Temp);
             var entityManager = World.Active.EntityManager;
             entityManager.Instantiate(prefab, agents);
 
             // SharedComponent placed on Agents o we can process by chunk
             // var unitMembership = new UnitMembership { Value = unit };
 
+            for (int i = 0; i < count; i++)
+            {
+
+                // float3 formationPosition = transform.TransformPoint(new float3(x * 1.3F, 0, y * 1.3F));
+                float3 formationPosition = formationPositions[i];
+                float3 spawnPosition = spawnPositions[i];
+
+                entityManager.SetComponentData(agents[i], new Agent { Unit = unit });
+                entityManager.AddComponentData(agents[i], new Goal());
+                entityManager.AddComponentData(agents[i], new FormationElement { Position = new float4(formationPosition, 1)});
+                // entityManager.AddComponentData(agents[i], new TranslationSpeed { UnitsPerSecond = agentTranslationUnitsPerSecond });
+                
+                entityManager.SetComponentData(agents[i], new Translation { Value = spawnPosition });
+                // entityManager.SetComponentData(agents[i], new Translation { Value = formationPosition });
+                entityManager.SetComponentData(agents[i], new Rotation { Value = Quaternion.identity });
+
+                // creates a chunk per unitId, but data is not accessible in job
+                // entityManager.AddSharedComponentData(agents[i], unitMembership);
+                
+            }
+            agents.Dispose();
+        }
+
+        public float3 [] GetFormationPositions()
+        {
+            int count = agentCountX * agentCountY;
+            float3 [] formationPositions = new float3 [count];
+
             for (int x = 0; x < agentCountX; x++)
             {
                 for (int y = 0; y < agentCountY; y++)
                 {
                     int i = x * agentCountY + y;
-                    float3 formationPosition = transform.TransformPoint(new float3(x * 1.3F, 0, y * 1.3F));
-                    float3 spawnPosition = formationPosition + new float3( random.NextFloat(-4, 4), 0,  random.NextFloat(-4, 4));
-
-                    entityManager.SetComponentData(agents[i], new Agent { Unit = unit });
-                    entityManager.AddComponentData(agents[i], new Goal());
-                    entityManager.AddComponentData(agents[i], new FormationElement { Position = new float4(formationPosition, 1)});
-                    // entityManager.AddComponentData(agents[i], new TranslationSpeed { UnitsPerSecond = agentTranslationUnitsPerSecond });
-                    
-                    entityManager.SetComponentData(agents[i], new Translation { Value = spawnPosition });
-                    // entityManager.SetComponentData(agents[i], new Translation { Value = formationPosition });
-                    entityManager.SetComponentData(agents[i], new Rotation { Value = Quaternion.identity });
-
-                    // creates a chunk per unitId, but data is not accessible in job
-                    // entityManager.AddSharedComponentData(agents[i], unitMembership);
+                    // formationPositions[i] = transform.TransformPoint(new float3(x * 1.3F, 0, y * 1.3F));
+                    formationPositions[i] = new float3(x * 1.3F, 0, y * 1.3F);
                 }
             }
-            agents.Dispose();
+            return formationPositions;
         }
-    }
+
+
+        public float3 [] GetSpawnPositions(float3 [] formationPositions)
+        {
+            Unity.Mathematics.Random random = new Unity.Mathematics.Random( (uint) gameObject.GetInstanceID());
+
+            int count = formationPositions.Length;
+            float3 [] spawnPositions = new float3 [count];
+
+            for (int i = 0; i < count; i++)
+            {
+                spawnPositions[i] = (float3)(transform.TransformPoint(formationPositions[i])) + new float3( random.NextFloat(-4, 4), 0,  random.NextFloat(-4, 4));
+            }
+            return spawnPositions;
+        }
+    } 
 }
 

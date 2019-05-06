@@ -14,7 +14,7 @@ namespace UnitAgent
 
     [Serializable] public struct Goal : IComponentData { 
         public float3 Position;
-        public quaternion Rotation;
+        public float3 Heading;
     }
     
     [Serializable] public struct Unit : IComponentData { }
