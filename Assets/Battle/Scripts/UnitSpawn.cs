@@ -14,16 +14,16 @@ namespace UnitAgent
 
 
         [Header("Unit")]
+        public UnitProxy unitPrefab;
         public float unitTranslationUnitsPerSecond = 1;
 
 
-        public UnitProxy unitPrefab;
 
         [Header("Agent")]
+        public AgentProxy agentPrefab;
         public int agentCountX = 6, agentCountY = 2;
         public float agentTranslationUnitsPerSecond = .5f;
 
-        public AgentProxy agentPrefab;
 
 
 
@@ -43,7 +43,12 @@ namespace UnitAgent
             // Place the instantiated entity in a grid with some noise
             var spawnPosition = transform.TransformPoint(new float3(0,0,0));
             entityManager.SetComponentData(entity, new Translation { Value = spawnPosition });
-            entityManager.AddComponentData(entity, new TranslationSpeed { UnitsPerSecond = unitTranslationUnitsPerSecond });
+            entityManager.AddComponentData(entity, new Goal { 
+                Position = (float3)(
+                    transform.TransformPoint( transform.right * 20 + transform.forward * 10)), 
+                TranslateSpeed = unitTranslationUnitsPerSecond,
+                RotateSpeed = .5f
+                });
             SpawnAgents(entity);
         }
 
@@ -73,12 +78,13 @@ namespace UnitAgent
                 float3 spawnPosition = spawnPositions[i];
 
                 entityManager.SetComponentData(agents[i], new Agent { Unit = unit });
-                entityManager.AddComponentData(agents[i], new Goal());
+                entityManager.AddComponentData(agents[i], new Goal {
+                    TranslateSpeed = agentTranslationUnitsPerSecond,
+                    RotateSpeed = .5f
+                });
                 entityManager.AddComponentData(agents[i], new FormationElement { Position = new float4(formationPosition, 1)});
-                // entityManager.AddComponentData(agents[i], new TranslationSpeed { UnitsPerSecond = agentTranslationUnitsPerSecond });
                 
                 entityManager.SetComponentData(agents[i], new Translation { Value = spawnPosition });
-                // entityManager.SetComponentData(agents[i], new Translation { Value = formationPosition });
                 entityManager.SetComponentData(agents[i], new Rotation { Value = Quaternion.identity });
 
                 // creates a chunk per unitId, but data is not accessible in job

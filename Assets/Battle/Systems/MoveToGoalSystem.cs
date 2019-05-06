@@ -22,15 +22,15 @@ namespace UnitAgent
             public void Execute(ref Rotation rotation, ref Translation translation, [ReadOnly] ref Goal goal)
             {
 
-                float turnSpeed = .8f;
-                float moveSpeed = .2f; 
+                float rotateSpeed = goal.RotateSpeed;
+                float translateSpeed = goal.TranslateSpeed; 
 
                 float3 toGoal = goal.Position - translation.Value;
                 toGoal.y = 0;
                 float distance = math.length(toGoal);
                 float3 desiredForward;
                 bool atGoal = false;
-                float moveThisTick = moveSpeed * DeltaTime;
+                float moveThisTick = translateSpeed * DeltaTime;
 
                 // if (distance <= moveThisTick)
                 if (moveThisTick * 2 > distance)
@@ -53,7 +53,7 @@ namespace UnitAgent
                 }
                 else
                 {
-                    nextHeading = math.normalizesafe(forward + turnSpeed * DeltaTime * (desiredForward-forward));
+                    nextHeading = math.normalizesafe(forward + rotateSpeed * DeltaTime * (desiredForward-forward));
                 }
                 rotation.Value = quaternion.LookRotation(nextHeading, math.up());;
 

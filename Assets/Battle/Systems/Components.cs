@@ -4,10 +4,6 @@ using Unity.Mathematics;
 
 namespace UnitAgent
 {
-    [Serializable] public struct TranslationSpeed : IComponentData{ public float UnitsPerSecond; }
-
-    [Serializable] public struct RotationSpeed : IComponentData {public float RadiansPerSecond; }
-
     [Serializable] public struct Agent : IComponentData { public Entity Unit; }
 
     [Serializable] public struct FormationElement : IComponentData { public float4 Position; }
@@ -15,6 +11,9 @@ namespace UnitAgent
     [Serializable] public struct Goal : IComponentData { 
         public float3 Position;
         public float3 Heading;
+
+        public float TranslateSpeed;
+        public float RotateSpeed;
     }
     
     [Serializable] public struct Unit : IComponentData { }
