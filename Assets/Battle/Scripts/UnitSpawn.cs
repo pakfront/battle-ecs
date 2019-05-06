@@ -73,8 +73,8 @@ namespace UnitAgent
 
                     entityManager.SetComponentData(agents[i], new Agent { Unit = unit });
                     entityManager.AddComponentData(agents[i], new Goal());
-                    entityManager.AddComponentData(agents[i], new TranslationSpeed { UnitsPerSecond = agentTranslationUnitsPerSecond });
                     entityManager.AddComponentData(agents[i], new FormationElement { Position = new float4(formationPosition, 1)});
+                    // entityManager.AddComponentData(agents[i], new TranslationSpeed { UnitsPerSecond = agentTranslationUnitsPerSecond });
                     
                     entityManager.SetComponentData(agents[i], new Translation { Value = spawnPosition });
                     // entityManager.SetComponentData(agents[i], new Translation { Value = formationPosition });

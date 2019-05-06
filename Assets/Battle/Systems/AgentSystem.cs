@@ -68,21 +68,52 @@ namespace UnitAgent
 
         [BurstCompile]
         [RequireComponentTag(typeof(Agent))]
-        struct RotateTowardGoalJob : IJobForEach<Rotation, Translation, Goal>
+        struct TowardGoalJob : IJobForEach<Rotation, Translation, Goal>
         {
             public float DeltaTime;
 
-            public void Execute(ref Rotation rotation, [ReadOnly] ref Translation translation, [ReadOnly] ref Goal goal)
+            public void Execute(ref Rotation rotation, ref Translation translation, [ReadOnly] ref Goal goal)
             {
 
-                float turnSpeed = 1f;
+                float turnSpeed = .8f;
+                float moveSpeed = .2f; 
+
+                float3 toGoal = goal.Position - translation.Value;
+                toGoal.y = 0;
+                float distance = math.length(toGoal);
+                float3 desiredForward;
+                bool atGoal = false;
+                float moveThisTick = moveSpeed * DeltaTime;
+
+                // if (distance <= moveThisTick)
+                if (moveThisTick * 2 > distance)
+                {
+                    //TODO use goalForward
+                    desiredForward = new float3(0,0,1);
+                    atGoal = true;
+                }
+                else {
+                    //normalize
+                    desiredForward = toGoal/distance;
+                }
+
                 float3 forward = math.mul(rotation.Value, new Vector3 (0,0,1) );
-                float3 desiredForward = goal.Position - translation.Value;
-                desiredForward.y = 0;
-                desiredForward = math.normalizesafe(desiredForward);
-                rotation.Value = quaternion.LookRotationSafe(
-                    math.normalizesafe(forward + turnSpeed * DeltaTime * (desiredForward-forward)),
-                    math.up());
+                float3 nextHeading;
+                if ( math.dot(desiredForward,forward) > .98)
+                {
+                    // close enough, snap
+                    nextHeading = desiredForward;
+                }
+                else
+                {
+                    nextHeading = math.normalizesafe(forward + turnSpeed * DeltaTime * (desiredForward-forward));
+                }
+                rotation.Value = quaternion.LookRotation(nextHeading, math.up());;
+
+                if (atGoal)
+                    translation.Value = goal.Position;
+                else
+                    translation.Value += moveThisTick * nextHeading;
             }
         }
 
@@ -96,7 +127,7 @@ namespace UnitAgent
 
             var setGoalJobHandle = setGoalJob.Schedule(this, inputDependencies);
 
-            var rotateTowardGoalJob = new RotateTowardGoalJob()
+            var rotateTowardGoalJob = new TowardGoalJob()
             {
                 DeltaTime = Time.deltaTime
             };
