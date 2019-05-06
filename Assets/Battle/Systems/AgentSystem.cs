@@ -11,7 +11,7 @@ namespace UnitAgent
 {
     // cribbed from 
     // https://forum.unity.com/threads/how-do-you-get-a-bufferfromentity-or-componentdatafromentity-without-inject.587857/#post-3924478
-    [UpdateBefore(typeof(TranslationSpeedSystem))]
+    [UpdateBefore(typeof(MoveToGoalSystem))]
     public class AgentSystem : JobComponentSystem
     {
 
@@ -29,95 +29,6 @@ namespace UnitAgent
             }
         }
 
-        // [BurstCompile]
-        // struct RotationJob : IJobForEach<Rotation, Translation, Goal >
-        // {
-        //     public void Execute(ref Rotation rotation, [ReadOnly] ref Translation translation, [ReadOnly] ref Goal goal)
-        //     {
-        //         float3 heading = goal.Value - translation.Value;
-        //         heading.y = 0;
-        //         rotation.Value = quaternion.LookRotation(heading, math.up());                   
-        //     }
-        // }
-
-        // [BurstCompile]
-        // LocalToWorld not working the way i think it does
-        // [RequireComponentTag(typeof(Agent))]
-        // struct MoveTowardGoalJob : IJobForEach<LocalToWorld, Goal>
-        // {
-        //     public float DeltaTime;
-
-        //     public void Execute(ref LocalToWorld localToWorld, [ReadOnly] ref Goal goal)
-        //     {
-        //         var currentPosition                   = localToWorld.Position;
-
-        //         float moveSpeed = .2f;
-        //         float3 nextHeading = goal.Position - currentPosition;
-        //         nextHeading.y = 0;
-        //         nextHeading = math.normalizesafe(nextHeading);
-
-        //         localToWorld = new LocalToWorld
-        //         {
-        //             Value = float4x4.TRS(
-        //                 currentPosition + nextHeading * moveSpeed * DeltaTime,
-        //                 quaternion.identity,
-        //                 new float3(1.0f, 1.0f, 1.0f))
-        //         };                  
-        //     }
-        // }
-
-        [BurstCompile]
-        [RequireComponentTag(typeof(Agent))]
-        struct TowardGoalJob : IJobForEach<Rotation, Translation, Goal>
-        {
-            public float DeltaTime;
-
-            public void Execute(ref Rotation rotation, ref Translation translation, [ReadOnly] ref Goal goal)
-            {
-
-                float turnSpeed = .8f;
-                float moveSpeed = .2f; 
-
-                float3 toGoal = goal.Position - translation.Value;
-                toGoal.y = 0;
-                float distance = math.length(toGoal);
-                float3 desiredForward;
-                bool atGoal = false;
-                float moveThisTick = moveSpeed * DeltaTime;
-
-                // if (distance <= moveThisTick)
-                if (moveThisTick * 2 > distance)
-                {
-                    //TODO use goalForward
-                    desiredForward = new float3(0,0,1);
-                    atGoal = true;
-                }
-                else {
-                    //normalize
-                    desiredForward = toGoal/distance;
-                }
-
-                float3 forward = math.mul(rotation.Value, new Vector3 (0,0,1) );
-                float3 nextHeading;
-                if ( math.dot(desiredForward,forward) > .98)
-                {
-                    // close enough, snap
-                    nextHeading = desiredForward;
-                }
-                else
-                {
-                    nextHeading = math.normalizesafe(forward + turnSpeed * DeltaTime * (desiredForward-forward));
-                }
-                rotation.Value = quaternion.LookRotation(nextHeading, math.up());;
-
-                if (atGoal)
-                    translation.Value = goal.Position;
-                else
-                    translation.Value += moveThisTick * nextHeading;
-            }
-        }
-
-
         protected override JobHandle OnUpdate(JobHandle inputDependencies)
         {
             var setGoalJob = new SetGoalJob()
@@ -125,14 +36,7 @@ namespace UnitAgent
                 Units = GetComponentDataFromEntity<LocalToWorld>(true)
             };
 
-            var setGoalJobHandle = setGoalJob.Schedule(this, inputDependencies);
-
-            var rotateTowardGoalJob = new TowardGoalJob()
-            {
-                DeltaTime = Time.deltaTime
-            };
-
-            return rotateTowardGoalJob.Schedule(this, setGoalJobHandle);
+            return setGoalJob.Schedule(this, inputDependencies);
         }
     }
 }
