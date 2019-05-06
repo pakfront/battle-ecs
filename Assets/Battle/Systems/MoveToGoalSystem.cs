@@ -15,15 +15,15 @@ namespace UnitAgent
     public class MoveToGoalSystem : JobComponentSystem
     {
         [BurstCompile]
-        struct TowardGoalJob : IJobForEach<Rotation, Translation, Goal>
+        struct TowardGoalJob : IJobForEach<Rotation, Translation, Move, Goal>
         {
             public float DeltaTime;
 
-            public void Execute(ref Rotation rotation, ref Translation translation, [ReadOnly] ref Goal goal)
+            public void Execute(ref Rotation rotation, ref Translation translation, [ReadOnly] ref Move move, [ReadOnly] ref Goal goal)
             {
 
-                float rotateSpeed = goal.RotateSpeed;
-                float translateSpeed = goal.TranslateSpeed; 
+                float rotateSpeed = move.RotateSpeed;
+                float translateSpeed = move.TranslateSpeed; 
 
                 float3 toGoal = goal.Position - translation.Value;
                 toGoal.y = 0;

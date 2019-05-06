@@ -7,13 +7,16 @@ namespace UnitAgent
     [Serializable] public struct Agent : IComponentData { public Entity Unit; }
 
     [Serializable] public struct FormationElement : IComponentData { public float4 Position; }
+    [Serializable] public struct Move : IComponentData { 
+        public float TranslateSpeed;
+        public float RotateSpeed;
+    }
+
+
 
     [Serializable] public struct Goal : IComponentData { 
         public float3 Position;
         public float3 Heading;
-
-        public float TranslateSpeed;
-        public float RotateSpeed;
     }
     
     [Serializable] public struct Unit : IComponentData { }

@@ -46,6 +46,8 @@ namespace UnitAgent
             entityManager.AddComponentData(entity, new Goal { 
                 Position = (float3)(
                     transform.TransformPoint( transform.right * 20 + transform.forward * 10)), 
+                });
+            entityManager.AddComponentData(entity, new Move { 
                 TranslateSpeed = unitTranslationUnitsPerSecond,
                 RotateSpeed = .5f
                 });
@@ -78,7 +80,8 @@ namespace UnitAgent
                 float3 spawnPosition = spawnPositions[i];
 
                 entityManager.SetComponentData(agents[i], new Agent { Unit = unit });
-                entityManager.AddComponentData(agents[i], new Goal {
+                entityManager.AddComponentData(agents[i], new Goal ());
+                entityManager.AddComponentData(agents[i], new Move {
                     TranslateSpeed = agentTranslationUnitsPerSecond,
                     RotateSpeed = .5f
                 });
