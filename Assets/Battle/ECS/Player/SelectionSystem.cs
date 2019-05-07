@@ -14,12 +14,13 @@ namespace UnitAgent
         // which will then be played back when that barrier system executes.
         EntityCommandBufferSystem m_EntityCommandBufferSystem;
 
-        protected override void OnCreate()
-        {
-            // Cache the EndSimulationBarrier in a field, so we don't have to create it every frame
-            m_EntityCommandBufferSystem = World.GetOrCreateSystem<EntityCommandBufferSystem>();
-        }
+        // protected override void OnCreate()
+        // {
+        //     // Cache the EndSimulationBarrier in a field, so we don't have to create it every frame
+        //     m_EntityCommandBufferSystem = World.GetOrCreateSystem<EntityCommandBufferSystem>();
+        // }
 
+        [RequireComponentTag(typeof(Unit))]
         struct PlayerUnitSelectJob : IJobForEachWithEntity<AABB>
         {
 
@@ -34,14 +35,6 @@ namespace UnitAgent
             {
                 if (LeftClick)
                 {
-                    //     //If selected component exists on our unit, unselect before we recalc selected
-                    //     if(Selected.Exists(entity))
-                    //     {
-                    //         CommandBuffer.RemoveComponent<PlayerUnitSelect>(entity);
-                    //         CommandBuffer.AddComponent(entity, new Deselecting());
-                    //     }
-
-                    //Add select component to unit
                     if (RTSPhysics.Intersect(aabb, ray))
                     {
                         Debug.Log("Click on " + index);
