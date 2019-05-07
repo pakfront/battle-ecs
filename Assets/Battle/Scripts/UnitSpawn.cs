@@ -41,7 +41,7 @@ namespace UnitAgent
             var entity = entityManager.Instantiate(prefab);
 
             // Place the instantiated entity in a grid with some noise
-            var spawnPosition = transform.TransformPoint(new float3(0,0,0));
+            float3 spawnPosition = transform.TransformPoint(new float3(0,0,0));
             entityManager.SetComponentData(entity, new Translation { Value = spawnPosition });
             entityManager.AddComponentData(entity, new Goal { 
                 Position = (float3)(
@@ -51,6 +51,14 @@ namespace UnitAgent
                 TranslateSpeed = unitTranslationUnitsPerSecond,
                 RotateSpeed = .5f
                 });
+
+            entityManager.AddComponentData(entity, new AABB 
+            {
+                    //0.5f will represent halfwidth for now
+                    max = spawnPosition + 0.5f,
+                    min = spawnPosition - 0.5f,
+            });
+    
             SpawnAgents(entity);
         }
 
