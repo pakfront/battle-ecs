@@ -28,14 +28,10 @@ namespace UnitAgent
             //Create a ray from the Mouse click position
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-            //Initialise the enter variable
             float enter = 0.0f;
 
             if (!groundplane.Raycast(ray, out enter)) return inputDeps;
 
-            Debug.Log("Hit Plane");
-
-            //Get the point that is clicked
             Vector3 hitPoint = ray.GetPoint(enter);
 
             var job = new SetGoal

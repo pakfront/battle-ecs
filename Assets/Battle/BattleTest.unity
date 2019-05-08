@@ -467,6 +467,11 @@ PrefabInstance:
       propertyPath: unitTranslationUnitsPerSecond
       value: 0.2
       objectReference: {fileID: 0}
+    - target: {fileID: 1405471091258156789, guid: 070fc4462b64549c08ac4550ab44f92b,
+        type: 3}
+      propertyPath: team
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 070fc4462b64549c08ac4550ab44f92b, type: 3}
 --- !u!1001 &2101067205
