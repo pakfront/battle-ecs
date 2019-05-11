@@ -13,4 +13,6 @@ namespace UnitAgent
     // [Serializable] public struct UnitMembership : ISharedComponentData { public Entity Unit;}
     
     [Serializable] public struct Team : ISharedComponentData { public int Value;}
+    // [Serializable] public struct TeamA : ISharedComponentData { }
+    // [Serializable] public struct TeamB : ISharedComponentData { }
 }

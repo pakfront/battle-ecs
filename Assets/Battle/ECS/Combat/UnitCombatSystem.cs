@@ -13,7 +13,7 @@ namespace UnitAgent
     public class UnitCombatSystem : JobComponentSystem
     {
         [BurstCompile]
-        struct FindOpponentJob : IJobParallelFor
+        struct FindOpponent : IJobParallelFor
         {
             [DeallocateOnJobCompletion] public NativeArray<ArchetypeChunk> Chunks;
             public ArchetypeChunkComponentType<Opponent> OpponentType;
@@ -30,53 +30,63 @@ namespace UnitAgent
                 var instanceCount = chunk.Count;
 
                 //create arrays for holding distance and entity?
+                for (int i = 0; i < instanceCount; i++)
+                {
+                    chunkOpponent[i] =  new Opponent
+                    {
+                        DistanceSq = float.MaxValue
+                    };
+                }
 
                 for (int c = 0; c < Chunks.Length; c++)
                 {
                     var otherChunk = Chunks[c];
-
                     // don't test against your own Team/chunk
                     int otherChunkTeamIndex = otherChunk.GetSharedComponentIndex(TeamType);
                     if (otherChunkTeamIndex == chunkTeamIndex) continue;
 
-                    // assuming getnativearray has a cost so putting in outer loop
                     var otherTranslations = otherChunk.GetNativeArray(TranslationType);
 
                     for (int i = 0; i < instanceCount; i++)
                     {
-                        var rotation = chunkOpponent[i];
                         float3 position = chunkTranslation[i].Value;
+                        // Get from previous pass
+                        float nearestDistanceSq = chunkOpponent[i].DistanceSq;
                         int nearestPositionIndex = -1;
-                        //TODO get from previous pass
-                        float nearestDistance = float.MaxValue;
 
                         for (int j = 0; j < otherChunk.Count; j++)
                         {
                             var targetPosition = otherTranslations[j].Value;
                             var distance = math.lengthsq(position - targetPosition);
-                            bool nearest = distance < nearestDistance;
-                            nearestDistance = math.select(nearestDistance, distance, nearest);
+                            bool nearest = distance < nearestDistanceSq;
+                            nearestDistanceSq = math.select(nearestDistanceSq, distance, nearest);
                             nearestPositionIndex = math.select(nearestPositionIndex, j, nearest);
                         }
 
                         if (nearestPositionIndex > -1)
                         {
                             // Debug.Log("Found nearest chunk["+chunkIndex+"]: otherChunk["+c+"]"+nearestPositionIndex);
-
-                            // nearestDistance = math.sqrt(nearestDistance);
-                            // chunkOpponent 
-                            // combat.Position = OtherPositions[nearestPositionIndex];
+                            chunkOpponent[i] =  new Opponent
+                            {
+                                DistanceSq = nearestDistanceSq,
+                                Position = otherTranslations[nearestPositionIndex].Value
+                            };
                         }
-                        // else
-                        // {
-                        //     //temp debug value
-                        //     combat.Position = new float3(-1, -1, -1);
-
-                        // }
+                        //TODO possibly remove a tag if none found
                     }
                 }
             }
         }
+
+    [BurstCompile]
+    struct SetGoal : IJobForEach<Opponent, Goal>
+    {
+        public void Execute([ReadOnly] ref Opponent opponent, ref Goal goal)
+        {
+            goal.Position = opponent.Position;
+        }
+    }
+
 
         EntityQuery m_group;
 
@@ -97,7 +107,7 @@ namespace UnitAgent
             var teamType = GetArchetypeChunkSharedComponentType<Team>();
             var chunks = m_group.CreateArchetypeChunkArray(Allocator.TempJob);
 
-            var rotationsSpeedJob = new FindOpponentJob
+            var findOpponentJob = new FindOpponent
             {
                 Chunks = chunks,
                 OpponentType = opponentType,
@@ -105,7 +115,10 @@ namespace UnitAgent
                 TeamType = teamType,
                 DeltaTime = Time.deltaTime
             };
-            return rotationsSpeedJob.Schedule(chunks.Length, 32, inputDeps);
+            var findOpponentJobHandle = findOpponentJob.Schedule(chunks.Length, 32, inputDeps);
+
+            var setGoalJob = new SetGoal();
+            return setGoalJob.Schedule(this,findOpponentJobHandle); 
         }
     }
 }
