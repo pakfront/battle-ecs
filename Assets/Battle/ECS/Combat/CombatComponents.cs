@@ -5,7 +5,9 @@ using Unity.Mathematics;
 namespace UnitAgent
 {
     // [Serializable] public struct Combat : IComponentData { public Entity Opponent; }
-    [Serializable] public struct Combat : IComponentData { public float3 Position; }
+    [Serializable] public struct Opponent : IComponentData { 
+        public float3 Position;
+        }
 
 
 }

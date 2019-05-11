@@ -12,13 +12,12 @@ namespace UnitAgent
     public class UnitSpawn : MonoBehaviour
     {
 
+        [Header("Team")]
+        public int team = 0;
 
         [Header("Unit")]
         public UnitProxy unitPrefab;
         public float unitTranslationUnitsPerSecond = 1;
-        public int team = 0;
-
-
 
         [Header("Agent")]
         public AgentProxy agentPrefab;
@@ -59,7 +58,11 @@ namespace UnitAgent
                     max = spawnPosition + 0.5f,
                     min = spawnPosition - 0.5f,
             });
-    
+
+            entityManager.AddComponentData(entity, new Opponent { });
+
+            entityManager.AddSharedComponentData(entity, new Team { Value = team});
+
             SpawnAgents(entity);
         }
 
@@ -90,8 +93,6 @@ namespace UnitAgent
 
                 entityManager.SetComponentData(agents[i], new Agent { Unit = unit });
                 entityManager.AddComponentData(agents[i], new Goal ());
-                entityManager.AddComponentData(agents[i], new Team {Value = team });
-                entityManager.AddComponentData(agents[i], new Combat ());
                 entityManager.AddComponentData(agents[i], new Move {
                     TranslateSpeed = agentTranslationUnitsPerSecond,
                     RotateSpeed = .5f
