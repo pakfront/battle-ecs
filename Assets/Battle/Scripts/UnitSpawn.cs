@@ -81,6 +81,7 @@ namespace UnitAgent
 
 
             SpawnAgents(entity);
+            Destroy(gameObject);
         }
 
 
