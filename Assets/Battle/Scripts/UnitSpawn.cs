@@ -12,12 +12,15 @@ namespace UnitAgent
     public class UnitSpawn : MonoBehaviour
     {
 
+        public enum EOrder {None, Hold, Move, Pursue}
+
         [Header("Team")]
         public int team = 0;
 
         [Header("Unit")]
         public UnitProxy unitPrefab;
         public float unitTranslationUnitsPerSecond = 1;
+        public EOrder initialOrders;
 
         [Header("Agent")]
         public AgentProxy agentPrefab;
@@ -66,6 +69,16 @@ namespace UnitAgent
             entityManager.AddComponentData(entity, new Opponent { });
 
             entityManager.AddSharedComponentData(entity, new Team { Value = team });
+
+            switch (initialOrders)
+            {
+                case EOrder.Hold:
+                    entityManager.AddComponentData(entity, new OrderHold{});
+                    break;
+                default:
+                    break;
+            }
+
 
             SpawnAgents(entity);
         }
