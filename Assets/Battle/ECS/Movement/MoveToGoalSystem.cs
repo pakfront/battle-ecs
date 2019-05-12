@@ -15,11 +15,10 @@ namespace UnitAgent
     public class MoveToGoalSystem : JobComponentSystem
     {
         [BurstCompile]
-        struct TowardGoalJob : IJobForEach<Rotation, Translation, Move, Goal>
+        struct GoalMoveToJob : IJobForEach<Rotation, Translation, Move, GoalMoveTo>
         {
             public float DeltaTime;
-
-            public void Execute(ref Rotation rotation, ref Translation translation, [ReadOnly] ref Move move, [ReadOnly] ref Goal goal)
+            public void Execute(ref Rotation rotation, ref Translation translation, [ReadOnly] ref Move move, [ReadOnly] ref GoalMoveTo goal)
             {
 
                 float rotateSpeed = move.RotateSpeed;
@@ -58,21 +57,21 @@ namespace UnitAgent
                 rotation.Value = quaternion.LookRotation(nextHeading, math.up());;
 
                 if (atGoal)
+                    //TODO could just switch to rotate to if goal is no moving
                     translation.Value = goal.Position;
                 else
                     translation.Value += moveThisTick * nextHeading;
             }
         }
 
-
         protected override JobHandle OnUpdate(JobHandle inputDependencies)
         {
-            var rotateTowardGoalJob = new TowardGoalJob()
+            var goalMoveToJob = new GoalMoveToJob()
             {
                 DeltaTime = Time.deltaTime
             };
 
-            return rotateTowardGoalJob.Schedule(this, inputDependencies);
+            return goalMoveToJob.Schedule(this, inputDependencies);
         }
     }
 }

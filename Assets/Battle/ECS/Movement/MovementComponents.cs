@@ -14,11 +14,16 @@ namespace UnitAgent
 
 
 
-    [Serializable] public struct Goal : IComponentData { 
+    [Serializable] public struct GoalMoveTo : IComponentData { 
         public float3 Position;
         public float3 Heading;
     }
     
+
+   [Serializable] public struct GoalRotateTo : IComponentData { 
+        public float3 Heading;
+    }
+
     // [Serializable] public struct Unit : IComponentData { }
     
     //using SCD triggers chunking per unit

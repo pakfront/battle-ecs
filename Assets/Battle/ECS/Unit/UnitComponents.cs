@@ -5,8 +5,10 @@ using Unity.Mathematics;
 namespace UnitAgent
 {
 
-    [Serializable] public struct OrderHold : IComponentData {}
-    [Serializable] public struct OrderMove : IComponentData {}
-    [Serializable] public struct OrderPursue : IComponentData {}
+    [Serializable] public struct UnitInFormation : IComponentData {}
+    [Serializable] public struct UnitHoldPosition : IComponentData {}
+    [Serializable] public struct UnitMoveToPosition : IComponentData {}
+    [Serializable] public struct UnitFollowUnit : IComponentData {}
+    [Serializable] public struct UnitPursueUnit : IComponentData {}
 
 }

@@ -79,9 +79,9 @@ namespace UnitAgent
         }
 
     [BurstCompile]
-    struct SetGoal : IJobForEach<Opponent, Goal>
+    struct SetGoal : IJobForEach<Opponent, GoalMoveTo>
     {
-        public void Execute([ReadOnly] ref Opponent opponent, ref Goal goal)
+        public void Execute([ReadOnly] ref Opponent opponent, ref GoalMoveTo goal)
         {
             goal.Position = opponent.Position;
         }

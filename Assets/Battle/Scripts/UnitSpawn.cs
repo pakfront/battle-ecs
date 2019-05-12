@@ -12,7 +12,7 @@ namespace UnitAgent
     public class UnitSpawn : MonoBehaviour
     {
 
-        public enum EOrder {None, Hold, Move, Pursue}
+        public enum EOrder {None, InFormation, HoldPosition, MoveToPosition, FollowUnit, PursueUnit}
 
         [Header("Team")]
         public int team = 0;
@@ -31,7 +31,6 @@ namespace UnitAgent
         private float3[] formationPositions = null;
         private Bounds localBounds; 
 
-
         void Start()
         {
             SpawnUnit();
@@ -48,7 +47,7 @@ namespace UnitAgent
             // Place the instantiated entity in a grid with some noise
             float3 spawnPosition = transform.TransformPoint(new float3(0, 0, 0));
             entityManager.SetComponentData(entity, new Translation { Value = spawnPosition });
-            entityManager.AddComponentData(entity, new Goal
+            entityManager.AddComponentData(entity, new GoalMoveTo
             {
                 Position = (float3)(
                     transform.TransformPoint(transform.right * 20 + transform.forward * 10)),
@@ -72,16 +71,14 @@ namespace UnitAgent
 
             switch (initialOrders)
             {
-                case EOrder.Hold:
-                    entityManager.AddComponentData(entity, new OrderHold{});
+                case EOrder.HoldPosition:
+                    entityManager.AddComponentData(entity, new UnitHoldPosition{});
                     break;
                 default:
                     break;
             }
 
-
             SpawnAgents(entity);
-            Destroy(gameObject);
         }
 
 
@@ -90,8 +87,8 @@ namespace UnitAgent
         {
             Entity prefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(agentPrefab.gameObject, World.Active);
             // int count = columns * rows;
-            float3[] formationPositions = GetFormationPositions();
-            float3[] spawnPositions = GetSpawnPositions(formationPositions);
+            float3[] formationPositions = GetAgentFormationPositions();
+            float3[] spawnPositions = GetAgentSpawnPositions(formationPositions);
             int count = formationPositions.Length;
 
             NativeArray<Entity> agents = new NativeArray<Entity>(formationPositions.Length, Allocator.Temp);
@@ -108,7 +105,7 @@ namespace UnitAgent
                 float3 spawnPosition = spawnPositions[i];
 
                 entityManager.SetComponentData(agents[i], new Agent { Unit = unit });
-                entityManager.AddComponentData(agents[i], new Goal());
+                entityManager.AddComponentData(agents[i], new GoalMoveTo());
                 entityManager.AddComponentData(agents[i], new Move
                 {
                     TranslateSpeed = agentTranslationUnitsPerSecond,
@@ -126,7 +123,7 @@ namespace UnitAgent
             agents.Dispose();
         }
 
-        public float3[] GetFormationPositions()
+        public float3[] GetAgentFormationPositions()
         {
             int count = columns * rows;
             if (formationPositions == null || formationPositions.Length != count)
@@ -149,7 +146,7 @@ namespace UnitAgent
         }
 
 
-        public float3[] GetSpawnPositions(float3[] formationPositions)
+        public float3[] GetAgentSpawnPositions(float3[] formationPositions)
         {
             Unity.Mathematics.Random random = new Unity.Mathematics.Random((uint)gameObject.GetInstanceID());
 
@@ -191,7 +188,7 @@ namespace UnitAgent
         {
             Gizmos.color = Color.gray;
             Gizmos.matrix = transform.localToWorldMatrix;
-            float3 [] pos = GetFormationPositions();
+            float3 [] pos = GetAgentFormationPositions();
             for (int i = 0; i < pos.Length; i++)
             Gizmos.DrawSphere(
                     pos[i], agentSpacing/2f

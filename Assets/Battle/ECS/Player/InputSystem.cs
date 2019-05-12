@@ -11,11 +11,11 @@ namespace UnitAgent
 
         Plane groundplane = new Plane(Vector3.up, 0);
 
-        public struct SetGoal : IJobForEach<Goal>
+        public struct SetGoal : IJobForEach<GoalMoveTo>
         {
             public float3 HitPoint;
 
-            public void Execute(ref Goal goal)
+            public void Execute(ref GoalMoveTo goal)
             {
                 goal.Position = HitPoint;
             }
