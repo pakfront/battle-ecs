@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
@@ -5,22 +6,21 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using Samples.HelloCube_02;
 
 namespace UnitAgent
-
 {
-    public class UnitSpawn : MonoBehaviour
+    [RequiresEntityConversion]
+    public class UnitSubsceneProxy : MonoBehaviour, IConvertGameObjectToEntity
     {
-
+        public float DegreesPerSecond = 360;
+        
         public enum EOrder {None, InFormation, HoldPosition, MoveToPosition, FollowUnit, PursueUnit}
 
         [Header("Team")]
         public int team = 0;
 
         [Header("Unit")]
-        public UnitProxy unitPrefab;
-
-        public UnitSpawn superior;
         public float unitTranslationUnitsPerSecond = 1;
         public EOrder initialOrders;
 
@@ -31,20 +31,10 @@ namespace UnitAgent
         public float agentTranslationUnitsPerSecond = .5f;
 
         private float3[] formationPositions = null;
-        private Bounds localBounds; 
-
-        // void Start()
-        // {
-        //     SpawnUnit();
-        // }
-
-        public Entity SpawnUnit(EntityManager entityManager)
+        void SpawnUnit(Entity entity, EntityManager entityManager)
         {
-
-            // Create entity prefab from the game object hierarchy once
-            Entity prefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(unitPrefab.gameObject, entityManager.World);
-            var entity = entityManager.Instantiate(prefab);
-
+            entityManager.AddComponentData(entity, new Unit());
+            
             // Place the instantiated entity in a grid with some noise
             float3 spawnPosition = transform.TransformPoint(new float3(0, 0, 0));
             entityManager.SetComponentData(entity, new Translation { Value = spawnPosition });
@@ -80,15 +70,12 @@ namespace UnitAgent
             }
 
             SpawnAgents(entity, entityManager);
-
-            return entity;
         }
-
 
         // spawn multiple agents taht follow this unit
         void SpawnAgents(Entity unit, EntityManager entityManager)
         {
-            Entity prefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(agentPrefab.gameObject, entityManager.World);
+            Entity prefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(agentPrefab.gameObject, World.Active);
             // int count = columns * rows;
             float3[] formationPositions = GetAgentFormationPositions();
             float3[] spawnPositions = GetAgentSpawnPositions(formationPositions);
@@ -162,40 +149,15 @@ namespace UnitAgent
             return spawnPositions;
         }
 
-        void OnDrawGizmos()
+        // The MonoBehaviour data is converted to ComponentData on the entity.
+        // We are specifically transforming from a good editor representation of the data (Represented in degrees)
+        // To a good runtime representation (Represented in radians)
+        public void Convert(Entity entity, EntityManager entityManager, GameObjectConversionSystem conversionSystem)
         {
-            // Draw a yellow sphere at the transform's position
-            switch (team)
-            {
-                case 0:
-                    Gizmos.color = Color.red;
-                    break;
-                case 1:
-                    Gizmos.color = Color.blue;
-                    break;
-                default:
-                    Gizmos.color = Color.yellow;
-                    break;
+            // var data = new RotationSpeed { RadiansPerSecond = math.radians(DegreesPerSecond) };
+            // entityManager.AddComponentData(entity, data);
 
-            }
-            Gizmos.matrix = transform.localToWorldMatrix;
-            float agentRadius = agentSpacing/2f;
-            Gizmos.DrawCube(
-                new Vector3(-agentRadius, 1, agentRadius - agentSpacing*rows/2f),
-                new Vector3(agentSpacing*columns, 2, agentSpacing*rows)
-            );
-        }
-
-       void OnDrawGizmosSelected()
-        {
-            Gizmos.color = Color.gray;
-            Gizmos.matrix = transform.localToWorldMatrix;
-            float3 [] pos = GetAgentFormationPositions();
-            for (int i = 0; i < pos.Length; i++)
-            Gizmos.DrawSphere(
-                    pos[i], agentSpacing/2f
-            );
+            SpawnUnit(entity, entityManager);            
         }
     }
 }
-
