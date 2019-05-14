@@ -149,7 +149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa2e8262003704a1bb196820518eb31f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeedProxyPrefab: {fileID: 7553994827955101607, guid: 739c78ebf708f40159220d18044a8546,
+  rotationSpeedProxyPrefab: {fileID: 8602938293526307936, guid: 739c78ebf708f40159220d18044a8546,
     type: 3}
 --- !u!4 &1320160734
 Transform:
