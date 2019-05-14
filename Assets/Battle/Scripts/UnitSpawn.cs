@@ -87,7 +87,7 @@ namespace UnitAgent
         }
 
 
-        // spawn multiple agents taht follow this unit
+        // spawn multiple agents that follow this unit
         void SpawnAgents(Entity unit, EntityManager entityManager)
         {
             Entity prefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(agentPrefab.gameObject, entityManager.World);

@@ -36,29 +36,6 @@ namespace UnitAgent
 
             // }
         }
-        public static void SpawnUnits(EntityManager manager)
-        {
-            var entityManager = World.Active.EntityManager;
-
-            Dictionary<UnitSpawn, Entity> map = new Dictionary<UnitSpawn, Entity>();
-            foreach (var unitSpawn in GameObject.FindObjectsOfType<UnitSpawn>())
-            {
-                map[unitSpawn] = unitSpawn.SpawnUnit(entityManager);
-            }
-
-            foreach (var outer in map)
-            {
-                var unitSpawn = outer.Key;
-                var unitEntity = outer.Value;
-
-                if (unitSpawn.superior == null) continue;
-
-                Debug.Log("Setting entity reference to " + unitSpawn.superior, unitSpawn);
-
-                var superiorEntity = map[unitSpawn.superior];
-                entityManager.AddComponentData(unitEntity, new Subordinate { Superior = superiorEntity });
-            }
-        }
 
     }
 }

@@ -10,8 +10,36 @@ namespace UnitAgent
     {
         void Start()
         {
-            // SpawnUnits();
-            Spawn.SpawnUnits(World.Active.EntityManager);
+            UnitSpawn[] unitSpawns = GameObject.FindObjectsOfType<UnitSpawn>();
+            SpawnUnits(World.Active.EntityManager, unitSpawns);
+            for (int i = 0; i < unitSpawns.Length; i++)
+            {
+                GameObject.Destroy(unitSpawns[i]);
+            }
+        }
+
+        public void SpawnUnits(EntityManager manager, UnitSpawn[] unitSpawns)
+        {
+            var entityManager = World.Active.EntityManager;
+
+            Dictionary<UnitSpawn, Entity> map = new Dictionary<UnitSpawn, Entity>();
+            foreach (var unitSpawn in unitSpawns)
+            {
+                map[unitSpawn] = unitSpawn.SpawnUnit(entityManager);
+            }
+
+            foreach (var outer in map)
+            {
+                var unitSpawn = outer.Key;
+                var unitEntity = outer.Value;
+
+                if (unitSpawn.superior == null) continue;
+
+                Debug.Log("Setting entity reference to " + unitSpawn.superior, unitSpawn);
+
+                var superiorEntity = map[unitSpawn.superior];
+                entityManager.AddComponentData(unitEntity, new Subordinate { Superior = superiorEntity });
+            }
         }
     }
 }
