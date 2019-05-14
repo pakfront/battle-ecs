@@ -11,32 +11,8 @@ namespace UnitAgent
         // Start is called before the first frame update
         void Start()
         {
-            SpawnUnits();
-        }
-
-        void SpawnUnits()
-        {
-            var entityManager = World.Active.EntityManager;
-
-            Dictionary<UnitSpawn, Entity> map = new Dictionary<UnitSpawn, Entity>();
-            foreach( var unitSpawn in FindObjectsOfType<UnitSpawn>())
-            {
-                map[unitSpawn] = unitSpawn.SpawnUnit(entityManager);
-            }
-
-            foreach (var outer in map )
-            {
-                var unitSpawn = outer.Key;
-                var unitEntity = outer.Value;
-
-                if (unitSpawn.superior == null) continue;
-
-                var superiorEntity = map[unitSpawn.superior];
-                //unitEntity.Set( )unitSpawn
-
-                
-            }
-
+            // SpawnUnits();
+            Spawn.SpawnUnits(World.Active.EntityManager);
         }
   
     }

@@ -12,18 +12,18 @@ namespace UnitAgent
     // cribbed from 
     // https://forum.unity.com/threads/how-do-you-get-a-bufferfromentity-or-componentdatafromentity-without-inject.587857/#post-3924478
     [UpdateBefore(typeof(MoveToGoalSystem))]
-    public class AgentSystem : JobComponentSystem
+    public class SubordinateSystem : JobComponentSystem
     {
 
         // TODO run only when unit has moved
         [BurstCompile]
-        struct SetGoalJob : IJobForEach<GoalMoveTo, Agent, FormationElement>
+        struct SetGoalJob : IJobForEach<GoalMoveTo, Subordinate, FormationElement>
         {
             [ReadOnly] public ComponentDataFromEntity<LocalToWorld> Units;
-            public void Execute(ref GoalMoveTo goal, [ReadOnly] ref Agent agent, [ReadOnly] ref FormationElement formationElement)
+            public void Execute(ref GoalMoveTo goal, [ReadOnly] ref Subordinate subordinate, [ReadOnly] ref FormationElement formationElement)
             {
-                Entity e = agent.Unit;
-                float4x4 xform = Units[e].Value;
+                Entity superior = subordinate.Superior;
+                float4x4 xform = Units[superior].Value;
                 goal.Position = math.mul (xform, formationElement.Position).xyz;
                 // heterogenous as it's a direction vector;
                 goal.Heading = math.mul( xform, new float4(0,0,1,0) ).xyz;

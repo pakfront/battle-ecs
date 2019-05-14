@@ -5,8 +5,9 @@ using Unity.Mathematics;
 namespace UnitAgent
 {
 
-    [Serializable] public struct Unit : IComponentData { public Entity Parent; }    
-    [Serializable] public struct Agent : IComponentData { public Entity Unit; }
+    [Serializable] public struct Subordinate : IComponentData { public Entity Superior; }    
+    [Serializable] public struct Unit : IComponentData { }    
+    [Serializable] public struct Agent : IComponentData { }
     
     
     //using SCD triggers chunking per unit

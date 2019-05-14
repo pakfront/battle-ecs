@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace UnitAgent
 {
-    [UpdateBefore(typeof(AgentSystem))]
+    [UpdateBefore(typeof(SubordinateSystem))]
     public class UnitCombatSystem : JobComponentSystem
     {
         [BurstCompile]

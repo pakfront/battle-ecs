@@ -45,6 +45,8 @@ namespace UnitAgent
             Entity prefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(unitPrefab.gameObject, entityManager.World);
             var entity = entityManager.Instantiate(prefab);
 
+            entityManager.SetName(entity, name);
+
             // Place the instantiated entity in a grid with some noise
             float3 spawnPosition = transform.TransformPoint(new float3(0, 0, 0));
             entityManager.SetComponentData(entity, new Translation { Value = spawnPosition });
@@ -105,8 +107,10 @@ namespace UnitAgent
                 // float3 formationPosition = transform.TransformPoint(new float3(x * 1.3F, 0, y * 1.3F));
                 float3 formationPosition = formationPositions[i];
                 float3 spawnPosition = spawnPositions[i];
+                entityManager.SetName(agents[i], name+"_"+i);
 
-                entityManager.SetComponentData(agents[i], new Agent { Unit = unit });
+                // entityManager.SetComponentData(agents[i], new Agent { });
+                entityManager.AddComponentData(agents[i], new Subordinate { Superior = unit });
                 entityManager.AddComponentData(agents[i], new GoalMoveTo());
                 entityManager.AddComponentData(agents[i], new Move
                 {

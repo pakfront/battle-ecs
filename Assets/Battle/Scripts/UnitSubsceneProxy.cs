@@ -93,7 +93,8 @@ namespace UnitAgent
                 float3 formationPosition = formationPositions[i];
                 float3 spawnPosition = spawnPositions[i];
 
-                entityManager.SetComponentData(agents[i], new Agent { Unit = unit });
+                entityManager.SetComponentData(agents[i], new Agent { });
+                entityManager.SetComponentData(agents[i], new Subordinate { Superior = unit });
                 entityManager.AddComponentData(agents[i], new GoalMoveTo());
                 entityManager.AddComponentData(agents[i], new Move
                 {
