@@ -16,7 +16,6 @@ namespace UnitAgent
         protected override void OnCreate()
         {
             m_EndSimulationBarrier = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
-
         }
 
         [RequireComponentTag(typeof(GoalMoveTo))]

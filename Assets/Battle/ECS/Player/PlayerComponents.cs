@@ -4,9 +4,9 @@ using Unity.Mathematics;
 
 namespace UnitAgent
 {
-    [Serializable] public struct Selectable : IComponentData {  }
+    [Serializable] public struct PlayerSelected : IComponentData {  }
+
         
-    //using SCD triggers chunking per unit
-    // [Serializable] public struct UnitMembership : ISharedComponentData { public Entity Value;}
+
 
 }

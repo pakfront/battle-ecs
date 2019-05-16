@@ -50,11 +50,11 @@ namespace UnitAgent
             // Place the instantiated entity in a grid with some noise
             float3 spawnPosition = transform.TransformPoint(new float3(0, 0, 0));
             entityManager.SetComponentData(entity, new Translation { Value = spawnPosition });
-            entityManager.AddComponentData(entity, new GoalMoveTo
-            {
-                Position = (float3)(
-                    transform.TransformPoint(transform.right * 20 + transform.forward * 10)),
-            });
+            // entityManager.AddComponentData(entity, new GoalMoveTo
+            // {
+            //     Position = (float3)(
+            //         transform.TransformPoint(transform.right * 20 + transform.forward * 10)),
+            // });
             entityManager.AddComponentData(entity, new Move
             {
                 TranslateSpeed = unitTranslationUnitsPerSecond,
