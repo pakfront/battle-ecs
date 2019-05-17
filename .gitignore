@@ -6,6 +6,7 @@
 [Ll]ogs/
 Assets/AssetStoreTools*
 Assets/PandaBehaviour/Examples*
+!Assets/Battle/ECS/OldCode~
 
 # Visual Studio 2015 cache directory
 */.vs/
