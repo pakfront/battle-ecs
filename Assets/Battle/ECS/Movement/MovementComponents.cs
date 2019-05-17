@@ -4,17 +4,17 @@ using Unity.Mathematics;
 
 namespace UnitAgent
 {
-    [Serializable] public struct Move : IComponentData { 
+    [Serializable] public struct MoveSettings : IComponentData { 
         public float TranslateSpeed;
         public float RotateSpeed;
     }
 
-    [Serializable] public struct GoalMoveTo : IComponentData { 
+    [Serializable] public struct MoveToGoal : IComponentData { 
         public float3 Position;
         public float3 Heading;
     }
     
-   [Serializable] public struct GoalRotateTo : IComponentData { 
+   [Serializable] public struct RotateToGoal : IComponentData { 
         public float3 Heading;
     }
 }

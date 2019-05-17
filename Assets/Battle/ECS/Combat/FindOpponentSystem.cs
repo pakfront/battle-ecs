@@ -9,10 +9,12 @@ using UnityEngine;
 
 namespace UnitAgent
 {
-    [DisableAutoCreation]
+    // [DisableAutoCreation]
     [UpdateBefore(typeof(SubordinateSystem))]
     public class FindOpponentSystem : JobComponentSystem
     {
+        EntityQuery m_group;
+
         [BurstCompile]
         struct FindOpponentJob : IJobParallelFor
         {
@@ -78,17 +80,14 @@ namespace UnitAgent
             }
         }
 
-        [BurstCompile]
-        struct SetGoal : IJobForEach<Opponent, GoalMoveTo>
-        {
-            public void Execute([ReadOnly] ref Opponent opponent, ref GoalMoveTo goal)
-            {
-                goal.Position = opponent.Position;
-            }
-        }
-
-
-        EntityQuery m_group;
+        // [BurstCompile]
+        // struct SetGoal : IJobForEach<Opponent, GoalMoveTo>
+        // {
+        //     public void Execute([ReadOnly] ref Opponent opponent, ref GoalMoveTo goal)
+        //     {
+        //         goal.Position = opponent.Position;
+        //     }
+        // }
 
         protected override void OnCreate()
         {
@@ -114,10 +113,12 @@ namespace UnitAgent
                 TranslationType = translationType,
                 TeamType = teamType,
             };
-            var findOpponentJobHandle = findOpponentJob.Schedule(chunks.Length, 32, inputDeps);
+            var outputDeps = findOpponentJob.Schedule(chunks.Length, 32, inputDeps);
+            
+            return outputDeps;
 
-            var setGoalJob = new SetGoal();
-            return setGoalJob.Schedule(this, findOpponentJobHandle);
+            // var setGoalJob = new SetGoal();
+            // return setGoalJob.Schedule(this, outputDeps);
         }
     }
 }

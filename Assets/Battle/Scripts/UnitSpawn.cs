@@ -55,7 +55,7 @@ namespace UnitAgent
             //     Position = (float3)(
             //         transform.TransformPoint(transform.right * 20 + transform.forward * 10)),
             // });
-            entityManager.AddComponentData(entity, new Move
+            entityManager.AddComponentData(entity, new MoveSettings
             {
                 TranslateSpeed = unitTranslationUnitsPerSecond,
                 RotateSpeed = .5f
@@ -111,8 +111,8 @@ namespace UnitAgent
 
                 // entityManager.SetComponentData(agents[i], new Agent { });
                 entityManager.AddComponentData(agents[i], new Subordinate { Superior = unit });
-                entityManager.AddComponentData(agents[i], new GoalMoveTo());
-                entityManager.AddComponentData(agents[i], new Move
+                entityManager.AddComponentData(agents[i], new MoveToGoal());
+                entityManager.AddComponentData(agents[i], new MoveSettings
                 {
                     TranslateSpeed = agentTranslationUnitsPerSecond,
                     RotateSpeed = .5f

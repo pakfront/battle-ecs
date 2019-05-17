@@ -12,15 +12,15 @@ namespace UnitAgent
     // cribbed from 
     // https://forum.unity.com/threads/how-do-you-get-a-bufferfromentity-or-componentdatafromentity-without-inject.587857/#post-3924478
     [UpdateBefore(typeof(TransformSystemGroup))]
-    public class RotateToSystem : JobComponentSystem
+    public class RotateToGoalSystem : JobComponentSystem
     {
 
         [BurstCompile]
-        struct RotateToJob : IJobForEach<Rotation, Translation, Move, GoalRotateTo>
+        struct RotateToGoalJob : IJobForEach<Rotation, Translation, MoveSettings, RotateToGoal>
         {
             public float DeltaTime;
 
-            public void Execute(ref Rotation rotation, ref Translation translation, [ReadOnly] ref Move move, [ReadOnly] ref GoalRotateTo goal)
+            public void Execute(ref Rotation rotation, ref Translation translation, [ReadOnly] ref MoveSettings move, [ReadOnly] ref RotateToGoal goal)
             {
 
                 float rotateSpeed = move.RotateSpeed;
@@ -44,7 +44,7 @@ namespace UnitAgent
 
         protected override JobHandle OnUpdate(JobHandle inputDependencies)
         {
-            var goalMoveToJob = new RotateToJob()
+            var goalMoveToJob = new RotateToGoalJob()
             {
                 DeltaTime = Time.deltaTime
             };

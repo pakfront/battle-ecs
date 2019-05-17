@@ -18,14 +18,14 @@ namespace UnitAgent
             m_EndSimulationBarrier = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
         }
 
-        [RequireComponentTag(typeof(GoalMoveTo))]
+        [RequireComponentTag(typeof(MoveToGoal))]
         // [BurstCompile] - burst does not support RemoveComponent yet
         struct ClearGoalsJob : IJobForEachWithEntity<UnitHoldPosition>
         {
             public EntityCommandBuffer CommandBuffer;
             public void Execute(Entity entity, int index, [ReadOnly] ref UnitHoldPosition orderHold)
             {
-                CommandBuffer.RemoveComponent<GoalMoveTo>(entity);
+                CommandBuffer.RemoveComponent<MoveToGoal>(entity);
             }
         }
 

@@ -15,10 +15,10 @@ namespace UnitAgent
     public class MoveToGoalSystem : JobComponentSystem
     {
         [BurstCompile]
-        struct GoalMoveToJob : IJobForEach<Rotation, Translation, Move, GoalMoveTo>
+        struct MoveToGoalJob : IJobForEach<Rotation, Translation, MoveSettings, MoveToGoal>
         {
             public float DeltaTime;
-            public void Execute(ref Rotation rotation, ref Translation translation, [ReadOnly] ref Move move, [ReadOnly] ref GoalMoveTo goal)
+            public void Execute(ref Rotation rotation, ref Translation translation, [ReadOnly] ref MoveSettings move, [ReadOnly] ref MoveToGoal goal)
             {
 
                 float rotateSpeed = move.RotateSpeed;
@@ -66,7 +66,7 @@ namespace UnitAgent
 
         protected override JobHandle OnUpdate(JobHandle inputDependencies)
         {
-            var goalMoveToJob = new GoalMoveToJob()
+            var goalMoveToJob = new MoveToGoalJob()
             {
                 DeltaTime = Time.deltaTime
             };

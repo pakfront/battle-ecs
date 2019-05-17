@@ -33,7 +33,7 @@ namespace UnitAgent
         struct SetOrAddGoalJob : IJobChunk
         {
             [ReadOnly] public ArchetypeChunkEntityType EntityType;
-            [ReadOnly] public ArchetypeChunkComponentType<GoalMoveTo> GoalMoveToType;
+            [ReadOnly] public ArchetypeChunkComponentType<MoveToGoal> GoalMoveToType;
             [ReadOnly] public EntityCommandBuffer CommandBuffer;
             [ReadOnly] public float3 ClickLocation;
 
@@ -47,7 +47,7 @@ namespace UnitAgent
                     {
                         // some computed offset from the click location
                         CommandBuffer.SetComponent(entities[i], 
-                            new GoalMoveTo { Position = ClickLocation + new float3(i,0,chunkIndex) });
+                            new MoveToGoal { Position = ClickLocation + new float3(i,0,chunkIndex) });
                     }
                 } 
                 else
@@ -56,7 +56,7 @@ namespace UnitAgent
                     {
                         // some computed offset from the click location
                         CommandBuffer.AddComponent(entities[i], 
-                            new GoalMoveTo { Position = ClickLocation + new float3(i,0,chunkIndex) });
+                            new MoveToGoal { Position = ClickLocation + new float3(i,0,chunkIndex) });
                     }
                 }
             }
@@ -78,7 +78,7 @@ namespace UnitAgent
             var job = new SetOrAddGoalJob
             {
                 EntityType = GetArchetypeChunkEntityType (),
-                GoalMoveToType = GetArchetypeChunkComponentType<GoalMoveTo>(),
+                GoalMoveToType = GetArchetypeChunkComponentType<MoveToGoal>(),
                 CommandBuffer = m_EntityCommandBufferSystem.CreateCommandBuffer(),
                 ClickLocation = (float3)clickLocation
             };

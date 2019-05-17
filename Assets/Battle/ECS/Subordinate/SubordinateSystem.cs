@@ -17,10 +17,10 @@ namespace UnitAgent
 
         // TODO run only when unit has moved
         [BurstCompile]
-        struct SetGoalJob : IJobForEach<GoalMoveTo, Subordinate, FormationElement>
+        struct SetGoalJob : IJobForEach<MoveToGoal, Subordinate, FormationElement>
         {
             [ReadOnly] public ComponentDataFromEntity<LocalToWorld> Units;
-            public void Execute(ref GoalMoveTo goal, [ReadOnly] ref Subordinate subordinate, [ReadOnly] ref FormationElement formationElement)
+            public void Execute(ref MoveToGoal goal, [ReadOnly] ref Subordinate subordinate, [ReadOnly] ref FormationElement formationElement)
             {
                 Entity superior = subordinate.Superior;
                 float4x4 xform = Units[superior].Value;
