@@ -72,6 +72,12 @@ namespace UnitAgent
 
             entityManager.AddSharedComponentData(entity, new Team { Value = team });
 
+            // creates a chunk per unitId, but data is not accessible in job
+            if (team == LocalPlayer.Team)
+            {
+                entityManager.AddSharedComponentData(entity, new PlayerOwned());
+            }
+
             switch (initialOrders)
             {
                 case EOrder.HoldPosition:
@@ -100,7 +106,6 @@ namespace UnitAgent
             entityManager.Instantiate(prefab, agents);
 
             // SharedComponent placed on Agents o we can process by chunk
-            // var unitMembership = new UnitMembership { Value = unit };
 
             for (int i = 0; i < count; i++)
             {
@@ -111,7 +116,10 @@ namespace UnitAgent
 
                 // entityManager.SetComponentData(agents[i], new Agent { });
                 entityManager.AddComponentData(agents[i], new Subordinate { Superior = unit });
+
+                //TODO only add when move needed
                 entityManager.AddComponentData(agents[i], new MoveToGoal());
+
                 entityManager.AddComponentData(agents[i], new MoveSettings
                 {
                     TranslateSpeed = agentTranslationUnitsPerSecond,
@@ -121,9 +129,6 @@ namespace UnitAgent
 
                 entityManager.SetComponentData(agents[i], new Translation { Value = spawnPosition });
                 entityManager.SetComponentData(agents[i], new Rotation { Value = Quaternion.identity });
-
-                // creates a chunk per unitId, but data is not accessible in job
-                // entityManager.AddSharedComponentData(agents[i], unitMembership);
 
             }
             agents.Dispose();

@@ -7,7 +7,6 @@ using Unity.Collections;
 
 namespace UnitAgent
 {
-    // use ComponentSystem so we can create entities
     // [DisableAutoCreation] 
     [UpdateAfter(typeof(PlayerSelectionSystem))]
     public class PlayerInputSystem : JobComponentSystem
@@ -21,13 +20,13 @@ namespace UnitAgent
             m_PlayerSelectedNoGoal = GetEntityQuery( new EntityQueryDesc
                {
                    None = new ComponentType[] { typeof(MoveToGoal) },
-                   All = new ComponentType[] { ComponentType.ReadOnly<PlayerSelected>() }
+                   All = new ComponentType[] { ComponentType.ReadOnly<PlayerSelected>(), ComponentType.ReadOnly<PlayerOwned>()  }
                });
         }
 
         [BurstCompile]
-        [RequireComponentTag(typeof(PlayerSelected))]
-        struct SetGoalJob : IJobForEach<MoveToGoal>
+        [RequireComponentTag(typeof(PlayerSelected), typeof(PlayerOwned))]
+        struct SetGoalOnPlayerOwned : IJobForEach<MoveToGoal>
         {
             [ReadOnly] public float3 ClickLocation;
 
@@ -52,7 +51,7 @@ namespace UnitAgent
 
             EntityManager.AddComponent(m_PlayerSelectedNoGoal, typeof(MoveToGoal));
 
-            var job = new SetGoalJob
+            var job = new SetGoalOnPlayerOwned
             {
                 ClickLocation = (float3)clickLocation
             };
