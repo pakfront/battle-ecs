@@ -15,52 +15,54 @@ namespace UnitAgent
         private Plane groundplane = new Plane(Vector3.up, 0);
 
         private EntityQuery m_Group;
-
-        private EntityCommandBufferSystem m_EntityCommandBufferSystem;
+        private EntityQuery m_PlayerSelectedNoGoal;
 
         protected override void OnCreate()
         {
-            // Cached access to a set of ComponentData based on a specific query
-            m_Group = GetEntityQuery( ComponentType.ReadOnly<PlayerSelected>() );
+            m_Group = GetEntityQuery(
+               new EntityQueryDesc
+               {
+                   All = new ComponentType[] { typeof(GoalMoveTo), ComponentType.ReadOnly<PlayerSelected>() }
+               });
 
-            // Cache the EndSimulationBarrier in a field, so we don't have to create it every frame
-            m_EntityCommandBufferSystem = World.GetOrCreateSystem<EntityCommandBufferSystem>();
+            m_PlayerSelectedNoGoal = GetEntityQuery(
+               new EntityQueryDesc
+               {
+                   None = new ComponentType[] { typeof(GoalMoveTo) },
+                   All = new ComponentType[] { ComponentType.ReadOnly<PlayerSelected>() }
+               });
         }
 
-        //  do not burst compile, AddComponent not supported 
-        // [BurstCompile]
-        [RequireComponentTag(typeof(PlayerSelected))]
-        struct SetOrAddGoalJob : IJobChunk
+        [BurstCompile]
+        struct SetGoalJob : IJobChunk
         {
-            [ReadOnly] public ArchetypeChunkEntityType EntityType;
-            [ReadOnly] public ArchetypeChunkComponentType<GoalMoveTo> GoalMoveToType;
-            [ReadOnly] public EntityCommandBuffer CommandBuffer;
+            public ArchetypeChunkComponentType<GoalMoveTo> GoalMoveToType;
             [ReadOnly] public float3 ClickLocation;
 
             public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
             {
-
-                var entities = chunk.GetNativeArray(EntityType);
-                if (chunk.Has(GoalMoveToType))
+                var goalMoveTo = chunk.GetNativeArray(GoalMoveToType);
+                for (var i = 0; i < chunk.Count; i++)
                 {
-                    for (var i = 0; i < chunk.Count; i++)
-                    {
-                        // some computed offset from the click location
-                        CommandBuffer.SetComponent(entities[i], 
-                            new GoalMoveTo { Position = ClickLocation + new float3(i,0,chunkIndex) });
-                    }
-                } 
-                else
-                {
-                    for (var i = 0; i < chunk.Count; i++)
-                    {
-                        // some computed offset from the click location
-                        CommandBuffer.AddComponent(entities[i], 
-                            new GoalMoveTo { Position = ClickLocation + new float3(i,0,chunkIndex) });
-                    }
+                    // some computed offset from the click location
+                    goalMoveTo[i] =
+                        new GoalMoveTo { Position = ClickLocation + new float3(i, 0, chunkIndex) };
                 }
             }
         }
+
+        //  can burst compile
+        // [BurstCompile]
+        // [RequireComponentTag(typeof(PlayerSelected))]
+        // struct SetGoalJob : IJobForEach<GoalMoveTo>
+        // {
+        //     [ReadOnly] public float3 ClickLocation;
+
+        //     public void Execute(ref GoalMoveTo goalMoveTo)
+        //     {
+        //         goalMoveTo.Position = ClickLocation; // + some offset
+        //     }
+        // }
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
@@ -74,19 +76,28 @@ namespace UnitAgent
             if (!groundplane.Raycast(ray, out enter)) return inputDeps;
 
             Vector3 clickLocation = ray.GetPoint(enter);
+            Debug.Log("PlayerInputSystem clickLocation "+clickLocation);
 
-            var job = new SetOrAddGoalJob
+            // var m_PlayerSelectedNoGoal = GetEntityQuery(
+            //    new EntityQueryDesc
+            //    {
+            //        None = new ComponentType[] { typeof(GoalMoveTo) },
+            //        All = new ComponentType[] { ComponentType.ReadOnly<PlayerSelected>() }
+            //    });
+
+            EntityManager.AddComponent(m_PlayerSelectedNoGoal, typeof(GoalMoveTo));
+
+            // var job = new SetGoalJob
+            // {
+            //     ClickLocation = (float3)clickLocation
+            // };
+            var job = new SetGoalJob
             {
-                EntityType = GetArchetypeChunkEntityType (),
-                GoalMoveToType = GetArchetypeChunkComponentType<GoalMoveTo>(),
-                CommandBuffer = m_EntityCommandBufferSystem.CreateCommandBuffer(),
-                ClickLocation = (float3)clickLocation
+                ClickLocation = (float3)clickLocation,
+                GoalMoveToType = GetArchetypeChunkComponentType<GoalMoveTo>(false)
             };
-            
-            var jobHandle = job.Schedule(m_Group, inputDeps);
 
-            m_EntityCommandBufferSystem.AddJobHandleForProducer(jobHandle);
-            return jobHandle;
+            return job.Schedule(m_Group, inputDeps);
         }
     }
 }

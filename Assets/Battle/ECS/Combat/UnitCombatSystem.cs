@@ -9,6 +9,7 @@ using UnityEngine;
 
 namespace UnitAgent
 {
+    [DisableAutoCreation] 
     [UpdateBefore(typeof(SubordinateSystem))]
     public class UnitCombatSystem : JobComponentSystem
     {
