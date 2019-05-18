@@ -12,19 +12,40 @@ namespace UnitAgent
     [UpdateBefore(typeof(PlayerMouseOverSystem))]
     public class ClearPlayerMouseOverSystem : ComponentSystem
     {
-      private EntityQuery m_GroupPlayerSelection;
+      private EntityQuery m_PlayerSelection, m_PlayerTarget, m_PlayerFollow;
       protected override void OnCreate()
         {
             base.OnCreate();
-            m_GroupPlayerSelection = GetEntityQuery(new EntityQueryDesc
-            {
-                All = new ComponentType[] { ComponentType.ReadOnly<PlayerMouseOver>() }
-            });
+            m_PlayerSelection = GetEntityQuery(ComponentType.ReadOnly<PlayerSelection>());
+            m_PlayerTarget = GetEntityQuery(ComponentType.ReadOnly<PlayerSelection>());
+            m_PlayerFollow = GetEntityQuery(ComponentType.ReadOnly<PlayerFollow>());
         }
 
         protected override void OnUpdate()
         {
-            EntityManager.RemoveComponent(m_GroupPlayerSelection, ComponentType.ReadOnly<PlayerMouseOver>());
+            // selection modifier pressed, early exit;
+            if ( Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl) ||
+                 Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)
+                ) return;
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                Debug.Log("Clearing PlayerSelection");
+                EntityManager.RemoveComponent(m_PlayerSelection, ComponentType.ReadOnly<PlayerSelection>());
+            }
+            else if (Input.GetKeyDown(KeyCode.T))
+            {
+                Debug.Log("Clearing PlayerTarget");
+                EntityManager.RemoveComponent(m_PlayerTarget, ComponentType.ReadOnly<PlayerTarget>());
+            }
+            else if (Input.GetKeyDown(KeyCode.F))
+            {
+                Debug.Log("Clearing PlayerFollow");
+                EntityManager.RemoveComponent(m_PlayerFollow, ComponentType.ReadOnly<PlayerFollow>());
+            }
+            
+
+
         }
     }
 }

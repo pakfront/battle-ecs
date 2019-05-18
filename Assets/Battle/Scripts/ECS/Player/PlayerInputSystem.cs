@@ -8,7 +8,7 @@ using Unity.Collections;
 namespace UnitAgent
 {
     // [DisableAutoCreation] 
-    [UpdateAfter(typeof(PlayerSelectionSystem))]
+    [UpdateAfter(typeof(PlayerMouseOverSystem))]
     public class PlayerInputSystem : JobComponentSystem
     {
         private Plane groundplane = new Plane(Vector3.up, 0);
