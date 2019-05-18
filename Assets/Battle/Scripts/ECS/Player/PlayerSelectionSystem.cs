@@ -8,32 +8,34 @@ using Unity.Collections;
 
 namespace UnitAgent
 {
-    // This may be better done as a main thread component system
-
     // [DisableAutoCreation] 
     // [UpdateBefore(typeof(PlayerInputSystem))]
     public class PlayerSelectionSystem : JobComponentSystem
     {
         EntityCommandBufferSystem m_EntityCommandBufferSystem;
         // private EntityQuery m_GroupPlayerSelected;
-
-
         protected override void OnCreate()
         {
+            base.OnCreate();
             m_EntityCommandBufferSystem = World.GetOrCreateSystem<EntityCommandBufferSystem>();
+
+            // m_GroupPlayerSelected = GetEntityQuery(new EntityQueryDesc
+            // {
+            //     All = new ComponentType[] { ComponentType.ReadOnly<PlayerSelected>() }
+            // });
         }
 
         //  do not burst compile, AddComponent not supported 
         // [BurstCompile]
         [RequireComponentTag(typeof(Unit))]
+        [ExcludeComponent(typeof(PlayerSelected))]
         struct PlayerSelectionJob : IJobForEachWithEntity<AABB>
         {
 
             [ReadOnly] public EntityCommandBuffer CommandBuffer;
             public Ray ray;
-            public bool LeftClick;
 
-            public void Execute (Entity entity, int index, [ReadOnly] ref AABB aabb)
+            public void Execute(Entity entity, int index, [ReadOnly] ref AABB aabb)
             {
                 if (RTSPhysics.Intersect(aabb, ray))
                 {
@@ -47,23 +49,20 @@ namespace UnitAgent
         {
             var leftClick = Input.GetMouseButtonDown(0);
 
-            // early out removed for testing
-            if ( ! leftClick ) return inputDeps;
+            //if (!leftClick) return inputDeps;
 
-            //clear all old selections unless shift or ctrl
-            // if (! (
+            // clear all old selections unless shift or ctrl
+            // if (!(
             //     Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl) ||
             //     Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)
-            //     ) )
+            //     ))
             // {
-            //         EntityManager.RemoveComponent(m_GroupPlayerSelected, ComponentType.ReadOnly<PlayerSelected>());
+            //     EntityManager.RemoveComponent(m_GroupPlayerSelected, ComponentType.ReadOnly<PlayerSelected>());
             // }
 
             var job = new PlayerSelectionJob
             {
-                 CommandBuffer = m_EntityCommandBufferSystem.CreateCommandBuffer(),
-                //  Selected = GetComponentDataFromEntity<PlayerUnitSelect>(),
-                LeftClick = leftClick,
+                CommandBuffer = m_EntityCommandBufferSystem.CreateCommandBuffer(),
                 ray = Camera.main.ScreenPointToRay(Input.mousePosition),
             };
             var outputDeps = job.Schedule(this, inputDeps);

@@ -13,11 +13,11 @@ namespace UnitAgent
     {
         private Plane groundplane = new Plane(Vector3.up, 0);
 
-        private EntityQuery m_PlayerSelectedNoGoal;
+        private EntityQuery m_PlayerSelectedPlayerOwnedNoGoal;
 
         protected override void OnCreate()
         {
-            m_PlayerSelectedNoGoal = GetEntityQuery( new EntityQueryDesc
+            m_PlayerSelectedPlayerOwnedNoGoal = GetEntityQuery( new EntityQueryDesc
                {
                    None = new ComponentType[] { typeof(OrderMoveTo) },
                    All = new ComponentType[] { ComponentType.ReadOnly<PlayerSelected>(), ComponentType.ReadOnly<PlayerOwned>()  }
@@ -49,7 +49,7 @@ namespace UnitAgent
             Vector3 clickLocation = ray.GetPoint(enter);
             Debug.Log("PlayerInputSystem clickLocation "+clickLocation);
 
-            EntityManager.AddComponent(m_PlayerSelectedNoGoal, typeof(OrderMoveTo));
+            EntityManager.AddComponent(m_PlayerSelectedPlayerOwnedNoGoal, typeof(OrderMoveTo));
 
             var job = new SetGoalOnPlayerOwned
             {
