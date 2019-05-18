@@ -19,18 +19,18 @@ namespace UnitAgent
         {
             m_PlayerSelectedNoGoal = GetEntityQuery( new EntityQueryDesc
                {
-                   None = new ComponentType[] { typeof(MoveToGoal) },
+                   None = new ComponentType[] { typeof(OrderMoveTo) },
                    All = new ComponentType[] { ComponentType.ReadOnly<PlayerSelected>(), ComponentType.ReadOnly<PlayerOwned>()  }
                });
         }
 
         [BurstCompile]
         [RequireComponentTag(typeof(PlayerSelected), typeof(PlayerOwned))]
-        struct SetGoalOnPlayerOwned : IJobForEach<MoveToGoal>
+        struct SetGoalOnPlayerOwned : IJobForEach<OrderMoveTo>
         {
             [ReadOnly] public float3 ClickLocation;
 
-            public void Execute(ref MoveToGoal goalMoveTo)
+            public void Execute(ref OrderMoveTo goalMoveTo)
             {
                 goalMoveTo.Position = ClickLocation; // + some offset
             }
@@ -49,7 +49,7 @@ namespace UnitAgent
             Vector3 clickLocation = ray.GetPoint(enter);
             Debug.Log("PlayerInputSystem clickLocation "+clickLocation);
 
-            EntityManager.AddComponent(m_PlayerSelectedNoGoal, typeof(MoveToGoal));
+            EntityManager.AddComponent(m_PlayerSelectedNoGoal, typeof(OrderMoveTo));
 
             var job = new SetGoalOnPlayerOwned
             {

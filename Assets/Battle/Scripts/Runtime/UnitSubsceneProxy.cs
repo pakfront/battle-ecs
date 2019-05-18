@@ -63,7 +63,7 @@ namespace UnitAgent
             switch (initialOrders)
             {
                 case EOrder.HoldPosition:
-                    entityManager.AddComponentData(entity, new UnitHoldPosition{});
+                    entityManager.AddComponentData(entity, new OrderHold{});
                     break;
                 default:
                     break;

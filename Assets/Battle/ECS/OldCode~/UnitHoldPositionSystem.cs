@@ -20,10 +20,10 @@ namespace UnitAgent
 
         [RequireComponentTag(typeof(MoveToGoal))]
         // [BurstCompile] - burst does not support RemoveComponent yet
-        struct ClearGoalsJob : IJobForEachWithEntity<UnitHoldPosition>
+        struct ClearGoalsJob : IJobForEachWithEntity<DetachedHold>
         {
             public EntityCommandBuffer CommandBuffer;
-            public void Execute(Entity entity, int index, [ReadOnly] ref UnitHoldPosition orderHold)
+            public void Execute(Entity entity, int index, [ReadOnly] ref DetachedHold orderHold)
             {
                 CommandBuffer.RemoveComponent<MoveToGoal>(entity);
             }

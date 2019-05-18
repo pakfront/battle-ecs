@@ -43,10 +43,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96d04011612b5469b87cf3561f366900, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  agentCountX: 6
-  agentCountY: 2
-  unitIndex: 0
+  team: 0
   unitPrefab: {fileID: 4950615352860273327, guid: d1ee9e243f3227748bc3c84dee76c97f,
     type: 3}
+  superior: {fileID: 0}
+  unitTranslationUnitsPerSecond: 1
+  initialOrders: 2
   agentPrefab: {fileID: 8478563898956065711, guid: 8073a763f7b654e3cbeb52c2c078dfd4,
     type: 3}
+  agentSpacing: 1.3
+  columns: 6
+  rows: 2
+  agentTranslationUnitsPerSecond: 0.5
