@@ -88,6 +88,9 @@ namespace UnitAgent
 
             switch (initialOrders)
             {
+                case EOrder.PursueUnit:
+                    entityManager.AddComponentData(entity, new OrderPursue{});
+                    break;                
                 case EOrder.HoldPosition:
                     entityManager.AddComponentData(entity, new OrderHold{});
                     break;
