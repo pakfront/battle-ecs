@@ -20,12 +20,12 @@ namespace UnitAgent
             m_PlayerSelectedPlayerOwnedNoGoal = GetEntityQuery( new EntityQueryDesc
                {
                    None = new ComponentType[] { typeof(OrderMoveTo) },
-                   All = new ComponentType[] { ComponentType.ReadOnly<PlayerSelected>(), ComponentType.ReadOnly<PlayerOwned>()  }
+                   All = new ComponentType[] { ComponentType.ReadOnly<PlayerSelection>(), ComponentType.ReadOnly<PlayerOwned>()  }
                });
         }
 
         [BurstCompile]
-        [RequireComponentTag(typeof(PlayerSelected), typeof(PlayerOwned))]
+        [RequireComponentTag(typeof(PlayerSelection), typeof(PlayerOwned))]
         struct SetGoalOnPlayerOwned : IJobForEach<OrderMoveTo>
         {
             [ReadOnly] public float3 ClickLocation;

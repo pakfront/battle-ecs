@@ -21,7 +21,7 @@ namespace UnitAgent
         protected override void OnCreate()
         {
             // Cached access to a set of ComponentData based on a specific query
-            m_Group = GetEntityQuery( ComponentType.ReadOnly<PlayerSelected>() );
+            m_Group = GetEntityQuery( ComponentType.ReadOnly<PlayerSelection>() );
 
             // Cache the EndSimulationBarrier in a field, so we don't have to create it every frame
             m_EntityCommandBufferSystem = World.GetOrCreateSystem<EntityCommandBufferSystem>();
@@ -29,7 +29,7 @@ namespace UnitAgent
 
         //  do not burst compile, AddComponent not supported 
         // [BurstCompile]
-        [RequireComponentTag(typeof(PlayerSelected))]
+        [RequireComponentTag(typeof(PlayerSelection))]
         struct SetOrAddGoalJob : IJobChunk
         {
             [ReadOnly] public ArchetypeChunkEntityType EntityType;
