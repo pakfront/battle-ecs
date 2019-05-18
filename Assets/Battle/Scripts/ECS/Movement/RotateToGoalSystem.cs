@@ -22,8 +22,21 @@ namespace UnitAgent
 
             public void Execute(ref Rotation rotation, ref Translation translation, [ReadOnly] ref MoveSettings move, [ReadOnly] ref RotateToGoal goal)
             {
-
                 float rotateSpeed = move.RotateSpeed;
+
+                // float3 desiredForward = goal.Heading;
+                // float3 forward = math.mul(rotation.Value, new Vector3 (0,0,1) );
+                // quaternion desiredRotation = quaternion.LookRotation(goal.Heading, math.up());
+                // if ( math.dot(desiredForward,forward) > .98)
+                // {
+                //     // close enough, snap
+                //     rotation.Value = desiredRotation;
+                //     return;
+                // }
+                // else
+                // {
+                //     rotation.Value = math.slerp(rotation.Value, desiredRotation, rotateSpeed * DeltaTime);
+                // }
 
                 float3 desiredForward = goal.Heading;
                 float3 forward = math.mul(rotation.Value, new Vector3 (0,0,1) );
