@@ -80,6 +80,10 @@ namespace UnitAgent
             if (team == LocalPlayer.Team)
             {
                 entityManager.AddSharedComponentData(entity, new PlayerOwned());
+            } 
+            else
+            {
+                entityManager.AddSharedComponentData(entity, new PlayerEnemy());
             }
 
             switch (initialOrders)

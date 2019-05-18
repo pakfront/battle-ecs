@@ -4,9 +4,11 @@ using Unity.Mathematics;
 
 namespace UnitAgent
 {
-    [Serializable] public struct PlayerSelected : IComponentData {  }
+    [Serializable] public struct PlayerMouseOver : IComponentData {  }
+    [Serializable] public struct PlayerSelection : IComponentData {  }
+    [Serializable] public struct PlayerTarget : IComponentData {  }
 
     [Serializable] public struct PlayerOwned : ISharedComponentData {  }
     // [Serializable] public struct PlayerAlly : ISharedComponentData {  }
-    // [Serializable] public struct PlayerEnemy : ISharedComponentData {  }
+    [Serializable] public struct PlayerEnemy : ISharedComponentData {  }
 }
