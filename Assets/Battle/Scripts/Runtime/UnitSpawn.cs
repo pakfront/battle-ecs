@@ -21,14 +21,17 @@ namespace UnitAgent
         public UnitProxy unitPrefab;
 
         public UnitSpawn superior;
-        public float unitTranslationUnitsPerSecond = 1;
         public EOrder initialOrders;
 
         [Header("Agent")]
         public AgentProxy agentPrefab;
         public float agentSpacing = 1.3F;
         public int columns = 6, rows = 2;
-        public float agentTranslationUnitsPerSecond = .5f;
+
+        [Header("Movement")]
+        public float translationUnitsPerSecond = 1;
+        public float rotationsPerSecond = 1;
+
 
         private float3[] formationPositions = null;
         private Bounds localBounds; 
@@ -58,8 +61,8 @@ namespace UnitAgent
             // });
             entityManager.AddComponentData(entity, new MoveSettings
             {
-                TranslateSpeed = unitTranslationUnitsPerSecond,
-                RotateSpeed = .5f
+                TranslateSpeed = translationUnitsPerSecond,
+                RotateSpeed = rotationsPerSecond
             });
 
             entityManager.AddComponentData(entity, new AABB
@@ -123,8 +126,8 @@ namespace UnitAgent
 
                 entityManager.AddComponentData(agents[i], new MoveSettings
                 {
-                    TranslateSpeed = agentTranslationUnitsPerSecond,
-                    RotateSpeed = .5f
+                    TranslateSpeed = translationUnitsPerSecond,
+                    RotateSpeed = rotationsPerSecond
                 });
                 entityManager.AddComponentData(agents[i], new FormationElement { Position = new float4(formationPosition, 1) });
 
