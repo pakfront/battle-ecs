@@ -24,7 +24,6 @@ namespace UnitAgent
         [RequireComponentTag(typeof(Unit), typeof(PlayerOwned))]
         struct PlayerSelectionJob : IJobForEachWithEntity<AABB>
         {
-
             [ReadOnly] public EntityCommandBuffer CommandBuffer;
             public Ray ray;
 

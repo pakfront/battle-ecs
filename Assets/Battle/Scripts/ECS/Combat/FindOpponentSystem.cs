@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace UnitAgent
 {
-    // [DisableAutoCreation]
+    [DisableAutoCreation]
     [UpdateBefore(typeof(MoveToGoalSystem))]
     public class FindOpponentSystem : JobComponentSystem
     {

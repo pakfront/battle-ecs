@@ -9,39 +9,11 @@ using static Unity.Mathematics.math;
 namespace UnitAgent
 {
 
+    [UpdateBefore(typeof(MoveToGoalSystem))]
     public class UnitMovementSystem : JobComponentSystem
     {
 
 
-        private EntityQuery m_NeedsMoveToGoal, m_RemoveMoveToGoal;
-
-        protected override void OnCreate()
-        {
-            m_RemoveMoveToGoal = GetEntityQuery(new EntityQueryDesc
-            {
-                All = new ComponentType[] { typeof(MoveToGoal) },
-                Any = new ComponentType[] { 
-                    ComponentType.ReadOnly<OrderHold>(), 
-                },                
-                None = new ComponentType[] { 
-                    ComponentType.ReadOnly<OrderMoveTo>(), 
-                    ComponentType.ReadOnly<OrderPursue>(), 
-                    ComponentType.ReadOnly<OrderMarch>(),   
-                    ComponentType.ReadOnly<OrderFormation>()
-                }
-            });
-
-            m_NeedsMoveToGoal = GetEntityQuery(new EntityQueryDesc
-            {
-                None = new ComponentType[] { typeof(MoveToGoal) },
-                Any = new ComponentType[] { 
-                    ComponentType.ReadOnly<OrderMoveTo>(), 
-                    ComponentType.ReadOnly<OrderPursue>(), 
-                    ComponentType.ReadOnly<OrderMarch>(),   
-                    ComponentType.ReadOnly<OrderFormation>()
-                }
-            });
-        }
 
         [BurstCompile]
         struct OrderMoveToJob : IJobForEach<MoveToGoal, OrderMoveTo>
@@ -59,10 +31,10 @@ namespace UnitAgent
         struct OrderPursueJob : IJobForEach<MoveToGoal, OrderPursue>
         {
             [ReadOnly] public ComponentDataFromEntity<LocalToWorld> Others;
-            public void Execute(ref MoveToGoal goal, [ReadOnly] ref OrderPursue detachedPursue)
+            public void Execute(ref MoveToGoal goal, [ReadOnly] ref OrderPursue orderPursue)
             {
-                Entity superior = detachedPursue.Target;
-                float4x4 xform = Others[superior].Value;
+                Entity target = orderPursue.Target;
+                float4x4 xform = Others[target].Value;
                 goal.Position = math.mul (xform, new float4(0,0,0,1)).xyz;
                 // heterogenous as it's a direction vector;
                 goal.Heading = math.mul( xform, new float4(0,0,1,0) ).xyz;
@@ -74,7 +46,7 @@ namespace UnitAgent
         [ExcludeComponent(typeof(OrderMoveTo),typeof(OrderPursue))]
         struct OrderHoldJob : IJobForEach<OrderHold>
         {
-            public void Execute([ReadOnly] ref OrderHold detachedPursue)
+            public void Execute([ReadOnly] ref OrderHold orderPursue)
             {
                 // UnityEngine.Debug.Log("OrderHold");
             }
@@ -82,8 +54,7 @@ namespace UnitAgent
 
         protected override JobHandle OnUpdate(JobHandle inputDependencies)
         {
-            EntityManager.RemoveComponent(m_RemoveMoveToGoal, typeof(MoveToGoal));
-            EntityManager.AddComponent(m_NeedsMoveToGoal, typeof(MoveToGoal));
+ 
 
             var allXforms = GetComponentDataFromEntity<LocalToWorld>(true);
 
