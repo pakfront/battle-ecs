@@ -8,9 +8,10 @@ using Unity.Collections;
 
 namespace UnitAgent
 {
+    [UpdateInGroup(typeof(GameSystemGroup))]
     [UpdateAfter(typeof(PlayerMouseOverSystem))]
     [UpdateBefore(typeof(PlayerTargetSystem))]
-    public class ClearPlayerTargetSystem : ComponentSystem
+    public class PrePlayerTargetSystem : ComponentSystem
     {
 
         private EntityQuery m_NeedsOrderPursue;
@@ -26,8 +27,6 @@ namespace UnitAgent
 
         protected override void OnUpdate()
         {
-            Debug.LogError("Firgure out how to prevent adding when there are no Targets");
-
             EntityManager.AddComponent(m_NeedsOrderPursue, typeof(OrderPursue));
         }
     }

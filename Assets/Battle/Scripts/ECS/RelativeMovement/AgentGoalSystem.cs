@@ -11,9 +11,9 @@ namespace UnitAgent
 {
     // cribbed from 
     // https://forum.unity.com/threads/how-do-you-get-a-bufferfromentity-or-componentdatafromentity-without-inject.587857/#post-3924478
-    [UpdateBefore(typeof(MovementSystem))]
+    [UpdateAfter(typeof(UnitGoalSystem))]
     [UpdateInGroup(typeof(GameSystemGroup))]
-    public class FormationElementToGoalSystem : JobComponentSystem
+    public class AgentGoalSystem : JobComponentSystem
     {
 
         // TODO run only when unit has moved

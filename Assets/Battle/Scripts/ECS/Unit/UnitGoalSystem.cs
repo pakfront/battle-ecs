@@ -10,12 +10,9 @@ namespace UnitAgent
 {
 
     [UpdateInGroup(typeof(GameSystemGroup))]
-    [UpdateAfter(typeof(PlayerInputSystem))]
-    public class UnitMovementSystem : JobComponentSystem
+    [UpdateAfter(typeof(PlayerAddOrderSystem))]
+    public class UnitGoalSystem : JobComponentSystem
     {
-
-
-
         [BurstCompile]
         struct OrderMoveToJob : IJobForEach<MoveToGoal, OrderMoveTo>
         {

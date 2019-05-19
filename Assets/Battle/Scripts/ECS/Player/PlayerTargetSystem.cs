@@ -9,8 +9,9 @@ using UnityEngine;
 
 namespace UnitAgent
 {
+    [UpdateInGroup(typeof(GameSystemGroup))]
     [UpdateAfter(typeof(PlayerMouseOverSystem))]
-    [UpdateBefore(typeof(MovementSystem))]
+    [UpdateBefore(typeof(UnitGoalSystem))]
     public class PlayerTargetSystem : JobComponentSystem
     {
         private EntityQuery m_TargetGroup;
@@ -24,7 +25,6 @@ namespace UnitAgent
         [BurstCompile]
         struct SetOrderPursueTarget : IJobForEachWithEntity<PlayerSelection, OrderPursue>
         {
-
             [ReadOnly, DeallocateOnJobCompletion] public NativeArray<Entity> Targets;
             [ReadOnly] public ComponentDataFromEntity<Translation> AllPositions;
 
@@ -50,7 +50,6 @@ namespace UnitAgent
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
-
             // EntityManager.AddComponent(m_PlayerSelectionNoOrderPursue, typeof(OrderPursue));
             var targets = m_TargetGroup.ToEntityArray(Allocator.TempJob);
             if (targets.Length == 0)

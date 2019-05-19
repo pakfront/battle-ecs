@@ -9,8 +9,8 @@ namespace UnitAgent
 {
     // [DisableAutoCreation] 
     [UpdateInGroup(typeof(GameSystemGroup))]
-    [UpdateAfter(typeof(PlayerMouseOverSystem))]
-    public class PlayerInputSystem : JobComponentSystem
+    [UpdateAfter(typeof(PlayerTargetSystem))]
+    public class PlayerAddOrderSystem : JobComponentSystem
     {
         private Plane groundplane = new Plane(Vector3.up, 0);
 
@@ -27,7 +27,7 @@ namespace UnitAgent
 
         [BurstCompile]
         [RequireComponentTag(typeof(PlayerSelection), typeof(PlayerOwned))]
-        struct SetGoalOnPlayerOwned : IJobForEach<OrderMoveTo>
+        struct SetOrderMoveTo : IJobForEach<OrderMoveTo>
         {
             [ReadOnly] public float3 ClickLocation;
 
@@ -52,7 +52,7 @@ namespace UnitAgent
 
             EntityManager.AddComponent(m_PlayerSelectedPlayerOwnedNoMoveToGoal, typeof(OrderMoveTo));
 
-            var job = new SetGoalOnPlayerOwned
+            var job = new SetOrderMoveTo
             {
                 ClickLocation = (float3)clickLocation
             };
