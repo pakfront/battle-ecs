@@ -38,6 +38,22 @@ namespace UnitAgent
             }
         }
 
+        [RequireComponentTag(typeof(Unit), typeof(PlayerOwned))]
+        struct PlayerFollowJob : IJobForEachWithEntity<AABB>
+        {
+            [ReadOnly] public EntityCommandBuffer CommandBuffer;
+            public Ray ray;
+
+            public void Execute(Entity entity, int index, [ReadOnly] ref AABB aabb)
+            {
+                if (RTSPhysics.Intersect(aabb, ray))
+                {
+                    Debug.Log("PlayerSelectionJob: Click on " + index);
+                    CommandBuffer.AddComponent(entity, new PlayerFollow());
+                }
+            }
+        }
+
         [RequireComponentTag(typeof(Unit), typeof(PlayerEnemy))]
         struct PlayerTargetJob : IJobForEachWithEntity<AABB>
         {
@@ -72,6 +88,14 @@ namespace UnitAgent
             else if (Input.GetKeyDown(KeyCode.T))
             {
                 outputDeps = new PlayerTargetJob
+                {
+                    CommandBuffer = m_EntityCommandBufferSystem.CreateCommandBuffer(),
+                    ray = Camera.main.ScreenPointToRay(Input.mousePosition),
+                }.Schedule(this, inputDeps);
+            }
+            else if (Input.GetKeyDown(KeyCode.F))
+            {
+                outputDeps = new PlayerFollowJob
                 {
                     CommandBuffer = m_EntityCommandBufferSystem.CreateCommandBuffer(),
                     ray = Camera.main.ScreenPointToRay(Input.mousePosition),
