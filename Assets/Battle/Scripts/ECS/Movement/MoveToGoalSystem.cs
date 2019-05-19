@@ -31,49 +31,41 @@ namespace UnitAgent
                 bool atGoal = false;
                 float moveThisTick = translateSpeed * DeltaTime;
 
-                // if (distance <= moveThisTick)
+                // TODO prevent branching
                 if (moveThisTick * 2 > distance)
                 {
                     desiredForward = goal.Heading;
                     atGoal = true;
                 }
-                else if (moveThisTick * 4 > distance)
+                else if (moveThisTick * 8 > distance)
                 {
                     desiredForward = toGoal/distance;
-                    distance /= 2;
-                    rotateSpeed *= 2;
+                    moveThisTick /= 2f;
+                    rotateSpeed *= 4;
                 }
                 else {
                     //normalize
                     desiredForward = toGoal/distance;
                 }
-
+                
                 // float3 forward = math.mul(rotation.Value, new Vector3 (0,0,1) );
-                // quaternion desiredRotation = quaternion.LookRotation(goal.Heading, math.up());
+                // float3 nextHeading;
                 // if ( math.dot(desiredForward,forward) > .98)
                 // {
                 //     // close enough, snap
-                //     rotation.Value = desiredRotation;
-                //     return;
+                //     nextHeading = desiredForward;
                 // }
                 // else
                 // {
-                //     rotation.Value = math.slerp(rotation.Value, desiredRotation, 100 * rotateSpeed * DeltaTime);
+                //     nextHeading = math.normalizesafe(forward + rotateSpeed * DeltaTime * (desiredForward-forward));
                 // }
-                
-                float3 forward = math.mul(rotation.Value, new Vector3 (0,0,1) );
-                float3 nextHeading;
-                if ( math.dot(desiredForward,forward) > .98)
-                {
-                    // close enough, snap
-                    nextHeading = desiredForward;
-                }
-                else
-                {
-                    nextHeading = math.normalizesafe(forward + rotateSpeed * DeltaTime * (desiredForward-forward));
-                }
-                rotation.Value = quaternion.LookRotation(nextHeading, math.up());;
+                // rotation.Value = quaternion.LookRotation(nextHeading, math.up());;
 
+                quaternion desired = quaternion.LookRotation(desiredForward, math.up());
+                quaternion current = rotation.Value;
+                Movement.RotateTowards(desired, rotateSpeed*DeltaTime, ref current);
+                rotation.Value = current;
+            
                 if (atGoal)
                     //TODO could just switch to rotate to if goal is no moving
                     translation.Value = goal.Position;

@@ -24,33 +24,24 @@ namespace UnitAgent
             {
                 float rotateSpeed = move.RotateSpeed;
 
+                quaternion desired = quaternion.LookRotation(goal.Heading, math.up());
+                quaternion current = rotation.Value;
+                Movement.RotateTowards(desired, rotateSpeed*DeltaTime, ref current);
+                rotation.Value = current;
+
                 // float3 desiredForward = goal.Heading;
                 // float3 forward = math.mul(rotation.Value, new Vector3 (0,0,1) );
-                // quaternion desiredRotation = quaternion.LookRotation(goal.Heading, math.up());
+                // float3 nextHeading;
                 // if ( math.dot(desiredForward,forward) > .98)
                 // {
                 //     // close enough, snap
-                //     rotation.Value = desiredRotation;
-                //     return;
+                //     nextHeading = desiredForward;
                 // }
                 // else
                 // {
-                //     rotation.Value = math.slerp(rotation.Value, desiredRotation, rotateSpeed * DeltaTime);
+                //     nextHeading = math.normalizesafe(forward + rotateSpeed * DeltaTime * (desiredForward-forward));
                 // }
-
-                float3 desiredForward = goal.Heading;
-                float3 forward = math.mul(rotation.Value, new Vector3 (0,0,1) );
-                float3 nextHeading;
-                if ( math.dot(desiredForward,forward) > .98)
-                {
-                    // close enough, snap
-                    nextHeading = desiredForward;
-                }
-                else
-                {
-                    nextHeading = math.normalizesafe(forward + rotateSpeed * DeltaTime * (desiredForward-forward));
-                }
-                rotation.Value = quaternion.LookRotation(nextHeading, math.up());;
+                // rotation.Value = quaternion.LookRotation(nextHeading, math.up());;
             }
         }
 
