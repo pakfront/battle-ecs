@@ -26,7 +26,7 @@ namespace UnitAgent
                 },
                 None = new ComponentType[] {
                     ComponentType.ReadOnly<OrderMoveTo>(),
-                    ComponentType.ReadOnly<OrderPursue>(),
+                    ComponentType.ReadOnly<OrderAttack>(),
                     ComponentType.ReadOnly<OrderMarch>(),
                     ComponentType.ReadOnly<OrderFormation>()
                 }
@@ -37,7 +37,7 @@ namespace UnitAgent
                 None = new ComponentType[] { typeof(MoveToGoal) },
                 Any = new ComponentType[] {
                     ComponentType.ReadOnly<OrderMoveTo>(),
-                    ComponentType.ReadOnly<OrderPursue>(),
+                    ComponentType.ReadOnly<OrderAttack>(),
                     ComponentType.ReadOnly<OrderMarch>(),
                     ComponentType.ReadOnly<OrderFormation>()
                 }

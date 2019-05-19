@@ -11,7 +11,7 @@ namespace UnitAgent
     // [Serializable] public struct UnitPursueUnit : IComponentData {}
 
     [Serializable] public struct OrderMoveTo : IComponentData { public float3 Position; }
-    [Serializable] public struct OrderPursue : IComponentData { public Entity Target;}
+    [Serializable] public struct OrderAttack : IComponentData { public Entity Target;}
     [Serializable] public struct OrderHold : IComponentData {}
     [Serializable] public struct OrderMarch : IComponentData { public Entity Next; }
     [Serializable] public struct OrderFormation : IComponentData {}

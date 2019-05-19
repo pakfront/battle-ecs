@@ -12,23 +12,23 @@ namespace UnitAgent
     [UpdateInGroup(typeof(GameSystemGroup))]
     [UpdateAfter(typeof(PlayerMouseOverSystem))]
     [UpdateBefore(typeof(UnitGoalSystem))]
-    public class PlayerTargetSystem : JobComponentSystem
+    public class PlayerOrderAttackSystem : JobComponentSystem
     {
-        private EntityQuery m_TargetGroup;
+        private EntityQuery m_PlayerTargetGroup;
 
         protected override void OnCreateManager()
         {
-            m_TargetGroup = GetEntityQuery(
+            m_PlayerTargetGroup = GetEntityQuery(
                 ComponentType.ReadOnly<PlayerTarget>());
         }
 
         [BurstCompile]
-        struct SetOrderPursueTarget : IJobForEachWithEntity<PlayerSelection, OrderPursue>
+        struct SetOrderAttackTarget : IJobForEachWithEntity<PlayerSelection, OrderAttack>
         {
             [ReadOnly, DeallocateOnJobCompletion] public NativeArray<Entity> Targets;
             [ReadOnly] public ComponentDataFromEntity<Translation> AllPositions;
 
-            public void Execute([ReadOnly] Entity entity, [ReadOnly] int index, [ReadOnly] ref PlayerSelection playerSelection, ref OrderPursue orderPursue)
+            public void Execute([ReadOnly] Entity entity, [ReadOnly] int index, [ReadOnly] ref PlayerSelection playerSelection, ref OrderAttack OrderAttack)
             {
                 float nearestDistanceSq = float.MaxValue;
                 int nearestPositionIndex = -1;
@@ -41,25 +41,27 @@ namespace UnitAgent
                 }
                 Debug.Assert(nearestPositionIndex > -1);
                 Debug.Assert(entity != Targets[nearestPositionIndex]);
-                Debug.Log("SetOrderPursueTarget:"+nearestPositionIndex);
-                // orderPursue = new OrderPursue {
-                //     Target = Targets[nearestPositionIndex]
-                // };
+                Debug.Log("SetOrderAttackTarget:"+nearestPositionIndex);
+                OrderAttack = new OrderAttack {
+                    Target = Targets[nearestPositionIndex]
+                };
             }
         }
 
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
-            // EntityManager.AddComponent(m_PlayerSelectionNoOrderPursue, typeof(OrderPursue));
-            var targets = m_TargetGroup.ToEntityArray(Allocator.TempJob);
+            if (!Input.GetKeyDown(KeyCode.Y)) return inputDeps;
+
+            // EntityManager.AddComponent(m_PlayerSelectionNoOrderAttack, typeof(OrderAttack));
+            var targets = m_PlayerTargetGroup.ToEntityArray(Allocator.TempJob);
             if (targets.Length == 0)
             {
                 targets.Dispose();
                 return inputDeps;
             }
 
-            var outputDeps = new SetOrderPursueTarget
+            var outputDeps = new SetOrderAttackTarget
             {
                 Targets = targets,
                 AllPositions = GetComponentDataFromEntity<Translation>()
@@ -70,4 +72,31 @@ namespace UnitAgent
             return outputDeps;
         }
     }
+
+
+    [UpdateInGroup(typeof(GameSystemGroup))]
+    [UpdateAfter(typeof(PlayerMouseOverSystem))]
+    [UpdateBefore(typeof(PlayerOrderAttackSystem))]
+    public class PrePlayerOrderAttackSystem : ComponentSystem
+    {
+
+        private EntityQuery m_NeedsOrderAttack;
+
+        protected override void OnCreate()
+        {
+            m_NeedsOrderAttack = GetEntityQuery( new EntityQueryDesc
+               {
+                   None = new ComponentType[] { typeof(OrderAttack) },
+                   All = new ComponentType[] { ComponentType.ReadOnly<PlayerSelection>(), ComponentType.ReadOnly<PlayerOwned>()  }
+               });
+        }
+
+        protected override void OnUpdate()
+        {
+            if (!Input.GetKeyDown(KeyCode.Y)) return;
+            
+            EntityManager.AddComponent(m_NeedsOrderAttack, typeof(OrderAttack));
+        }
+    }
+
 }

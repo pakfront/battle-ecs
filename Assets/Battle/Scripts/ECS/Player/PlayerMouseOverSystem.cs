@@ -10,7 +10,7 @@ namespace UnitAgent
 {
     // [DisableAutoCreation] 
     [UpdateInGroup(typeof(GameSystemGroup))]
-    [UpdateBefore(typeof(PlayerAddOrderSystem))]
+    [UpdateBefore(typeof(PlayerOrderMoveToSystem))]
     public class PlayerMouseOverSystem : JobComponentSystem
     {
         EntityCommandBufferSystem m_EntityCommandBufferSystem;

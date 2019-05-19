@@ -9,8 +9,8 @@ namespace UnitAgent
 {
     // [DisableAutoCreation] 
     [UpdateInGroup(typeof(GameSystemGroup))]
-    [UpdateAfter(typeof(PlayerTargetSystem))]
-    public class PlayerAddOrderSystem : JobComponentSystem
+    [UpdateAfter(typeof(PlayerOrderAttackSystem))]
+    public class PlayerOrderMoveToSystem : JobComponentSystem
     {
         private Plane groundplane = new Plane(Vector3.up, 0);
 
@@ -40,6 +40,8 @@ namespace UnitAgent
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
             if (!Input.GetMouseButtonDown(1)) return inputDeps;
+
+            //TODO make sure we didn't click on gui, etc.
 
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
