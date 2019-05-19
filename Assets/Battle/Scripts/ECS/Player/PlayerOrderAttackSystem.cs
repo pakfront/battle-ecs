@@ -15,11 +15,18 @@ namespace UnitAgent
     public class PlayerOrderAttackSystem : JobComponentSystem
     {
         private EntityQuery m_PlayerTargetGroup;
+        private EntityQuery m_NeedsOrderAttack;
 
         protected override void OnCreateManager()
         {
             m_PlayerTargetGroup = GetEntityQuery(
                 ComponentType.ReadOnly<PlayerTarget>());
+
+            m_NeedsOrderAttack = GetEntityQuery(new EntityQueryDesc
+            {
+                None = new ComponentType[] { typeof(OrderAttack) },
+                All = new ComponentType[] { ComponentType.ReadOnly<PlayerSelection>(), ComponentType.ReadOnly<PlayerOwned>() }
+            });
         }
 
         [BurstCompile]
@@ -37,13 +44,14 @@ namespace UnitAgent
                     float distance = math.lengthsq(AllPositions[entity].Value - AllPositions[Targets[i]].Value);
                     bool nearest = distance < nearestDistanceSq;
                     nearestDistanceSq = math.select(nearestDistanceSq, distance, nearest);
-                    nearestPositionIndex = math.select(nearestPositionIndex, i, nearest);;
+                    nearestPositionIndex = math.select(nearestPositionIndex, i, nearest); ;
                 }
-                #if ! BurstCompile
+#if !BurstCompile
                 Debug.Assert(nearestPositionIndex > -1);
                 Debug.Assert(entity != Targets[nearestPositionIndex]);
-                #endif
-                OrderAttack = new OrderAttack {
+#endif
+                OrderAttack = new OrderAttack
+                {
                     Target = Targets[nearestPositionIndex]
                 };
             }
@@ -54,13 +62,15 @@ namespace UnitAgent
         {
             if (!Input.GetKeyDown(KeyCode.Y)) return inputDeps;
 
-            // EntityManager.AddComponent(m_PlayerSelectionNoOrderAttack, typeof(OrderAttack));
             var targets = m_PlayerTargetGroup.ToEntityArray(Allocator.TempJob);
             if (targets.Length == 0)
             {
                 targets.Dispose();
                 return inputDeps;
             }
+
+            // prepopulate 
+            EntityManager.AddComponent(m_NeedsOrderAttack, typeof(OrderAttack));
 
             var outputDeps = new SetOrderAttackTarget
             {
@@ -75,28 +85,28 @@ namespace UnitAgent
     }
 
 
-    [UpdateInGroup(typeof(GameSystemGroup))]
-    [UpdateAfter(typeof(PlayerMouseOverSystem))]
-    [UpdateBefore(typeof(PlayerOrderAttackSystem))]
-    public class PrePlayerOrderAttackSystem : ComponentSystem
-    {
-        private EntityQuery m_NeedsOrderAttack;
+    // [UpdateInGroup(typeof(GameSystemGroup))]
+    // [UpdateAfter(typeof(PlayerMouseOverSystem))]
+    // [UpdateBefore(typeof(PlayerOrderAttackSystem))]
+    // public class PrePlayerOrderAttackSystem : ComponentSystem
+    // {
+    //     private EntityQuery m_NeedsOrderAttack;
 
-        protected override void OnCreate()
-        {
-            m_NeedsOrderAttack = GetEntityQuery( new EntityQueryDesc
-               {
-                   None = new ComponentType[] { typeof(OrderAttack) },
-                   All = new ComponentType[] { ComponentType.ReadOnly<PlayerSelection>(), ComponentType.ReadOnly<PlayerOwned>()  }
-               });
-        }
+    //     protected override void OnCreate()
+    //     {
+    //         m_NeedsOrderAttack = GetEntityQuery( new EntityQueryDesc
+    //            {
+    //                None = new ComponentType[] { typeof(OrderAttack) },
+    //                All = new ComponentType[] { ComponentType.ReadOnly<PlayerSelection>(), ComponentType.ReadOnly<PlayerOwned>()  }
+    //            });
+    //     }
 
-        protected override void OnUpdate()
-        {
-            if (!Input.GetKeyDown(KeyCode.Y)) return;
-            
-            EntityManager.AddComponent(m_NeedsOrderAttack, typeof(OrderAttack));
-        }
-    }
+    //     protected override void OnUpdate()
+    //     {
+    //         if (!Input.GetKeyDown(KeyCode.Y)) return;
+
+    //         EntityManager.AddComponent(m_NeedsOrderAttack, typeof(OrderAttack));
+    //     }
+    // }
 
 }
