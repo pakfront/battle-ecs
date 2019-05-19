@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace UnitAgent
 {
-    [DisableAutoCreation]
+    [UpdateAfter(typeof(PlayerMouseOverSystem))]
     [UpdateBefore(typeof(MoveToGoalSystem))]
     public class PlayerTargetSystem : JobComponentSystem
     {
@@ -21,9 +21,8 @@ namespace UnitAgent
                 ComponentType.ReadOnly<PlayerTarget>());
         }
 
-        [RequireComponentTag(typeof(OrderPursue))]
         [BurstCompile]
-        struct FindOpponentJob : IJobForEachWithEntity<PlayerSelection, OrderPursue>
+        struct SetOrderPursueTarget : IJobForEachWithEntity<PlayerSelection, OrderPursue>
         {
 
             [ReadOnly, DeallocateOnJobCompletion] public NativeArray<Entity> Targets;
@@ -51,15 +50,23 @@ namespace UnitAgent
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
-            var targetCount = m_TargetGroup.CalculateLength();
-            var targetType = GetArchetypeChunkComponentType<PlayerTarget>(true);
 
-            var outputDeps = new FindOpponentJob
+            // EntityManager.AddComponent(m_PlayerSelectionNoOrderPursue, typeof(OrderPursue));
+            var targets = m_TargetGroup.ToEntityArray(Allocator.TempJob);
+            if (targets.Length == 0)
             {
-                Targets = m_TargetGroup.ToEntityArray(Allocator.TempJob),
+                targets.Dispose();
+                return inputDeps;
+            }
+
+            var outputDeps = new SetOrderPursueTarget
+            {
+                Targets = targets,
                 AllPositions = GetComponentDataFromEntity<Translation>()
 
             }.Schedule(this, inputDeps);
+
+            //then remove all the PlayerTarget?
             return outputDeps;
         }
     }

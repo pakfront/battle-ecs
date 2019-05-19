@@ -11,6 +11,7 @@ namespace UnitAgent
 {
     // cribbed from 
     // https://forum.unity.com/threads/how-do-you-get-a-bufferfromentity-or-componentdatafromentity-without-inject.587857/#post-3924478
+    [UpdateAfter(typeof(MoveToGoal))]
     [UpdateBefore(typeof(TransformSystemGroup))]
     public class RotateToGoalSystem : JobComponentSystem
     {
