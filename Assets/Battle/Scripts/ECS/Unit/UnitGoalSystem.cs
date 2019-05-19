@@ -32,7 +32,6 @@ namespace UnitAgent
             public void Execute(ref MoveToGoal goal, [ReadOnly] ref OrderAttack OrderAttack)
             {
                 Entity target = OrderAttack.Target;
-                UnityEngine.Debug.Log("OrderAttackJob target:"+target);
                 float4x4 xform = Others[target].Value;
                 goal.Position = math.mul (xform, new float4(0,0,0,1)).xyz;
                 // heterogenous as it's a direction vector;

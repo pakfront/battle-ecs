@@ -39,9 +39,10 @@ namespace UnitAgent
                     nearestDistanceSq = math.select(nearestDistanceSq, distance, nearest);
                     nearestPositionIndex = math.select(nearestPositionIndex, i, nearest);;
                 }
+                #if ! BurstCompile
                 Debug.Assert(nearestPositionIndex > -1);
                 Debug.Assert(entity != Targets[nearestPositionIndex]);
-                Debug.Log("SetOrderAttackTarget:"+nearestPositionIndex);
+                #endif
                 OrderAttack = new OrderAttack {
                     Target = Targets[nearestPositionIndex]
                 };
@@ -79,7 +80,6 @@ namespace UnitAgent
     [UpdateBefore(typeof(PlayerOrderAttackSystem))]
     public class PrePlayerOrderAttackSystem : ComponentSystem
     {
-
         private EntityQuery m_NeedsOrderAttack;
 
         protected override void OnCreate()
