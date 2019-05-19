@@ -11,8 +11,8 @@ namespace UnitAgent
 {
     // cribbed from 
     // https://forum.unity.com/threads/how-do-you-get-a-bufferfromentity-or-componentdatafromentity-without-inject.587857/#post-3924478
-    [UpdateBefore(typeof(TransformSystemGroup))]
-    public class MoveToGoalSystem : JobComponentSystem
+    [UpdateInGroup(typeof(GameSystemGroup))]
+    public class MovementSystem : JobComponentSystem
     {
         [BurstCompile]
         struct MoveToGoalJob : IJobForEach<Rotation, Translation, MoveSettings, MoveToGoal>
@@ -47,19 +47,6 @@ namespace UnitAgent
                     //normalize
                     desiredForward = toGoal/distance;
                 }
-                
-                // float3 forward = math.mul(rotation.Value, new Vector3 (0,0,1) );
-                // float3 nextHeading;
-                // if ( math.dot(desiredForward,forward) > .98)
-                // {
-                //     // close enough, snap
-                //     nextHeading = desiredForward;
-                // }
-                // else
-                // {
-                //     nextHeading = math.normalizesafe(forward + rotateSpeed * DeltaTime * (desiredForward-forward));
-                // }
-                // rotation.Value = quaternion.LookRotation(nextHeading, math.up());;
 
                 quaternion desired = quaternion.LookRotation(desiredForward, math.up());
                 quaternion current = rotation.Value;
@@ -75,14 +62,34 @@ namespace UnitAgent
             }
         }
 
+       [BurstCompile]
+        struct RotateToGoalJob : IJobForEach<Rotation, Translation, MoveSettings, RotateToGoal>
+        {
+            public float DeltaTime;
+
+            public void Execute(ref Rotation rotation, ref Translation translation, [ReadOnly] ref MoveSettings move, [ReadOnly] ref RotateToGoal goal)
+            {
+                float rotateSpeed = move.RotateSpeed;
+
+                quaternion desired = quaternion.LookRotation(goal.Heading, math.up());
+                quaternion current = rotation.Value;
+                Movement.RotateTowards(desired, rotateSpeed*DeltaTime, ref current);
+                rotation.Value = current;
+            }
+        }
         protected override JobHandle OnUpdate(JobHandle inputDependencies)
         {
-            var goalMoveToJob = new MoveToGoalJob()
+            var outputDeps = new MoveToGoalJob()
             {
                 DeltaTime = Time.deltaTime
-            };
+            }.Schedule(this, inputDependencies);
 
-            return goalMoveToJob.Schedule(this, inputDependencies);
+            outputDeps = new RotateToGoalJob()
+            {
+                DeltaTime = Time.deltaTime
+            }.Schedule(this, outputDeps);
+
+            return outputDeps;
         }
     }
 }

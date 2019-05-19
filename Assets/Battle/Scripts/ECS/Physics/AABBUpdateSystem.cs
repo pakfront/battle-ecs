@@ -5,6 +5,8 @@ using Unity.Transforms;
 
 namespace UnitAgent
 {
+    [UpdateInGroup(typeof(GameSystemGroup))]
+    [UpdateBefore(typeof(PlayerMouseOverSystem))]
     public class AABBUpdateSystem : JobComponentSystem
     {
         public struct AABBMovmentJob : IJobForEach<AABB, Translation>

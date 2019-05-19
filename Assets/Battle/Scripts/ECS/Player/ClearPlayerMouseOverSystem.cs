@@ -8,7 +8,7 @@ using Unity.Collections;
 
 namespace UnitAgent
 {
-
+    [UpdateInGroup(typeof(GameSystemGroup))]
     [UpdateBefore(typeof(PlayerMouseOverSystem))]
     public class ClearPlayerMouseOverSystem : ComponentSystem
     {

@@ -9,6 +9,7 @@ using Unity.Collections;
 namespace UnitAgent
 {
     // [DisableAutoCreation] 
+    [UpdateInGroup(typeof(GameSystemGroup))]
     [UpdateBefore(typeof(PlayerInputSystem))]
     public class PlayerMouseOverSystem : JobComponentSystem
     {

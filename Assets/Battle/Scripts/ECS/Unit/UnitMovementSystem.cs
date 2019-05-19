@@ -9,7 +9,8 @@ using static Unity.Mathematics.math;
 namespace UnitAgent
 {
 
-    [UpdateBefore(typeof(MoveToGoalSystem))]
+    [UpdateInGroup(typeof(GameSystemGroup))]
+    [UpdateAfter(typeof(PlayerInputSystem))]
     public class UnitMovementSystem : JobComponentSystem
     {
 
