@@ -41,9 +41,10 @@ namespace UnitAgent
                 }
                 Debug.Assert(nearestPositionIndex > -1);
                 Debug.Assert(entity != Targets[nearestPositionIndex]);
-                orderPursue = new OrderPursue {
-                    Target = Targets[nearestPositionIndex]
-                };
+                Debug.Log("SetOrderPursueTarget:"+nearestPositionIndex);
+                // orderPursue = new OrderPursue {
+                //     Target = Targets[nearestPositionIndex]
+                // };
             }
         }
 

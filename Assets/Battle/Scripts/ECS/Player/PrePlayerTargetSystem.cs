@@ -27,7 +27,10 @@ namespace UnitAgent
 
         protected override void OnUpdate()
         {
-            EntityManager.AddComponent(m_NeedsOrderPursue, typeof(OrderPursue));
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                EntityManager.AddComponent(m_NeedsOrderPursue, typeof(OrderPursue));
+            }
         }
     }
 }
