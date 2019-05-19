@@ -10,7 +10,7 @@ using UnityEngine;
 namespace UnitAgent
 {
     [UpdateAfter(typeof(PlayerMouseOverSystem))]
-    [UpdateBefore(typeof(MoveToGoalSystem))]
+    [UpdateBefore(typeof(MovementSystem))]
     public class PlayerTargetSystem : JobComponentSystem
     {
         private EntityQuery m_TargetGroup;
