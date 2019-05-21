@@ -9,7 +9,8 @@ using Unity.Collections;
 namespace UnitAgent
 {
     // [DisableAutoCreation] 
-    [UpdateBefore(typeof(PlayerInputSystem))]
+    [UpdateInGroup(typeof(GameSystemGroup))]
+    [UpdateBefore(typeof(PlayerOrderMoveToSystem))]
     public class PlayerMouseOverSystem : JobComponentSystem
     {
         EntityCommandBufferSystem m_EntityCommandBufferSystem;
@@ -33,6 +34,22 @@ namespace UnitAgent
                 {
                     Debug.Log("PlayerSelectionJob: Click on " + index);
                     CommandBuffer.AddComponent(entity, new PlayerSelection());
+                }
+            }
+        }
+
+        [RequireComponentTag(typeof(Unit), typeof(PlayerOwned))]
+        struct PlayerFollowJob : IJobForEachWithEntity<AABB>
+        {
+            [ReadOnly] public EntityCommandBuffer CommandBuffer;
+            public Ray ray;
+
+            public void Execute(Entity entity, int index, [ReadOnly] ref AABB aabb)
+            {
+                if (RTSPhysics.Intersect(aabb, ray))
+                {
+                    Debug.Log("PlayerSelectionJob: Click on " + index);
+                    CommandBuffer.AddComponent(entity, new PlayerFollow());
                 }
             }
         }
@@ -71,6 +88,14 @@ namespace UnitAgent
             else if (Input.GetKeyDown(KeyCode.T))
             {
                 outputDeps = new PlayerTargetJob
+                {
+                    CommandBuffer = m_EntityCommandBufferSystem.CreateCommandBuffer(),
+                    ray = Camera.main.ScreenPointToRay(Input.mousePosition),
+                }.Schedule(this, inputDeps);
+            }
+            else if (Input.GetKeyDown(KeyCode.F))
+            {
+                outputDeps = new PlayerFollowJob
                 {
                     CommandBuffer = m_EntityCommandBufferSystem.CreateCommandBuffer(),
                     ray = Camera.main.ScreenPointToRay(Input.mousePosition),

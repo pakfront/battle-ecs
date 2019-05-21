@@ -11,8 +11,9 @@ namespace UnitAgent
 {
     // cribbed from 
     // https://forum.unity.com/threads/how-do-you-get-a-bufferfromentity-or-componentdatafromentity-without-inject.587857/#post-3924478
-    [UpdateBefore(typeof(TransformSystemGroup))]
-    public class MoveToGoalSystem : JobComponentSystem
+    [UpdateInGroup(typeof(GameSystemGroup))]
+    [UpdateAfter(typeof(AgentGoalSystem))]
+    public class MovementSystem : JobComponentSystem
     {
         [BurstCompile]
         struct MoveToGoalJob : IJobForEach<Rotation, Translation, MoveSettings, MoveToGoal>
@@ -31,49 +32,28 @@ namespace UnitAgent
                 bool atGoal = false;
                 float moveThisTick = translateSpeed * DeltaTime;
 
-                // if (distance <= moveThisTick)
+                // TODO prevent branching
                 if (moveThisTick * 2 > distance)
                 {
                     desiredForward = goal.Heading;
                     atGoal = true;
                 }
-                else if (moveThisTick * 4 > distance)
+                else if (moveThisTick * 8 > distance)
                 {
                     desiredForward = toGoal/distance;
-                    distance /= 2;
-                    rotateSpeed *= 2;
+                    moveThisTick /= 2f;
+                    rotateSpeed *= 4;
                 }
                 else {
                     //normalize
                     desiredForward = toGoal/distance;
                 }
 
-                // float3 forward = math.mul(rotation.Value, new Vector3 (0,0,1) );
-                // quaternion desiredRotation = quaternion.LookRotation(goal.Heading, math.up());
-                // if ( math.dot(desiredForward,forward) > .98)
-                // {
-                //     // close enough, snap
-                //     rotation.Value = desiredRotation;
-                //     return;
-                // }
-                // else
-                // {
-                //     rotation.Value = math.slerp(rotation.Value, desiredRotation, 100 * rotateSpeed * DeltaTime);
-                // }
-                
-                float3 forward = math.mul(rotation.Value, new Vector3 (0,0,1) );
-                float3 nextHeading;
-                if ( math.dot(desiredForward,forward) > .98)
-                {
-                    // close enough, snap
-                    nextHeading = desiredForward;
-                }
-                else
-                {
-                    nextHeading = math.normalizesafe(forward + rotateSpeed * DeltaTime * (desiredForward-forward));
-                }
-                rotation.Value = quaternion.LookRotation(nextHeading, math.up());;
-
+                quaternion desired = quaternion.LookRotation(desiredForward, math.up());
+                quaternion current = rotation.Value;
+                Movement.RotateTowards(desired, rotateSpeed*DeltaTime, ref current);
+                rotation.Value = current;
+            
                 if (atGoal)
                     //TODO could just switch to rotate to if goal is no moving
                     translation.Value = goal.Position;
@@ -83,14 +63,34 @@ namespace UnitAgent
             }
         }
 
+       [BurstCompile]
+        struct RotateToGoalJob : IJobForEach<Rotation, Translation, MoveSettings, RotateToGoal>
+        {
+            public float DeltaTime;
+
+            public void Execute(ref Rotation rotation, ref Translation translation, [ReadOnly] ref MoveSettings move, [ReadOnly] ref RotateToGoal goal)
+            {
+                float rotateSpeed = move.RotateSpeed;
+
+                quaternion desired = quaternion.LookRotation(goal.Heading, math.up());
+                quaternion current = rotation.Value;
+                Movement.RotateTowards(desired, rotateSpeed*DeltaTime, ref current);
+                rotation.Value = current;
+            }
+        }
         protected override JobHandle OnUpdate(JobHandle inputDependencies)
         {
-            var goalMoveToJob = new MoveToGoalJob()
+            var outputDeps = new MoveToGoalJob()
             {
                 DeltaTime = Time.deltaTime
-            };
+            }.Schedule(this, inputDependencies);
 
-            return goalMoveToJob.Schedule(this, inputDependencies);
+            outputDeps = new RotateToGoalJob()
+            {
+                DeltaTime = Time.deltaTime
+            }.Schedule(this, outputDeps);
+
+            return outputDeps;
         }
     }
 }

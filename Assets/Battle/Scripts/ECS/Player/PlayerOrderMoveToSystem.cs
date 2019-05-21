@@ -8,8 +8,9 @@ using Unity.Collections;
 namespace UnitAgent
 {
     // [DisableAutoCreation] 
-    [UpdateAfter(typeof(PlayerMouseOverSystem))]
-    public class PlayerInputSystem : JobComponentSystem
+    [UpdateInGroup(typeof(GameSystemGroup))]
+    [UpdateAfter(typeof(PlayerOrderAttackSystem))]
+    public class PlayerOrderMoveToSystem : JobComponentSystem
     {
         private Plane groundplane = new Plane(Vector3.up, 0);
 
@@ -26,7 +27,7 @@ namespace UnitAgent
 
         [BurstCompile]
         [RequireComponentTag(typeof(PlayerSelection), typeof(PlayerOwned))]
-        struct SetGoalOnPlayerOwned : IJobForEach<OrderMoveTo>
+        struct SetOrderMoveTo : IJobForEach<OrderMoveTo>
         {
             [ReadOnly] public float3 ClickLocation;
 
@@ -40,6 +41,8 @@ namespace UnitAgent
         {
             if (!Input.GetMouseButtonDown(1)) return inputDeps;
 
+            //TODO make sure we didn't click on gui, etc.
+
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
             float enter = 0.0f;
@@ -51,7 +54,7 @@ namespace UnitAgent
 
             EntityManager.AddComponent(m_PlayerSelectedPlayerOwnedNoMoveToGoal, typeof(OrderMoveTo));
 
-            var job = new SetGoalOnPlayerOwned
+            var job = new SetOrderMoveTo
             {
                 ClickLocation = (float3)clickLocation
             };

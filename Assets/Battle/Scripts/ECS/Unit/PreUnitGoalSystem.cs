@@ -8,9 +8,10 @@ using Unity.Collections;
 
 namespace UnitAgent
 {
+    [UpdateInGroup(typeof(GameSystemGroup))]
     [UpdateAfter(typeof(PlayerMouseOverSystem))]
-    [UpdateBefore(typeof(UnitMovementSystem))]
-    public class ClearUnitMovementSystem : ComponentSystem
+    [UpdateBefore(typeof(UnitGoalSystem))]
+    public class PreUnitGoalSystem : ComponentSystem
     {
 
         private EntityQuery m_NeedsMoveToGoal, m_RemoveMoveToGoal;
@@ -25,7 +26,7 @@ namespace UnitAgent
                 },
                 None = new ComponentType[] {
                     ComponentType.ReadOnly<OrderMoveTo>(),
-                    ComponentType.ReadOnly<OrderPursue>(),
+                    ComponentType.ReadOnly<OrderAttack>(),
                     ComponentType.ReadOnly<OrderMarch>(),
                     ComponentType.ReadOnly<OrderFormation>()
                 }
@@ -36,7 +37,7 @@ namespace UnitAgent
                 None = new ComponentType[] { typeof(MoveToGoal) },
                 Any = new ComponentType[] {
                     ComponentType.ReadOnly<OrderMoveTo>(),
-                    ComponentType.ReadOnly<OrderPursue>(),
+                    ComponentType.ReadOnly<OrderAttack>(),
                     ComponentType.ReadOnly<OrderMarch>(),
                     ComponentType.ReadOnly<OrderFormation>()
                 }

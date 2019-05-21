@@ -8,7 +8,7 @@ using Unity.Collections;
 
 namespace UnitAgent
 {
-
+    [UpdateInGroup(typeof(GameSystemGroup))]
     [UpdateBefore(typeof(PlayerMouseOverSystem))]
     public class ClearPlayerMouseOverSystem : ComponentSystem
     {
@@ -17,7 +17,7 @@ namespace UnitAgent
         {
             base.OnCreate();
             m_PlayerSelection = GetEntityQuery(ComponentType.ReadOnly<PlayerSelection>());
-            m_PlayerTarget = GetEntityQuery(ComponentType.ReadOnly<PlayerSelection>());
+            m_PlayerTarget = GetEntityQuery(ComponentType.ReadOnly<PlayerTarget>());
             m_PlayerFollow = GetEntityQuery(ComponentType.ReadOnly<PlayerFollow>());
         }
 
