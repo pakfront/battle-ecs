@@ -34,16 +34,18 @@ namespace UnitAgent
         struct CastRayJob : IJobParallelFor
         {
             [DeallocateOnJobCompletion] public NativeArray<ArchetypeChunk> Chunks;
+            [ReadOnly] public ArchetypeChunkEntityType EntityType;
             [ReadOnly] public ArchetypeChunkComponentType<AABB> AABBType;
             [ReadOnly] public ArchetypeChunkComponentType<Translation> TranslationType;
 
             public RTSRay Ray;
-            public NativeArray<int> NearestEntity;
+            public NativeArray<Entity> NearestEntity;
             public NativeArray<float> NearestDistanceSq;
 
             public void Execute(int chunkIndex)
             {
                 var chunk = Chunks[chunkIndex];
+                var entities = chunk.GetNativeArray(EntityType);
                 var chunkTranslation = chunk.GetNativeArray(TranslationType);
                 var chunkAABB = chunk.GetNativeArray(AABBType);
                 var instanceCount = chunk.Count;
@@ -66,13 +68,17 @@ namespace UnitAgent
                 }
 
                 // FIXME is not an actual Enitty
-                NearestEntity[chunkIndex] = nearestPositionIndex;
-                NearestDistanceSq[chunkIndex] = nearestPositionIndex;
+                if (nearestPositionIndex > -1) {
+                    NearestEntity[chunkIndex] = entities[nearestPositionIndex];
+                    NearestDistanceSq[chunkIndex] = nearestDistanceSq;
+                }
             }
         }
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
+            if (! Input.GetMouseButtonDown(0) ) return inputDeps;
+
             var chunks = m_group.CreateArchetypeChunkArray(Allocator.TempJob);
             var nchunks = chunks.Length;
 
@@ -84,7 +90,7 @@ namespace UnitAgent
             };
 
             var nearestDistanceSq = new NativeArray<float>(nchunks, Allocator.TempJob);
-            var nearestEntity = new NativeArray<int>(nchunks, Allocator.TempJob);
+            var nearestEntity = new NativeArray<Entity>(nchunks, Allocator.TempJob);
 
             var outputDeps = new CastRayJob
             {
@@ -98,17 +104,17 @@ namespace UnitAgent
             outputDeps.Complete();
 
             float nsq = float.MaxValue;
-            int nentity = -1;
+            Entity nentity = Entity.Null;
             for (int i = 0; i < nchunks; i++)
             {
-                Debug.Log("test:"+i+" "+nearestEntity[i]+" "+nearestEntity[i]);
+                // Debug.Log("PlayerPointerSystem chunk:" + i + " e:" + nearestEntity[i] + " " + nearestDistanceSq[i]);
                 if (nsq < nearestDistanceSq[i])
                 {
                     nsq = nearestDistanceSq[i];
                     nentity = nearestEntity[i];
                 }
             }
-            
+
             nearestDistanceSq.Dispose();
             nearestEntity.Dispose();
 
