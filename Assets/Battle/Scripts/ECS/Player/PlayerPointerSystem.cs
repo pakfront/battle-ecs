@@ -56,10 +56,10 @@ namespace UnitAgent
                 {
                     var aabb = chunkAABB[i];
                     bool hit = RTSPhysics.Intersect(aabb, Ray);
-                    if (hit)
-                    {
-                        Debug.Log("PlayerSelectionJob: Click on " + i);
-                    }
+                    // if (hit)
+                    // {
+                    //     Debug.Log("PlayerSelectionJob: Click on " + i);
+                    // }
 
                     float distance = math.lengthsq((chunkTranslation[i].Value - Ray.origin));
                     bool nearest = hit && distance < nearestDistanceSq;
@@ -67,8 +67,8 @@ namespace UnitAgent
                     nearestPositionIndex = math.select(nearestPositionIndex, i, nearest);
                 }
 
-                // FIXME is not an actual Enitty
-                if (nearestPositionIndex > -1) {
+                if (nearestPositionIndex > -1) 
+                {
                     NearestEntity[chunkIndex] = entities[nearestPositionIndex];
                     NearestDistanceSq[chunkIndex] = nearestDistanceSq;
                 }
@@ -96,6 +96,7 @@ namespace UnitAgent
             {
                 Chunks = chunks,
                 Ray = rtsRay,
+                EntityType = GetArchetypeChunkEntityType(),
                 TranslationType = GetArchetypeChunkComponentType<Translation>(true),
                 AABBType = GetArchetypeChunkComponentType<AABB>(true),
                 NearestDistanceSq = nearestDistanceSq,
@@ -107,12 +108,26 @@ namespace UnitAgent
             Entity nentity = Entity.Null;
             for (int i = 0; i < nchunks; i++)
             {
-                // Debug.Log("PlayerPointerSystem chunk:" + i + " e:" + nearestEntity[i] + " " + nearestDistanceSq[i]);
-                if (nsq < nearestDistanceSq[i])
+                if ( nearestEntity[i] != Entity.Null && nearestDistanceSq[i] < nsq)
                 {
                     nsq = nearestDistanceSq[i];
                     nentity = nearestEntity[i];
+
                 }
+            }
+
+            if (nentity == Entity.Null)
+            {
+                // Debug.LogError("PlayerPointerSystem No Hit");
+                // TODO get world hit location
+            }
+            else
+            {
+                // Debug.LogError("PlayerPointerSystem Hit "+nentity);
+                if (EntityManager.HasComponent<PlayerSelection>(nentity))
+                    EntityManager.SetComponentData(nentity, new PlayerSelection {});
+                else
+                    EntityManager.AddComponentData(nentity, new PlayerSelection {});
             }
 
             nearestDistanceSq.Dispose();

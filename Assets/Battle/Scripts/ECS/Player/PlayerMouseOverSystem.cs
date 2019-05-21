@@ -28,7 +28,7 @@ namespace UnitAgent
         struct PlayerSelectionJob : IJobForEachWithEntity<AABB>
         {
             [ReadOnly] public EntityCommandBuffer CommandBuffer;
-            public Ray CameraRay;
+            public RTSRay CameraRay;
 
             public void Execute(Entity entity, int index, [ReadOnly] ref AABB aabb)
             {
@@ -44,7 +44,7 @@ namespace UnitAgent
         struct PlayerFollowJob : IJobForEachWithEntity<AABB>
         {
             [ReadOnly] public EntityCommandBuffer CommandBuffer;
-            public Ray CameraRay;
+            public RTSRay CameraRay;
 
             public void Execute(Entity entity, int index, [ReadOnly] ref AABB aabb)
             {
@@ -60,7 +60,7 @@ namespace UnitAgent
         struct PlayerTargetJob : IJobForEachWithEntity<AABB>
         {
             [ReadOnly] public EntityCommandBuffer CommandBuffer;
-            public Ray CameraRay;
+            public RTSRay CameraRay;
 
             public void Execute(Entity entity, int index, [ReadOnly] ref AABB aabb)
             {
@@ -76,60 +76,49 @@ namespace UnitAgent
         {
             if ( ! (Input.anyKeyDown || Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1) )) return inputDeps;
 
-            JobHandle outputDeps;
+            return inputDeps;
 
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-            float enter = 0.0f;
-
-
-            Vector3 clickLocation = ray.GetPoint(enter);
-            if (Input.GetMouseButtonDown(0))
-            {
-                outputDeps = new PlayerSelectionJob
-                {
-                    CommandBuffer = m_EntityCommandBufferSystem.CreateCommandBuffer(),
-                    CameraRay = ray,
-                }.Schedule(this, inputDeps);
-            }
-            else if (Input.GetMouseButtonDown(1))
-            {
-                outputDeps = new PlayerTargetJob
-                {
-                    CommandBuffer = m_EntityCommandBufferSystem.CreateCommandBuffer(),
-                    CameraRay = ray,
-                }.Schedule(this, inputDeps);
-
-                outputDeps = new PlayerFollowJob
-                {
-                    CommandBuffer = m_EntityCommandBufferSystem.CreateCommandBuffer(),
-                    CameraRay = ray,
-                }.Schedule(this, inputDeps);
-            }
-            // else if (Input.GetKeyDown(KeyCode.T))
+            // JobHandle outputDeps;
+            // Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            // RTSRay rtsRay = new RTSRay
             // {
-            //     outputDeps = new PlayerTargetJob
-            //     {
-            //         CommandBuffer = m_EntityCommandBufferSystem.CreateCommandBuffer(),
-            //         CameraRay = ray,
-            //     }.Schedule(this, inputDeps);
-            // }
-            // else if (Input.GetKeyDown(KeyCode.F))
+            //     origin = ray.origin,
+            //     direction = ray.direction
+            // };
+            // // Vector3 clickLocation = ray.GetPoint(enter);
+            // // if (Input.GetMouseButtonDown(0))
+            // // {
+            // //     outputDeps = new PlayerSelectionJob
+            // //     {
+            // //         CommandBuffer = m_EntityCommandBufferSystem.CreateCommandBuffer(),
+            // //         CameraRay = rtsRay,
+            // //     }.Schedule(this, inputDeps);
+            // // }
+            // // else if (Input.GetKeyDown(KeyCode.T))
+            // // {
+            // //     outputDeps = new PlayerTargetJob
+            // //     {
+            // //         CommandBuffer = m_EntityCommandBufferSystem.CreateCommandBuffer(),
+            // //         CameraRay = rtsRay,
+            // //     }.Schedule(this, inputDeps);
+            // // }
+            // // else 
+            // if (Input.GetKeyDown(KeyCode.F))
             // {
             //     outputDeps = new PlayerFollowJob
             //     {
             //         CommandBuffer = m_EntityCommandBufferSystem.CreateCommandBuffer(),
-            //         CameraRay = ray,
+            //         CameraRay = rtsRay,
             //     }.Schedule(this, inputDeps);
             // }
-            else
-            {
-                return inputDeps;
-            }
+            // else
+            // {
+            //     return inputDeps;
+            // }
 
-            m_EntityCommandBufferSystem.AddJobHandleForProducer(outputDeps);
+            // m_EntityCommandBufferSystem.AddJobHandleForProducer(outputDeps);
 
-            return outputDeps;
+            // return outputDeps;
         }
     }
 
