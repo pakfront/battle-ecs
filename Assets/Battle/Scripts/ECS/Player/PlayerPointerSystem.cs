@@ -9,7 +9,9 @@ using UnityEngine;
 
 namespace UnitAgent
 {
-    [UpdateBefore(typeof(MoveToGoalSystem))]
+    // [DisableAutoCreation] 
+    [UpdateInGroup(typeof(GameSystemGroup))]
+    [UpdateBefore(typeof(PlayerOrderMoveToSystem))]
     public class PlayerPointerSystem : JobComponentSystem
     {
         EntityCommandBufferSystem m_EntityCommandBufferSystem;
@@ -29,13 +31,13 @@ namespace UnitAgent
         }
 
         [BurstCompile]
-        struct FindOpponentJob : IJobParallelFor
+        struct CastRayJob : IJobParallelFor
         {
             [DeallocateOnJobCompletion] public NativeArray<ArchetypeChunk> Chunks;
             [ReadOnly] public ArchetypeChunkComponentType<AABB> AABBType;
             [ReadOnly] public ArchetypeChunkComponentType<Translation> TranslationType;
 
-            public Ray Ray;
+            public RTSRay Ray;
             public NativeArray<int> NearestEntity;
             public NativeArray<float> NearestDistanceSq;
 
@@ -43,7 +45,7 @@ namespace UnitAgent
             {
                 var chunk = Chunks[chunkIndex];
                 var chunkTranslation = chunk.GetNativeArray(TranslationType);
-                int chunkAABB = chunk.GetNativeArray(AABBType);
+                var chunkAABB = chunk.GetNativeArray(AABBType);
                 var instanceCount = chunk.Count;
                 float nearestDistanceSq = float.MaxValue;
                 int nearestPositionIndex = -1;
@@ -57,8 +59,7 @@ namespace UnitAgent
                         Debug.Log("PlayerSelectionJob: Click on " + i);
                     }
 
-                    float distance = (chunkTranslation[i].Value - ray.origin).lengthsq;
-                    var distance = math.lengthsq(position - targetPosition);
+                    float distance = math.lengthsq((chunkTranslation[i].Value - Ray.origin));
                     bool nearest = hit && distance < nearestDistanceSq;
                     nearestDistanceSq = math.select(nearestDistanceSq, distance, nearest);
                     nearestPositionIndex = math.select(nearestPositionIndex, i, nearest);
@@ -75,16 +76,42 @@ namespace UnitAgent
             var chunks = m_group.CreateArchetypeChunkArray(Allocator.TempJob);
             var nchunks = chunks.Length;
 
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RTSRay rtsRay = new RTSRay
+            {
+                origin = ray.origin,
+                direction = ray.direction
+            };
 
-            var findOpponentJob = new FindOpponentJob
+            var nearestDistanceSq = new NativeArray<float>(nchunks, Allocator.TempJob);
+            var nearestEntity = new NativeArray<int>(nchunks, Allocator.TempJob);
+
+            var outputDeps = new CastRayJob
             {
                 Chunks = chunks,
-                OpponentType = opponentType,
-                TranslationType = translationType,
-                TeamType = teamType,
-            };
-            var outputDeps = findOpponentJob.Schedule(nchunks, 32, inputDeps);
+                Ray = rtsRay,
+                TranslationType = GetArchetypeChunkComponentType<Translation>(true),
+                AABBType = GetArchetypeChunkComponentType<AABB>(true),
+                NearestDistanceSq = nearestDistanceSq,
+                NearestEntity = nearestEntity
+            }.Schedule(nchunks, 32, inputDeps);
+            outputDeps.Complete();
+
+            float nsq = float.MaxValue;
+            int nentity = -1;
+            for (int i = 0; i < nchunks; i++)
+            {
+                Debug.Log("test:"+i+" "+nearestEntity[i]+" "+nearestEntity[i]);
+                if (nsq < nearestDistanceSq[i])
+                {
+                    nsq = nearestDistanceSq[i];
+                    nentity = nearestEntity[i];
+                }
+            }
             
+            nearestDistanceSq.Dispose();
+            nearestEntity.Dispose();
+
             return outputDeps;
 
             // var setGoalJob = new SetGoal();

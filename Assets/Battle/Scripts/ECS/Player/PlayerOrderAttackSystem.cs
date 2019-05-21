@@ -61,13 +61,18 @@ namespace UnitAgent
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
             if (!Input.GetKeyDown(KeyCode.Y)) return inputDeps;
+            Debug.Log("PlayerOrderAttackSystem Y");
 
             var targets = m_PlayerTargetGroup.ToEntityArray(Allocator.TempJob);
             if (targets.Length == 0)
             {
+                Debug.Log("PlayerOrderAttackSystem No Targets");
                 targets.Dispose();
                 return inputDeps;
             }
+            Debug.Log("PlayerOrderAttackSystem Attack!");
+
+
 
             // prepopulate 
             EntityManager.AddComponent(m_NeedsOrderAttack, typeof(OrderAttack));

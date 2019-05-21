@@ -13,6 +13,8 @@ namespace UnitAgent
     [UpdateBefore(typeof(PlayerOrderMoveToSystem))]
     public class PlayerMouseOverSystem : JobComponentSystem
     {
+        private Plane groundplane = new Plane(Vector3.up, 0);
+
         EntityCommandBufferSystem m_EntityCommandBufferSystem;
         protected override void OnCreate()
         {
@@ -26,11 +28,11 @@ namespace UnitAgent
         struct PlayerSelectionJob : IJobForEachWithEntity<AABB>
         {
             [ReadOnly] public EntityCommandBuffer CommandBuffer;
-            public Ray ray;
+            public Ray CameraRay;
 
             public void Execute(Entity entity, int index, [ReadOnly] ref AABB aabb)
             {
-                if (RTSPhysics.Intersect(aabb, ray))
+                if (RTSPhysics.Intersect(aabb, CameraRay))
                 {
                     Debug.Log("PlayerSelectionJob: Click on " + index);
                     CommandBuffer.AddComponent(entity, new PlayerSelection());
@@ -42,11 +44,11 @@ namespace UnitAgent
         struct PlayerFollowJob : IJobForEachWithEntity<AABB>
         {
             [ReadOnly] public EntityCommandBuffer CommandBuffer;
-            public Ray ray;
+            public Ray CameraRay;
 
             public void Execute(Entity entity, int index, [ReadOnly] ref AABB aabb)
             {
-                if (RTSPhysics.Intersect(aabb, ray))
+                if (RTSPhysics.Intersect(aabb, CameraRay))
                 {
                     Debug.Log("PlayerSelectionJob: Click on " + index);
                     CommandBuffer.AddComponent(entity, new PlayerFollow());
@@ -58,11 +60,11 @@ namespace UnitAgent
         struct PlayerTargetJob : IJobForEachWithEntity<AABB>
         {
             [ReadOnly] public EntityCommandBuffer CommandBuffer;
-            public Ray ray;
+            public Ray CameraRay;
 
             public void Execute(Entity entity, int index, [ReadOnly] ref AABB aabb)
             {
-                if (RTSPhysics.Intersect(aabb, ray))
+                if (RTSPhysics.Intersect(aabb, CameraRay))
                 {
                     Debug.Log("PlayerTargetJob: Click on " + index);
                     CommandBuffer.AddComponent(entity, new PlayerTarget());
@@ -72,35 +74,54 @@ namespace UnitAgent
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
-            // early out needs to be refined
-            // if ( ! (Input.anyKeyDown || Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1) )) return inputDeps;
+            if ( ! (Input.anyKeyDown || Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1) )) return inputDeps;
 
             JobHandle outputDeps;
 
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            float enter = 0.0f;
+
+
+            Vector3 clickLocation = ray.GetPoint(enter);
             if (Input.GetMouseButtonDown(0))
             {
                 outputDeps = new PlayerSelectionJob
                 {
                     CommandBuffer = m_EntityCommandBufferSystem.CreateCommandBuffer(),
-                    ray = Camera.main.ScreenPointToRay(Input.mousePosition),
+                    CameraRay = ray,
                 }.Schedule(this, inputDeps);
             }
-            else if (Input.GetKeyDown(KeyCode.T))
+            else if (Input.GetMouseButtonDown(1))
             {
                 outputDeps = new PlayerTargetJob
                 {
                     CommandBuffer = m_EntityCommandBufferSystem.CreateCommandBuffer(),
-                    ray = Camera.main.ScreenPointToRay(Input.mousePosition),
+                    CameraRay = ray,
                 }.Schedule(this, inputDeps);
-            }
-            else if (Input.GetKeyDown(KeyCode.F))
-            {
+
                 outputDeps = new PlayerFollowJob
                 {
                     CommandBuffer = m_EntityCommandBufferSystem.CreateCommandBuffer(),
-                    ray = Camera.main.ScreenPointToRay(Input.mousePosition),
+                    CameraRay = ray,
                 }.Schedule(this, inputDeps);
             }
+            // else if (Input.GetKeyDown(KeyCode.T))
+            // {
+            //     outputDeps = new PlayerTargetJob
+            //     {
+            //         CommandBuffer = m_EntityCommandBufferSystem.CreateCommandBuffer(),
+            //         CameraRay = ray,
+            //     }.Schedule(this, inputDeps);
+            // }
+            // else if (Input.GetKeyDown(KeyCode.F))
+            // {
+            //     outputDeps = new PlayerFollowJob
+            //     {
+            //         CommandBuffer = m_EntityCommandBufferSystem.CreateCommandBuffer(),
+            //         CameraRay = ray,
+            //     }.Schedule(this, inputDeps);
+            // }
             else
             {
                 return inputDeps;
@@ -114,12 +135,13 @@ namespace UnitAgent
 
     [UpdateInGroup(typeof(GameSystemGroup))]
     [UpdateBefore(typeof(PlayerMouseOverSystem))]
-    public class ClearPlayerMouseOverSystem : ComponentSystem
+    public class PrePlayerMouseOverSystem : ComponentSystem
     {
-        private EntityQuery m_PlayerSelection, m_PlayerTarget, m_PlayerFollow;
+        private EntityQuery m_PlayerClicked, m_PlayerSelection, m_PlayerTarget, m_PlayerFollow;
         protected override void OnCreate()
         {
             base.OnCreate();
+            // m_PlayerClicked = GetEntityQuery(ComponentType.ReadOnly<PlayerClicked>());
             m_PlayerSelection = GetEntityQuery(ComponentType.ReadOnly<PlayerSelection>());
             m_PlayerTarget = GetEntityQuery(ComponentType.ReadOnly<PlayerTarget>());
             m_PlayerFollow = GetEntityQuery(ComponentType.ReadOnly<PlayerFollow>());
@@ -127,6 +149,9 @@ namespace UnitAgent
 
         protected override void OnUpdate()
         {
+            // clear previous clicks
+            // EntityManager.RemoveComponent(m_PlayerClicked, ComponentType.ReadOnly<PlayerClicked>());
+            
             // selection modifier pressed, early exit;
             if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl) ||
                  Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)
@@ -137,13 +162,10 @@ namespace UnitAgent
                 Debug.Log("Clearing PlayerSelection");
                 EntityManager.RemoveComponent(m_PlayerSelection, ComponentType.ReadOnly<PlayerSelection>());
             }
-            else if (Input.GetKeyDown(KeyCode.T))
+            else if (Input.GetMouseButtonDown(1))
             {
                 Debug.Log("Clearing PlayerTarget");
                 EntityManager.RemoveComponent(m_PlayerTarget, ComponentType.ReadOnly<PlayerTarget>());
-            }
-            else if (Input.GetKeyDown(KeyCode.F))
-            {
                 Debug.Log("Clearing PlayerFollow");
                 EntityManager.RemoveComponent(m_PlayerFollow, ComponentType.ReadOnly<PlayerFollow>());
             }
