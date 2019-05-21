@@ -12,11 +12,14 @@ namespace UnitAgent
     [UpdateBefore(typeof(MoveToGoalSystem))]
     public class PlayerPointerSystem : JobComponentSystem
     {
+        EntityCommandBufferSystem m_EntityCommandBufferSystem;
         EntityQuery m_group;
 
 
         protected override void OnCreate()
         {
+            m_EntityCommandBufferSystem = World.GetOrCreateSystem<EntityCommandBufferSystem>();
+
             var query = new EntityQueryDesc
             {
                 All = new ComponentType[] { ComponentType.ReadOnly<AABB>(), ComponentType.ReadOnly<Translation>() }
@@ -32,50 +35,46 @@ namespace UnitAgent
             [ReadOnly] public ArchetypeChunkComponentType<AABB> AABBType;
             [ReadOnly] public ArchetypeChunkComponentType<Translation> TranslationType;
 
+            public Ray Ray;
+            public NativeArray<int> NearestEntity;
+            public NativeArray<float> NearestDistanceSq;
+
             public void Execute(int chunkIndex)
             {
                 var chunk = Chunks[chunkIndex];
-                var chunkOpponent = chunk.GetNativeArray(OpponentType);
                 var chunkTranslation = chunk.GetNativeArray(TranslationType);
-                int chunkTeamIndex = chunk.GetSharedComponentIndex(TeamType);
+                int chunkAABB = chunk.GetNativeArray(AABBType);
                 var instanceCount = chunk.Count;
-                float nearestDistanceSq = chunkOpponent[i].DistanceSq;
+                float nearestDistanceSq = float.MaxValue;
                 int nearestPositionIndex = -1;
-
 
                 for (int i = 0; i < instanceCount; i++)
                 {
-                    float3 position = chunkTranslation[i].Value;
-                    // Get from previous pass
-
-                    for (int j = 0; j < otherChunk.Count; j++)
+                    var aabb = chunkAABB[i];
+                    bool hit = RTSPhysics.Intersect(aabb, Ray);
+                    if (hit)
                     {
-                        var targetPosition = otherTranslations[j].Value;
-                        var distance = math.lengthsq(position - targetPosition);
-                        bool nearest = distance < nearestDistanceSq;
-                        nearestDistanceSq = math.select(nearestDistanceSq, distance, nearest);
-                        nearestPositionIndex = math.select(nearestPositionIndex, j, nearest);
+                        Debug.Log("PlayerSelectionJob: Click on " + i);
                     }
 
-                    if (nearestPositionIndex > -1)
-                    {
-                        // Debug.Log("Found nearest chunk["+chunkIndex+"]: otherChunk["+c+"]"+nearestPositionIndex);
-                        chunkOpponent[i] = new Opponent
-                        {
-                            DistanceSq = nearestDistanceSq,
-                            Position = otherTranslations[nearestPositionIndex].Value
-                        };
-                    }
-                    //TODO possibly remove a tag if none found
-
+                    float distance = (chunkTranslation[i].Value - ray.origin).lengthsq;
+                    var distance = math.lengthsq(position - targetPosition);
+                    bool nearest = hit && distance < nearestDistanceSq;
+                    nearestDistanceSq = math.select(nearestDistanceSq, distance, nearest);
+                    nearestPositionIndex = math.select(nearestPositionIndex, i, nearest);
                 }
+
+                // FIXME is not an actual Enitty
+                NearestEntity[chunkIndex] = nearestPositionIndex;
+                NearestDistanceSq[chunkIndex] = nearestPositionIndex;
             }
         }
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
-            var closestIndex = NativeArray
             var chunks = m_group.CreateArchetypeChunkArray(Allocator.TempJob);
+            var nchunks = chunks.Length;
+
 
             var findOpponentJob = new FindOpponentJob
             {
@@ -84,7 +83,7 @@ namespace UnitAgent
                 TranslationType = translationType,
                 TeamType = teamType,
             };
-            var outputDeps = findOpponentJob.Schedule(chunks.Length, 32, inputDeps);
+            var outputDeps = findOpponentJob.Schedule(nchunks, 32, inputDeps);
             
             return outputDeps;
 
