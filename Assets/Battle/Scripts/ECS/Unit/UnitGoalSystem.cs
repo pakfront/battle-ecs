@@ -16,9 +16,9 @@ namespace UnitAgent
         [BurstCompile]
         struct OrderMoveToJob : IJobForEach<MoveToGoal, OrderMoveTo>
         {
-            public void Execute(ref MoveToGoal goalMoveTo, [ReadOnly] ref OrderMoveTo detachedMoveTo)
+            public void Execute(ref MoveToGoal goalMoveTo, [ReadOnly] ref OrderMoveTo orderMoveTo)
             {
-                goalMoveTo.Position = detachedMoveTo.Position;
+                goalMoveTo.Position = orderMoveTo.Position;
                 goalMoveTo.Heading = new float3(0,0,1);
             }
         }

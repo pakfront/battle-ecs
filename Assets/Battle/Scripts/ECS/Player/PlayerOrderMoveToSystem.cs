@@ -9,22 +9,10 @@ namespace UnitAgent
 {
     // [DisableAutoCreation] 
     [UpdateInGroup(typeof(GameSystemGroup))]
-    [UpdateAfter(typeof(PlayerOrderAttackSystem))]
+    [UpdateAfter(typeof(PlayerOrderPreSystem))]
+    [UpdateBefore(typeof(PlayerOrderPostSystem))]
     public class PlayerOrderMoveToSystem : JobComponentSystem
     {
-        private Plane groundplane = new Plane(Vector3.up, 0);
-
-        private EntityQuery m_PlayerSelectedPlayerOwnedNoMoveToGoal;
-
-        protected override void OnCreate()
-        {
-            m_PlayerSelectedPlayerOwnedNoMoveToGoal = GetEntityQuery( new EntityQueryDesc
-               {
-                   None = new ComponentType[] { typeof(OrderMoveTo) },
-                   All = new ComponentType[] { ComponentType.ReadOnly<PlayerSelection>(), ComponentType.ReadOnly<PlayerOwned>()  }
-               });
-        }
-
         [BurstCompile]
         [RequireComponentTag(typeof(PlayerSelection), typeof(PlayerOwned))]
         struct SetOrderMoveTo : IJobForEach<OrderMoveTo>
@@ -39,27 +27,17 @@ namespace UnitAgent
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
-            if (!Input.GetMouseButtonDown(1)) return inputDeps;
+            var playerClickTerrain = GetSingleton<PlayerClickTerrain>();
+            if ( (playerClickTerrain.Click & (uint)EClick.Terrain) != (uint)EClick.Terrain ) return inputDeps;
 
-            //TODO make sure we didn't click on gui, etc.
+            Debug.Log("PlayerOrderMoveSystem DidClick:"+playerClickTerrain.Click+" "+playerClickTerrain.Position );
 
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-            float enter = 0.0f;
-
-            if (!groundplane.Raycast(ray, out enter)) return inputDeps;
-
-            Vector3 clickLocation = ray.GetPoint(enter);
-            Debug.Log("PlayerInputSystem clickLocation "+clickLocation);
-
-            EntityManager.AddComponent(m_PlayerSelectedPlayerOwnedNoMoveToGoal, typeof(OrderMoveTo));
-
-            var job = new SetOrderMoveTo
+            var outputDeps = new SetOrderMoveTo
             {
-                ClickLocation = (float3)clickLocation
-            };
+                ClickLocation = playerClickTerrain.Position
+            }.Schedule(this, inputDeps);
  
-            return job.Schedule(this, inputDeps);
+            return outputDeps;
         }
     }
 }

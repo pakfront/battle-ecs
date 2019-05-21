@@ -11,11 +11,13 @@ namespace UnitAgent
 {
     // [DisableAutoCreation] 
     [UpdateInGroup(typeof(GameSystemGroup))]
-    [UpdateBefore(typeof(PlayerOrderMoveToSystem))]
+    [UpdateBefore(typeof(PlayerOrderPreSystem))]
     public class PlayerPointerSystem : JobComponentSystem
     {
-        EntityCommandBufferSystem m_EntityCommandBufferSystem;
-        EntityQuery m_group;
+
+        private EntityCommandBufferSystem m_EntityCommandBufferSystem;
+        private EntityQuery m_group;
+        private Plane groundplane = new Plane(Vector3.up, 0);
 
 
         protected override void OnCreate()
@@ -28,6 +30,9 @@ namespace UnitAgent
             };
 
             m_group = GetEntityQuery(query);
+
+            EntityManager.CreateEntity(typeof(PlayerClickTerrain));
+            SetSingleton(new PlayerClickTerrain{ Click = (uint) EClick.None });
         }
 
         [BurstCompile]
@@ -67,7 +72,7 @@ namespace UnitAgent
                     nearestPositionIndex = math.select(nearestPositionIndex, i, nearest);
                 }
 
-                if (nearestPositionIndex > -1) 
+                if (nearestPositionIndex > -1)
                 {
                     NearestEntity[chunkIndex] = entities[nearestPositionIndex];
                     NearestDistanceSq[chunkIndex] = nearestDistanceSq;
@@ -77,7 +82,17 @@ namespace UnitAgent
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
-            if (! Input.GetMouseButtonDown(0) ) return inputDeps;
+            uint click = (uint)EClick.None;
+            if (Input.GetMouseButtonDown(0)) click |= (uint)EClick.Primary;
+            else if (Input.GetMouseButtonDown(1)) click |= (uint)EClick.Secondary;
+            if ( click == (uint)EClick.None )
+            {
+                SetSingleton(new PlayerClickTerrain
+                {
+                    Click = click
+                });
+                return inputDeps;
+            }
 
             var chunks = m_group.CreateArchetypeChunkArray(Allocator.TempJob);
             var nchunks = chunks.Length;
@@ -108,7 +123,7 @@ namespace UnitAgent
             Entity nentity = Entity.Null;
             for (int i = 0; i < nchunks; i++)
             {
-                if ( nearestEntity[i] != Entity.Null && nearestDistanceSq[i] < nsq)
+                if (nearestEntity[i] != Entity.Null && nearestDistanceSq[i] < nsq)
                 {
                     nsq = nearestDistanceSq[i];
                     nentity = nearestEntity[i];
@@ -116,27 +131,47 @@ namespace UnitAgent
                 }
             }
 
+            float enter;
             if (nentity == Entity.Null)
             {
-                // Debug.LogError("PlayerPointerSystem No Hit");
-                // TODO get world hit location
+                if (groundplane.Raycast(ray, out enter))
+                {
+                    Vector3 clickLocation = ray.GetPoint(enter);
+                    Debug.Log("PlayerPointerSystem clickLocation " + clickLocation);
+                    SetSingleton(new PlayerClickTerrain
+                    {
+                        Position = clickLocation,
+                        Click = click | (uint)EClick.Terrain
+                    });
+                }
+                else
+                {
+                    Debug.Log("PlayerPointerSystem clickLocation MISS ");
+
+                    SetSingleton(new PlayerClickTerrain
+                    {
+                        Click = click
+                    });
+                }
             }
             else
             {
+                SetSingleton(new PlayerClickTerrain
+                {
+                    Click = click | (uint)EClick.AABB
+                });
+
                 // Debug.LogError("PlayerPointerSystem Hit "+nentity);
                 if (EntityManager.HasComponent<PlayerSelection>(nentity))
-                    EntityManager.SetComponentData(nentity, new PlayerSelection {});
+                    EntityManager.SetComponentData(nentity, new PlayerSelection { });
                 else
-                    EntityManager.AddComponentData(nentity, new PlayerSelection {});
+                    EntityManager.AddComponentData(nentity, new PlayerSelection { });
             }
 
             nearestDistanceSq.Dispose();
             nearestEntity.Dispose();
 
             return outputDeps;
-
-            // var setGoalJob = new SetGoal();
-            // return setGoalJob.Schedule(this, outputDeps);
         }
     }
 }

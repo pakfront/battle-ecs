@@ -10,8 +10,8 @@ using UnityEngine;
 namespace UnitAgent
 {
     [UpdateInGroup(typeof(GameSystemGroup))]
-    [UpdateAfter(typeof(PlayerMouseOverSystem))]
-    [UpdateBefore(typeof(UnitGoalSystem))]
+    [UpdateAfter(typeof(PlayerOrderPreSystem))]
+    [UpdateBefore(typeof(PlayerOrderPostSystem))]
     public class PlayerOrderAttackSystem : JobComponentSystem
     {
         private EntityQuery m_PlayerTargetGroup;

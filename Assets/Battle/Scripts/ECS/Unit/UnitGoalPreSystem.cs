@@ -9,9 +9,9 @@ using Unity.Collections;
 namespace UnitAgent
 {
     [UpdateInGroup(typeof(GameSystemGroup))]
-    [UpdateAfter(typeof(PlayerMouseOverSystem))]
+    [UpdateAfter(typeof(PlayerOrderPostSystem))]
     [UpdateBefore(typeof(UnitGoalSystem))]
-    public class PreUnitGoalSystem : ComponentSystem
+    public class UnitGoalPreSystem : ComponentSystem
     {
 
         private EntityQuery m_NeedsMoveToGoal, m_RemoveMoveToGoal;
