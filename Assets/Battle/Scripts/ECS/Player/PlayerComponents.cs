@@ -14,7 +14,7 @@ namespace UnitAgent
         Secondary = 8
     }
     [Serializable]
-    public struct PlayerClickTerrain : IComponentData
+    public struct PlayerPointer : IComponentData
     {
         public float3 Position;
         public uint Click;

@@ -31,8 +31,8 @@ namespace UnitAgent
 
             m_group = GetEntityQuery(query);
 
-            EntityManager.CreateEntity(typeof(PlayerClickTerrain));
-            SetSingleton(new PlayerClickTerrain{ Click = (uint) EClick.None });
+            EntityManager.CreateEntity(typeof(PlayerPointer));
+            SetSingleton(new PlayerPointer{ Click = (uint) EClick.None });
         }
 
         [BurstCompile]
@@ -87,7 +87,7 @@ namespace UnitAgent
             else if (Input.GetMouseButtonDown(1)) click |= (uint)EClick.Secondary;
             if ( click == (uint)EClick.None )
             {
-                SetSingleton(new PlayerClickTerrain
+                SetSingleton(new PlayerPointer
                 {
                     Click = click
                 });
@@ -138,7 +138,7 @@ namespace UnitAgent
                 {
                     Vector3 clickLocation = ray.GetPoint(enter);
                     Debug.Log("PlayerPointerSystem clickLocation " + clickLocation);
-                    SetSingleton(new PlayerClickTerrain
+                    SetSingleton(new PlayerPointer
                     {
                         Position = clickLocation,
                         Click = click | (uint)EClick.Terrain
@@ -148,7 +148,7 @@ namespace UnitAgent
                 {
                     Debug.Log("PlayerPointerSystem clickLocation MISS ");
 
-                    SetSingleton(new PlayerClickTerrain
+                    SetSingleton(new PlayerPointer
                     {
                         Click = click
                     });
@@ -156,7 +156,7 @@ namespace UnitAgent
             }
             else
             {
-                SetSingleton(new PlayerClickTerrain
+                SetSingleton(new PlayerPointer
                 {
                     Click = click | (uint)EClick.AABB
                 });

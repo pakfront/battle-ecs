@@ -27,7 +27,7 @@ namespace UnitAgent
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
-            var playerClickTerrain = GetSingleton<PlayerClickTerrain>();
+            var playerClickTerrain = GetSingleton<PlayerPointer>();
             if ( (playerClickTerrain.Click & (uint)EClick.Terrain) != (uint)EClick.Terrain ) return inputDeps;
 
             Debug.Log("PlayerOrderMoveSystem DidClick:"+playerClickTerrain.Click+" "+playerClickTerrain.Position );
