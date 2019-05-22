@@ -9,9 +9,13 @@ namespace UnitAgent
     {
         None = 0,
         AABB = 1,
-        Terrain = 2,
-        Primary = 4,
-        Secondary = 8
+        Terrain = 1<<2,
+        Primary = 1<<3,
+        Secondary = 1<<4,
+        Shift = 1<<5,
+        Ctrl = 1<<6,
+        AnyModifier = Shift | Ctrl,
+        AnyButton = Primary | Secondary
     }
     [Serializable]
     public struct PlayerPointer : IComponentData

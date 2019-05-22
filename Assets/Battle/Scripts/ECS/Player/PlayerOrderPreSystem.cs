@@ -34,7 +34,7 @@ namespace UnitAgent
 
             if (Input.GetMouseButtonDown(1))
             {
-                Debug.Log("Adding m_NeedsOrderMoveTo");
+                // Debug.Log("Adding m_NeedsOrderMoveTo");
                 EntityManager.AddComponent(m_NeedsOrderMoveTo, typeof(OrderMoveTo));
             }
         }

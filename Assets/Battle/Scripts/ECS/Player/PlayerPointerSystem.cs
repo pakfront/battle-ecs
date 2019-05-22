@@ -30,9 +30,6 @@ namespace UnitAgent
             };
 
             m_group = GetEntityQuery(query);
-
-            EntityManager.CreateEntity(typeof(PlayerPointer));
-            SetSingleton(new PlayerPointer{ Click = (uint) EClick.None });
         }
 
         [BurstCompile]
@@ -85,12 +82,11 @@ namespace UnitAgent
             uint click = (uint)EClick.None;
             if (Input.GetMouseButtonDown(0)) click |= (uint)EClick.Primary;
             else if (Input.GetMouseButtonDown(1)) click |= (uint)EClick.Secondary;
-            if ( click == (uint)EClick.None )
+
+            var playerPointer = GetSingleton<PlayerPointer>();
+
+            if ( playerPointer.Click == (uint)EClick.None )
             {
-                SetSingleton(new PlayerPointer
-                {
-                    Click = click
-                });
                 return inputDeps;
             }
 
@@ -127,7 +123,6 @@ namespace UnitAgent
                 {
                     nsq = nearestDistanceSq[i];
                     nentity = nearestEntity[i];
-
                 }
             }
 
@@ -136,31 +131,21 @@ namespace UnitAgent
             {
                 if (groundplane.Raycast(ray, out enter))
                 {
-                    Vector3 clickLocation = ray.GetPoint(enter);
-                    Debug.Log("PlayerPointerSystem clickLocation " + clickLocation);
-                    SetSingleton(new PlayerPointer
-                    {
-                        Position = clickLocation,
-                        Click = click | (uint)EClick.Terrain
-                    });
+                    playerPointer.Position = ray.GetPoint(enter);
+                    playerPointer.Click |=  (uint)EClick.Terrain;
                 }
-                else
-                {
-                    Debug.Log("PlayerPointerSystem clickLocation MISS ");
-
-                    SetSingleton(new PlayerPointer
-                    {
-                        Click = click
-                    });
-                }
+                // else
+                // {
+                //     // Debug.Log("PlayerPointerSystem clickLocation MISS ");
+                //     SetSingleton(new PlayerPointer
+                //     {
+                //         Click = click
+                //     });
+                // }
             }
             else
             {
-                SetSingleton(new PlayerPointer
-                {
-                    Click = click | (uint)EClick.AABB
-                });
-
+                playerPointer.Click |=  (uint)EClick.AABB;
                 // Debug.LogError("PlayerPointerSystem Hit "+nentity);
                 if (EntityManager.HasComponent<PlayerSelection>(nentity))
                     EntityManager.SetComponentData(nentity, new PlayerSelection { });
@@ -170,6 +155,8 @@ namespace UnitAgent
 
             nearestDistanceSq.Dispose();
             nearestEntity.Dispose();
+
+            SetSingleton(playerPointer);
 
             return outputDeps;
         }

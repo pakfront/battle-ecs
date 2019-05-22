@@ -26,24 +26,27 @@ namespace UnitAgent
 
         protected override void OnUpdate()
         {
-            // clear previous clicks
-            // EntityManager.RemoveComponent(m_PlayerClicked, ComponentType.ReadOnly<PlayerClicked>());
-            
-            // selection modifier pressed, early exit;
-            if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl) ||
-                 Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)
-                ) return;
+            var playerPointer = GetSingleton<PlayerPointer>();
 
-            if (Input.GetMouseButtonDown(0))
+            // selection modifier pressed, early exit;
+            if ( (playerPointer.Click &  (uint)(EClick.AnyModifier)) != 0) 
+            {
+                Debug.Log("Modifier pressed");
+                SetSingleton(playerPointer);
+                return;
+            }
+
+            // clear current selections
+            if ( (playerPointer.Click &  (uint)(EClick.Primary)) != 0) 
             {
                 Debug.Log("Clearing PlayerSelection");
                 EntityManager.RemoveComponent(m_PlayerSelection, ComponentType.ReadOnly<PlayerSelection>());
             }
-            else if (Input.GetMouseButtonDown(1))
+
+            if ( (playerPointer.Click &  (uint)(EClick.Secondary)) != 0) 
             {
-                Debug.Log("Clearing PlayerTarget");
+                Debug.Log("Clearing PlayerTarget & PlayerFollow");
                 EntityManager.RemoveComponent(m_PlayerTarget, ComponentType.ReadOnly<PlayerTarget>());
-                Debug.Log("Clearing PlayerFollow");
                 EntityManager.RemoveComponent(m_PlayerFollow, ComponentType.ReadOnly<PlayerFollow>());
             }
         }

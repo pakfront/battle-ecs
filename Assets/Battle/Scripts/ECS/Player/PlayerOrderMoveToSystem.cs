@@ -30,7 +30,7 @@ namespace UnitAgent
             var playerClickTerrain = GetSingleton<PlayerPointer>();
             if ( (playerClickTerrain.Click & (uint)EClick.Terrain) != (uint)EClick.Terrain ) return inputDeps;
 
-            Debug.Log("PlayerOrderMoveSystem DidClick:"+playerClickTerrain.Click+" "+playerClickTerrain.Position );
+            // Debug.Log("PlayerOrderMoveSystem DidClick:"+playerClickTerrain.Click+" "+playerClickTerrain.Position );
 
             var outputDeps = new SetOrderMoveTo
             {
