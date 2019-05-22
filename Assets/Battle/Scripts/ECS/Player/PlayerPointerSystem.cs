@@ -79,16 +79,12 @@ namespace UnitAgent
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
-            uint click = (uint)EClick.None;
-            if (Input.GetMouseButtonDown(0)) click |= (uint)EClick.Primary;
-            else if (Input.GetMouseButtonDown(1)) click |= (uint)EClick.Secondary;
-
             var playerPointer = GetSingleton<PlayerPointer>();
 
-            if ( playerPointer.Click == (uint)EClick.None )
-            {
+            // early out if no mouse button clicked
+            if ( (playerPointer.Click &  (uint)EClick.AnyPointerButton) == 0) 
                 return inputDeps;
-            }
+
 
             var chunks = m_group.CreateArchetypeChunkArray(Allocator.TempJob);
             var nchunks = chunks.Length;
@@ -146,9 +142,11 @@ namespace UnitAgent
             else
             {
                 playerPointer.Click |=  (uint)EClick.AABB;
-                // Debug.LogError("PlayerPointerSystem Hit "+nentity);
+                playerPointer.Entity = nentity;
+                Debug.Log("PlayerPointerSystem Hit "+nentity);
                 if (EntityManager.HasComponent<PlayerSelection>(nentity))
-                    EntityManager.SetComponentData(nentity, new PlayerSelection { });
+                    // EntityManager.SetComponentData(nentity, new PlayerSelection { });
+                    EntityManager.AddComponentData(nentity, new PlayerSelection { });
                 else
                     EntityManager.AddComponentData(nentity, new PlayerSelection { });
             }

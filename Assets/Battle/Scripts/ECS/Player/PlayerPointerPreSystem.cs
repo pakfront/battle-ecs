@@ -31,19 +31,17 @@ namespace UnitAgent
             // selection modifier pressed, early exit;
             if ( (playerPointer.Click &  (uint)(EClick.AnyModifier)) != 0) 
             {
-                Debug.Log("Modifier pressed");
-                SetSingleton(playerPointer);
                 return;
             }
 
             // clear current selections
-            if ( (playerPointer.Click &  (uint)(EClick.Primary)) != 0) 
+            if ( (playerPointer.Click &  (uint)(EClick.PrimaryPointerButton)) != 0) 
             {
                 Debug.Log("Clearing PlayerSelection");
                 EntityManager.RemoveComponent(m_PlayerSelection, ComponentType.ReadOnly<PlayerSelection>());
             }
 
-            if ( (playerPointer.Click &  (uint)(EClick.Secondary)) != 0) 
+            if ( (playerPointer.Click &  (uint)(EClick.SecondaryPointerButton)) != 0) 
             {
                 Debug.Log("Clearing PlayerTarget & PlayerFollow");
                 EntityManager.RemoveComponent(m_PlayerTarget, ComponentType.ReadOnly<PlayerTarget>());

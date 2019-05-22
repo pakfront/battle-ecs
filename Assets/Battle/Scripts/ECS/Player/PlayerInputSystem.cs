@@ -28,8 +28,8 @@ namespace UnitAgent
                 Click = (uint)EClick.None
             };
 
-            if (Input.GetMouseButtonDown(0)) playerPointer.Click |= (uint)EClick.Primary;
-            if (Input.GetMouseButtonDown(1)) playerPointer.Click |= (uint)EClick.Secondary;
+            if (Input.GetMouseButtonDown(0)) playerPointer.Click |= (uint)EClick.PrimaryPointerButton;
+            if (Input.GetMouseButtonDown(1)) playerPointer.Click |= (uint)EClick.SecondaryPointerButton;
             if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) playerPointer.Click |= (uint)EClick.Ctrl;
             if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) playerPointer.Click |= (uint)EClick.Shift;
 
