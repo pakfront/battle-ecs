@@ -72,6 +72,16 @@ namespace UnitAgent
                 min = spawnPosition - 0.5f,
             });
 
+            // var physicsShape = new Unity.Physics.PhysicsCollider {
+            //     Value = new Unity.Physics.Collider {
+            //         CollisionType = Unity.Physics.CollisionType.Convex,
+            //         Type = Unity.Physics.ColliderType.Box
+
+            //     }
+            // };
+            // physicsShape.SetBox( new float3(0,0.5f,0), new float3(1,1,1), quaternion.identity);
+            // entityManager.AddComponentData(entity, physicsShape);
+
             entityManager.AddComponentData(entity, new Opponent { });
 
             entityManager.AddSharedComponentData(entity, new Team { Value = team });

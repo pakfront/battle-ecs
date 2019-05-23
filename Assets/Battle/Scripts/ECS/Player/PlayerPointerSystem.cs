@@ -6,6 +6,9 @@ using Unity.Burst;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using Unity.Physics;
+using Unity.Physics.Systems;
+using static Unity.Physics.Math;
 
 namespace UnitAgent
 {
@@ -17,62 +20,101 @@ namespace UnitAgent
 
         private EntityCommandBufferSystem m_EntityCommandBufferSystem;
         private EntityQuery m_group;
-        private Plane groundplane = new Plane(Vector3.up, 0);
+        private UnityEngine.Plane groundplane = new UnityEngine.Plane(Vector3.up, 0);
+
+        Unity.Physics.Systems.BuildPhysicsWorld physicsWorldSystem;
 
 
         protected override void OnCreate()
         {
+            physicsWorldSystem = Unity.Entities.World.Active.GetExistingSystem<Unity.Physics.Systems.BuildPhysicsWorld>();
+
             m_EntityCommandBufferSystem = World.GetOrCreateSystem<EntityCommandBufferSystem>();
 
             var query = new EntityQueryDesc
             {
-                All = new ComponentType[] { ComponentType.ReadOnly<AABB>(), ComponentType.ReadOnly<Translation>() }
+                All = new ComponentType[] { ComponentType.ReadOnly<Translation>() }
             };
 
             m_group = GetEntityQuery(query);
         }
 
+        // [BurstCompile]
+        // struct CastRayJob : IJobParallelFor
+        // {
+        //     [DeallocateOnJobCompletion] public NativeArray<ArchetypeChunk> Chunks;
+        //     [ReadOnly] public ArchetypeChunkEntityType EntityType;
+        //     [ReadOnly] public ArchetypeChunkComponentType<AABB> AABBType;
+        //     [ReadOnly] public ArchetypeChunkComponentType<Translation> TranslationType;
+
+        //     public RTSRay Ray;
+        //     public NativeArray<Entity> NearestEntity;
+        //     public NativeArray<float> NearestDistanceSq;
+
+        //     public void Execute(int chunkIndex)
+        //     {
+        //         var chunk = Chunks[chunkIndex];
+        //         var entities = chunk.GetNativeArray(EntityType);
+        //         var chunkTranslation = chunk.GetNativeArray(TranslationType);
+        //         var chunkAABB = chunk.GetNativeArray(AABBType);
+        //         var instanceCount = chunk.Count;
+        //         float nearestDistanceSq = float.MaxValue;
+        //         int nearestPositionIndex = -1;
+
+        //         for (int i = 0; i < instanceCount; i++)
+        //         {
+        //             var aabb = chunkAABB[i];
+        //             bool hit = RTSPhysics.Intersect(aabb, Ray);
+        //             // if (hit)
+        //             // {
+        //             //     Debug.Log("PlayerSelectionJob: Click on " + i);
+        //             // }
+
+        //             float distance = math.lengthsq((chunkTranslation[i].Value - Ray.origin));
+        //             bool nearest = hit && distance < nearestDistanceSq;
+        //             nearestDistanceSq = math.select(nearestDistanceSq, distance, nearest);
+        //             nearestPositionIndex = math.select(nearestPositionIndex, i, nearest);
+        //         }
+
+        //         if (nearestPositionIndex > -1)
+        //         {
+        //             NearestEntity[chunkIndex] = entities[nearestPositionIndex];
+        //             NearestDistanceSq[chunkIndex] = nearestDistanceSq;
+        //         }
+        //     }
+        // }
+
+
         [BurstCompile]
-        struct CastRayJob : IJobParallelFor
+        struct Pick : IJob
         {
-            [DeallocateOnJobCompletion] public NativeArray<ArchetypeChunk> Chunks;
-            [ReadOnly] public ArchetypeChunkEntityType EntityType;
-            [ReadOnly] public ArchetypeChunkComponentType<AABB> AABBType;
-            [ReadOnly] public ArchetypeChunkComponentType<Translation> TranslationType;
+            [ReadOnly] public Unity.Physics.CollisionWorld CollisionWorld;
+            [ReadOnly] public int NumDynamicBodies;
+            public Unity.Physics.Ray Ray;
+            public PlayerPointer playerPointer;
 
-            public RTSRay Ray;
-            public NativeArray<Entity> NearestEntity;
-            public NativeArray<float> NearestDistanceSq;
-
-            public void Execute(int chunkIndex)
+            public void Execute()
             {
-                var chunk = Chunks[chunkIndex];
-                var entities = chunk.GetNativeArray(EntityType);
-                var chunkTranslation = chunk.GetNativeArray(TranslationType);
-                var chunkAABB = chunk.GetNativeArray(AABBType);
-                var instanceCount = chunk.Count;
-                float nearestDistanceSq = float.MaxValue;
-                int nearestPositionIndex = -1;
+                float fraction = 1.0f;
+                RigidBody? hitBody = null;
 
-                for (int i = 0; i < instanceCount; i++)
+                var rayCastInput = new RaycastInput { Ray = Ray, Filter = CollisionFilter.Default };
+                if (CollisionWorld.CastRay(rayCastInput, out Unity.Physics.RaycastHit hit))
                 {
-                    var aabb = chunkAABB[i];
-                    bool hit = RTSPhysics.Intersect(aabb, Ray);
-                    // if (hit)
-                    // {
-                    //     Debug.Log("PlayerSelectionJob: Click on " + i);
-                    // }
-
-                    float distance = math.lengthsq((chunkTranslation[i].Value - Ray.origin));
-                    bool nearest = hit && distance < nearestDistanceSq;
-                    nearestDistanceSq = math.select(nearestDistanceSq, distance, nearest);
-                    nearestPositionIndex = math.select(nearestPositionIndex, i, nearest);
+                    if (hit.RigidBodyIndex < NumDynamicBodies)
+                    {
+                        hitBody = CollisionWorld.Bodies[hit.RigidBodyIndex];
+                    }
                 }
 
-                if (nearestPositionIndex > -1)
+                // If there was a hit, set up the spring
+                if (hitBody != null)
                 {
-                    NearestEntity[chunkIndex] = entities[nearestPositionIndex];
-                    NearestDistanceSq[chunkIndex] = nearestDistanceSq;
+                    playerPointer.Entity = hitBody.Value.Entity;
+                    playerPointer.Click |= (uint)EClick.AABB;
+                }
+                else
+                {
                 }
             }
         }
@@ -82,68 +124,44 @@ namespace UnitAgent
             var playerPointer = GetSingleton<PlayerPointer>();
 
             // early out if no mouse button clicked
-            if ( (playerPointer.Click &  (uint)EClick.AnyPointerButton) == 0) 
+            if ((playerPointer.Click & (uint)EClick.AnyPointerButton) == 0)
                 return inputDeps;
 
+            //var handle = JobHandle.CombineDependencies(inputDeps, physicsWorldSystem.FinalJobHandle);
 
-            var chunks = m_group.CreateArchetypeChunkArray(Allocator.TempJob);
-            var nchunks = chunks.Length;
+            UnityEngine.Ray unityRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+            var ray = new Unity.Physics.Ray(unityRay.origin, unityRay.direction * 2000);
 
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RTSRay rtsRay = new RTSRay
+            var handle = new Pick
             {
-                origin = ray.origin,
-                direction = ray.direction
-            };
+                CollisionWorld = physicsWorldSystem.PhysicsWorld.CollisionWorld,
+                NumDynamicBodies = physicsWorldSystem.PhysicsWorld.NumDynamicBodies,
+                Ray = ray,
+                playerPointer = playerPointer
+                //Near = Camera.main.nearClipPlane,
+            }.Schedule();
 
-            var nearestDistanceSq = new NativeArray<float>(nchunks, Allocator.TempJob);
-            var nearestEntity = new NativeArray<Entity>(nchunks, Allocator.TempJob);
+            // handle = JobHandle.CombineDependencies(handle, physicsWorldSystem.FinalJobHandle);
 
-            var outputDeps = new CastRayJob
-            {
-                Chunks = chunks,
-                Ray = rtsRay,
-                EntityType = GetArchetypeChunkEntityType(),
-                TranslationType = GetArchetypeChunkComponentType<Translation>(true),
-                AABBType = GetArchetypeChunkComponentType<AABB>(true),
-                NearestDistanceSq = nearestDistanceSq,
-                NearestEntity = nearestEntity
-            }.Schedule(nchunks, 32, inputDeps);
-            outputDeps.Complete();
+            handle.Complete();
 
-            float nsq = float.MaxValue;
             Entity nentity = Entity.Null;
-            for (int i = 0; i < nchunks; i++)
-            {
-                if (nearestEntity[i] != Entity.Null && nearestDistanceSq[i] < nsq)
-                {
-                    nsq = nearestDistanceSq[i];
-                    nentity = nearestEntity[i];
-                }
-            }
 
             float enter;
-            if (nentity == Entity.Null)
+            if (playerPointer.Entity == Entity.Null)
             {
-                if (groundplane.Raycast(ray, out enter))
+                if (groundplane.Raycast(unityRay, out enter))
                 {
-                    playerPointer.Position = ray.GetPoint(enter);
-                    playerPointer.Click |=  (uint)EClick.Terrain;
+                    Debug.Log("PlayerPointerSystem Hit Terrain");
+                    playerPointer.Position = unityRay.GetPoint(enter);
+                    playerPointer.Click |= (uint)EClick.Terrain;
                 }
-                // else
-                // {
-                //     // Debug.Log("PlayerPointerSystem clickLocation MISS ");
-                //     SetSingleton(new PlayerPointer
-                //     {
-                //         Click = click
-                //     });
-                // }
             }
             else
             {
-                playerPointer.Click |=  (uint)EClick.AABB;
+                playerPointer.Click |= (uint)EClick.AABB;
                 playerPointer.Entity = nentity;
-                Debug.Log("PlayerPointerSystem Hit "+nentity);
+                Debug.Log("PlayerPointerSystem Hit Entity" + nentity);
                 if (EntityManager.HasComponent<PlayerSelection>(nentity))
                     // EntityManager.SetComponentData(nentity, new PlayerSelection { });
                     EntityManager.AddComponentData(nentity, new PlayerSelection { });
@@ -151,12 +169,9 @@ namespace UnitAgent
                     EntityManager.AddComponentData(nentity, new PlayerSelection { });
             }
 
-            nearestDistanceSq.Dispose();
-            nearestEntity.Dispose();
-
             SetSingleton(playerPointer);
 
-            return outputDeps;
+            return handle;
         }
     }
 }
