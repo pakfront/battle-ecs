@@ -144,11 +144,14 @@ namespace UnitAgent
                 playerPointer.Click |=  (uint)EClick.AABB;
                 playerPointer.Entity = nentity;
                 Debug.Log("PlayerPointerSystem Hit "+nentity);
-                if (EntityManager.HasComponent<PlayerSelection>(nentity))
-                    // EntityManager.SetComponentData(nentity, new PlayerSelection { });
+                if ( ! EntityManager.HasComponent<PlayerSelection>(nentity))
                     EntityManager.AddComponentData(nentity, new PlayerSelection { });
-                else
-                    EntityManager.AddComponentData(nentity, new PlayerSelection { });
+                // if (EntityManager.HasComponent<PlayerSelection>(nentity))
+                //     // why doesn't this work?
+                //     EntityManager.AddComponentData(nentity, new PlayerSelection { });
+                // else
+                //     EntityManager.AddComponentData(nentity, new PlayerSelection { });
+
             }
 
             nearestDistanceSq.Dispose();
