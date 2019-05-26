@@ -32,9 +32,10 @@ namespace UnitAgent
         protected override void OnUpdate()
         {
 
-            if (Input.GetMouseButtonDown(1))
+            var playerPointer = GetSingleton<PlayerPointer>();
+            if ( (playerPointer.Click & (uint)EClick.Terrain) == (uint)EClick.Terrain )
             {
-                // Debug.Log("Adding m_NeedsOrderMoveTo");
+                Debug.Log("Adding m_NeedsOrderMoveTo");
                 EntityManager.AddComponent(m_NeedsOrderMoveTo, typeof(OrderMoveTo));
             }
         }

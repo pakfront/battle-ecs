@@ -28,15 +28,18 @@ namespace UnitAgent
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
             var playerClickTerrain = GetSingleton<PlayerPointer>();
-            if ( (playerClickTerrain.Click & (uint)EClick.Terrain) != (uint)EClick.Terrain ) return inputDeps;
 
-            Debug.Log("PlayerOrderMoveSystem DidClick:"+playerClickTerrain.Click+" "+playerClickTerrain.Position );
+            if ((playerClickTerrain.Click & (uint)EClick.Terrain) == 0) return inputDeps;
+            if ((playerClickTerrain.Click & (uint)EClick.Ctrl) != 0) return inputDeps;
+
+            Debug.Log("PlayerOrderMoveSystem DidClick:" + playerClickTerrain.Click + " " + playerClickTerrain.Position);
 
             var outputDeps = new SetOrderMoveTo
             {
                 ClickLocation = playerClickTerrain.Position
             }.Schedule(this, inputDeps);
- 
+
+
             return outputDeps;
         }
     }
