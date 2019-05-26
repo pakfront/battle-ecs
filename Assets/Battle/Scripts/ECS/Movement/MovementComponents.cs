@@ -4,6 +4,14 @@ using Unity.Mathematics;
 
 namespace UnitAgent
 {
+    [Serializable]
+    public struct FormationElement : IComponentData
+    {
+        public int Index;
+        public Entity Parent;
+        public float3 Position;
+    }
+
     [Serializable] public struct MoveSettings : IComponentData { 
         public float TranslateSpeed;
         public float RotateSpeed;
@@ -32,5 +40,15 @@ namespace UnitAgent
             current = math.slerp(current, desired, delta);
             return false;
         }
+
+            // public static void SetGoalToFormationPosition(float4x4 xform, [REa])
+            // {
+            //     Entity superior = formationElement.Parent;
+            //     float4x4 xform = Others[superior].Value;
+            //     math.transform(xform, ormationElement.Position);
+            //     goal.Position = math.mul (xform, formationElement.Position).xyz;
+            //     // heterogenous as it's a direction vector;
+            //     goal.Heading = math.mul( xform, new float4(0,0,1,0) ).xyz;
+            // }
     }
 }

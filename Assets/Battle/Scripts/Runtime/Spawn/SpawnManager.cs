@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Entities;
+using Unity.Mathematics;
 
 
 namespace UnitAgent
@@ -28,6 +29,7 @@ namespace UnitAgent
                 map[unitSpawn] = unitSpawn.SpawnUnit(entityManager);
             }
 
+            int i = 0;
             foreach (var outer in map)
             {
                 var unitSpawn = outer.Key;
@@ -38,7 +40,12 @@ namespace UnitAgent
                 Debug.Log("Setting entity reference to " + unitSpawn.superior, unitSpawn);
 
                 var superiorEntity = map[unitSpawn.superior];
-                entityManager.AddComponentData(unitEntity, new Subordinate { Superior = superiorEntity });
+                entityManager.AddComponentData(unitEntity, new FormationElement
+                {
+                    Index = i++,
+                    Position = new float3(0, 0, i),
+                    Parent = superiorEntity
+                });
             }
         }
     }

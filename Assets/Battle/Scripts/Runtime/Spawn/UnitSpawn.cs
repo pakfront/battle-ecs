@@ -12,7 +12,7 @@ namespace UnitAgent
     public class UnitSpawn : MonoBehaviour
     {
 
-        public enum EOrder {None, InFormation, HoldPosition, MoveToPosition, FollowUnit, PursueUnit}
+        public enum EOrder { None, InFormation, HoldPosition, MoveToPosition, FollowUnit, PursueUnit }
 
         [Header("Team")]
         public int team = 0;
@@ -34,7 +34,7 @@ namespace UnitAgent
 
 
         private float3[] formationPositions = null;
-        private Bounds localBounds; 
+        private Bounds localBounds;
 
         // void Start()
         // {
@@ -54,11 +54,7 @@ namespace UnitAgent
             float3 spawnPosition = transform.TransformPoint(new float3(0, 0, 0));
             entityManager.SetComponentData(entity, new Translation { Value = spawnPosition });
             entityManager.SetComponentData(entity, new Rotation { Value = transform.rotation });
-            // entityManager.AddComponentData(entity, new GoalMoveTo
-            // {
-            //     Position = (float3)(
-            //         transform.TransformPoint(transform.right * 20 + transform.forward * 10)),
-            // });
+
             entityManager.AddComponentData(entity, new MoveSettings
             {
                 TranslateSpeed = translationUnitsPerSecond,
@@ -80,7 +76,7 @@ namespace UnitAgent
             if (team == LocalPlayer.Team)
             {
                 entityManager.AddSharedComponentData(entity, new PlayerOwned());
-            } 
+            }
             else
             {
                 entityManager.AddSharedComponentData(entity, new PlayerEnemy());
@@ -89,10 +85,10 @@ namespace UnitAgent
             switch (initialOrders)
             {
                 case EOrder.PursueUnit:
-                    entityManager.AddComponentData(entity, new OrderAttack{});
-                    break;                
+                    entityManager.AddComponentData(entity, new OrderAttack { });
+                    break;
                 case EOrder.HoldPosition:
-                    entityManager.AddComponentData(entity, new OrderHold{});
+                    entityManager.AddComponentData(entity, new OrderHold { });
                     break;
                 default:
                     break;
@@ -123,11 +119,9 @@ namespace UnitAgent
                 // float3 formationPosition = transform.TransformPoint(new float3(x * 1.3F, 0, y * 1.3F));
                 float3 formationPosition = formationPositions[i];
                 float3 spawnPosition = spawnPositions[i];
-                entityManager.SetName(agents[i], name+"_"+i);
+                entityManager.SetName(agents[i], name + "_" + i);
 
                 // entityManager.SetComponentData(agents[i], new Agent { });
-                entityManager.AddComponentData(agents[i], new Subordinate { Superior = unit });
-
                 //TODO only add when move needed
                 entityManager.AddComponentData(agents[i], new MoveToGoal());
 
@@ -136,7 +130,12 @@ namespace UnitAgent
                     TranslateSpeed = translationUnitsPerSecond,
                     RotateSpeed = rotationsPerSecond
                 });
-                entityManager.AddComponentData(agents[i], new FormationElement { Position = new float4(formationPosition, 1) });
+                entityManager.AddComponentData(agents[i], new FormationElement
+                {
+                    Index = i,
+                    Parent = unit,
+                    Position = formationPosition
+                });
 
                 entityManager.SetComponentData(agents[i], new Translation { Value = spawnPosition });
                 entityManager.SetComponentData(agents[i], new Rotation { Value = Quaternion.identity });
@@ -151,7 +150,9 @@ namespace UnitAgent
             if (formationPositions == null || formationPositions.Length != count)
             {
                 formationPositions = new float3[count];
-            } else {
+            }
+            else
+            {
                 return formationPositions;
             }
 
@@ -161,7 +162,7 @@ namespace UnitAgent
                 {
                     int i = x * rows + y;
                     // formationPositions[i] = transform.TransformPoint(new float3(x * 1.3F, 0, y * 1.3F));
-                    formationPositions[i] = new float3((x-columns/2) * agentSpacing, 0, -y * agentSpacing);
+                    formationPositions[i] = new float3((x - columns / 2) * agentSpacing, 0, -y * agentSpacing);
                 }
             }
             return formationPositions;
@@ -199,22 +200,22 @@ namespace UnitAgent
 
             }
             Gizmos.matrix = transform.localToWorldMatrix;
-            float agentRadius = agentSpacing/2f;
+            float agentRadius = agentSpacing / 2f;
             Gizmos.DrawCube(
-                new Vector3(-agentRadius, 1, agentRadius - agentSpacing*rows/2f),
-                new Vector3(agentSpacing*columns, 2, agentSpacing*rows)
+                new Vector3(-agentRadius, 1, agentRadius - agentSpacing * rows / 2f),
+                new Vector3(agentSpacing * columns, 2, agentSpacing * rows)
             );
         }
 
-       void OnDrawGizmosSelected()
+        void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.gray;
             Gizmos.matrix = transform.localToWorldMatrix;
-            float3 [] pos = GetAgentFormationPositions();
+            float3[] pos = GetAgentFormationPositions();
             for (int i = 0; i < pos.Length; i++)
-            Gizmos.DrawSphere(
-                    pos[i], agentSpacing/2f
-            );
+                Gizmos.DrawSphere(
+                        pos[i], agentSpacing / 2f
+                );
         }
     }
 }

@@ -4,7 +4,11 @@ using Unity.Mathematics;
 
 namespace UnitAgent
 {
-    [Serializable] public struct FormationElement : IComponentData { public float4 Position; }
+    [Serializable] public struct Agent : IComponentData { }
+
+
+    //using SCD triggers chunking per unit and chunk data lookup
+
 
 
     // [Serializable] public struct Follow : IComponentData {
