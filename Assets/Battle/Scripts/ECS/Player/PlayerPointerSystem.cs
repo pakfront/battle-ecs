@@ -142,7 +142,7 @@ namespace UnitAgent
             else
             {
                 playerPointer.Click |=  (uint)EClick.AABB;
-                playerPointer.Entity = nentity;
+                playerPointer.CurrentEntity = nentity;
                 Debug.Log("PlayerPointerSystem Hit "+nentity);
                 if ( ! EntityManager.HasComponent<PlayerSelection>(nentity) )
                     EntityManager.AddComponentData(nentity, new PlayerSelection { });

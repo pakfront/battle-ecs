@@ -14,15 +14,21 @@ namespace UnitAgent
         SecondaryPointerButton = 1<<4,
         Shift = 1<<5,
         Ctrl = 1<<6,
+
+        // aliases
         AnyModifier = Shift | Ctrl,
-        AnyPointerButton = PrimaryPointerButton | SecondaryPointerButton
+        AnyPointerButton = PrimaryPointerButton | SecondaryPointerButton,
+        MoveTo = SecondaryPointerButton | Terrain,
+        Attack =  SecondaryPointerButton | AABB,
+        FormationMoveTo = MoveTo | Ctrl,
+        FormationAttack = Attack | Ctrl
     }
     [Serializable]
     public struct PlayerPointer : IComponentData
     {
         public float3 Position;
         public uint Click;
-        public Entity Entity;
+        public Entity CurrentEntity;
     }
 
     [Serializable] public struct PlayerSelection : IComponentData { }

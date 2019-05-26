@@ -12,7 +12,7 @@ namespace UnitAgent
     [UpdateAfter(typeof(PlayerPointerSystem))]
     public class PlayerOrderPreSystem : ComponentSystem
     {
-        private EntityQuery m_NeedsOrderAttack, m_NeedsOrderMoveTo;
+        private EntityQuery m_NeedsOrderAttack, m_NeedsOrderMoveTo, m_NeedsOrderFormationMoveTo;
 
         protected override void OnCreate()
         {
@@ -27,17 +27,33 @@ namespace UnitAgent
                 None = new ComponentType[] { typeof(OrderMoveTo) },
                 All = new ComponentType[] { ComponentType.ReadOnly<PlayerSelection>(), ComponentType.ReadOnly<PlayerOwned>() }
             });
+
+
+            m_NeedsOrderFormationMoveTo = GetEntityQuery(new EntityQueryDesc
+            {
+                None = new ComponentType[] { typeof(OrderFormationMoveTo) },
+                All = new ComponentType[] { ComponentType.ReadOnly<Echelon>(), ComponentType.ReadOnly<PlayerOwned>() }
+            });
         }
 
         protected override void OnUpdate()
         {
 
             var playerPointer = GetSingleton<PlayerPointer>();
-            if ( (playerPointer.Click & (uint)EClick.Terrain) == (uint)EClick.Terrain )
+            if (playerPointer.Click == (uint)EClick.MoveTo)
             {
-                Debug.Log("Adding m_NeedsOrderMoveTo");
+                Debug.Log("Adding OrderMoveTo");
                 EntityManager.AddComponent(m_NeedsOrderMoveTo, typeof(OrderMoveTo));
+                return;
             }
+            if (playerPointer.Click == (uint)EClick.FormationMoveTo)
+            {
+                Debug.Log("Adding FormationMoveTo");
+                m_NeedsOrderFormationMoveTo.SetFilter( new Echelon { Superior = playerPointer.CurrentEntity} );
+                EntityManager.AddComponent(m_NeedsOrderFormationMoveTo, typeof(OrderFormationMoveTo));
+                return;
+            }
+
         }
     }
 }

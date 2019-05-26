@@ -10,7 +10,7 @@ namespace UnitAgent
 {
 
     [UpdateInGroup(typeof(GameSystemGroup))]
-    [UpdateAfter(typeof(PlayerOrderMoveToSystem))]
+    [UpdateAfter(typeof(PlayerOrderPostSystem))]
     public class UnitGoalSystem : JobComponentSystem
     {
         [BurstCompile]

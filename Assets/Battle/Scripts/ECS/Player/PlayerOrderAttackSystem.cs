@@ -60,7 +60,9 @@ namespace UnitAgent
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
-            if (!Input.GetKeyDown(KeyCode.Y)) return inputDeps;
+            var playerPointer = GetSingleton<PlayerPointer>();
+            if (playerPointer.Click != (uint)EClick.Attack) return inputDeps;
+
             Debug.Log("PlayerOrderAttackSystem Y");
 
             var targets = m_PlayerTargetGroup.ToEntityArray(Allocator.TempJob);
