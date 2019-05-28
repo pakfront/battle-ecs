@@ -20,10 +20,10 @@ namespace UnitAgent
         [BurstCompile]
         [RequireComponentTag(typeof(Agent))]
 
-        struct SetGoalJob : IJobForEach<MoveToGoal, FormationElement>
+        struct SetGoalJob : IJobForEach<MoveToGoal, FormationMember>
         {
             [ReadOnly] public ComponentDataFromEntity<LocalToWorld> Others;
-            public void Execute(ref MoveToGoal goal, [ReadOnly] ref FormationElement formationElement)
+            public void Execute(ref MoveToGoal goal, [ReadOnly] ref FormationMember formationElement)
             {
                 Entity parent = formationElement.Parent;
                 float4x4 xform = Others[parent].Value;

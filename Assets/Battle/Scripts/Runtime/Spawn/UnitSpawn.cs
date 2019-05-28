@@ -130,7 +130,7 @@ namespace UnitAgent
                     TranslateSpeed = translationUnitsPerSecond,
                     RotateSpeed = rotationsPerSecond
                 });
-                entityManager.AddComponentData(agents[i], new FormationElement
+                entityManager.AddComponentData(agents[i], new FormationMember
                 {
                     Index = i,
                     Parent = unit,

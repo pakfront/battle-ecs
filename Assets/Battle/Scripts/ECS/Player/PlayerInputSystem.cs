@@ -23,9 +23,12 @@ namespace UnitAgent
 
         protected override void OnUpdate()
         {
-            var playerPointer = new PlayerPointer
+            var playerPointer = GetSingleton<PlayerPointer>();
+
+            playerPointer = new PlayerPointer
             {
-                Click = (uint)EClick.None
+                Click = (uint)EClick.None,
+                CurrentEntity = playerPointer.CurrentEntity
             };
 
             if (Input.GetMouseButtonDown(0)) playerPointer.Click |= (uint)EClick.PrimaryPointerButton;

@@ -40,10 +40,15 @@ namespace UnitAgent
                 Debug.Log("Setting entity reference to " + unitSpawn.superior, unitSpawn);
 
                 var superiorEntity = map[unitSpawn.superior];
-                entityManager.AddComponentData(unitEntity, new FormationElement
+                entityManager.AddComponentData(unitEntity, new FormationMember
                 {
                     Index = i++,
                     Position = new float3(0, 0, i),
+                    Parent = superiorEntity
+                });
+
+                entityManager.AddSharedComponentData(unitEntity, new FormationGroup
+                {
                     Parent = superiorEntity
                 });
             }

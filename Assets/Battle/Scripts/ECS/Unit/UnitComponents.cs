@@ -6,7 +6,6 @@ namespace UnitAgent
 {
     //[Serializable] public struct Subordinate : IComponentData { public Entity Superior; }    
     [Serializable] public struct Unit : IComponentData { }   
-    [Serializable] public struct Echelon : ISharedComponentData { public Entity Superior; }   
 
     [Serializable] public struct Team : ISharedComponentData { public int Value; }
 

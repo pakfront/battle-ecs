@@ -32,7 +32,7 @@ namespace UnitAgent
             m_NeedsOrderFormationMoveTo = GetEntityQuery(new EntityQueryDesc
             {
                 None = new ComponentType[] { typeof(OrderFormationMoveTo) },
-                All = new ComponentType[] { ComponentType.ReadOnly<Echelon>(), ComponentType.ReadOnly<PlayerOwned>() }
+                All = new ComponentType[] { ComponentType.ReadOnly<FormationGroup>(), ComponentType.ReadOnly<PlayerOwned>() }
             });
         }
 
@@ -48,8 +48,8 @@ namespace UnitAgent
             }
             if (playerPointer.Click == (uint)EClick.FormationMoveTo)
             {
-                Debug.Log("Adding FormationMoveTo");
-                m_NeedsOrderFormationMoveTo.SetFilter( new Echelon { Superior = playerPointer.CurrentEntity} );
+                Debug.Log("Adding FormationMoveTo "+playerPointer.CurrentEntity);
+                m_NeedsOrderFormationMoveTo.SetFilter( new FormationGroup { Parent = playerPointer.CurrentEntity} );
                 EntityManager.AddComponent(m_NeedsOrderFormationMoveTo, typeof(OrderFormationMoveTo));
                 return;
             }

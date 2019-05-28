@@ -4,8 +4,11 @@ using Unity.Mathematics;
 
 namespace UnitAgent
 {
+
+    [Serializable] public struct FormationGroup : ISharedComponentData { public Entity Parent; }   
+
     [Serializable]
-    public struct FormationElement : IComponentData
+    public struct FormationMember : IComponentData
     {
         public int Index;
         public Entity Parent;
