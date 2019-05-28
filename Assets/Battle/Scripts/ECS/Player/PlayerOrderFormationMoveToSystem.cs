@@ -14,7 +14,7 @@ namespace UnitAgent
     public class PlayerOrderFormationMoveToSystem : JobComponentSystem
     {
         [BurstCompile]
-        [RequireComponentTag(typeof(PlayerSelection), typeof(PlayerOwned))]
+        [RequireComponentTag(typeof(PlayerOwned))]
         // [ChangedFilter(typeof(OrderFormationMoveTo))]
         struct SetOrderFormationMoveTo : IJobForEach<OrderFormationMoveTo, FormationMember>
         {
@@ -23,6 +23,7 @@ namespace UnitAgent
             public void Execute(ref OrderFormationMoveTo orderMoveTo, [ReadOnly] ref FormationMember formationMember)
             {
                 Movement.SetGoalToFormationPosition(ClickTransform, formationMember.Position, ref orderMoveTo.Position, ref orderMoveTo.Heading);
+                // Debug.Log("Execute "+orderMoveTo.Position);
             }
         }
 
@@ -31,14 +32,14 @@ namespace UnitAgent
             var playerPointer = GetSingleton<PlayerPointer>();
 
             if (playerPointer.Click != (uint)EClick.FormationMoveTo) return inputDeps;
+            var clickTransform = float4x4.Translate(playerPointer.Position);
 
-            Debug.Log("PlayerOrderFormationMoveToSystem DidClick:" + playerPointer.Click + " " + playerPointer.Position);
+            Debug.Log("PlayerOrderFormationMoveToSystem DidClick:" + playerPointer.Click + " " +clickTransform);
 
             var outputDeps = new SetOrderFormationMoveTo
             {
-                ClickTransform = float4x4.Translate(playerPointer.Position)
+                ClickTransform = clickTransform
             }.Schedule(this, inputDeps);
-
 
             return outputDeps;
         }

@@ -11,43 +11,54 @@ namespace UnitAgent
     {
         void Start()
         {
+            FormationSpawn[] formationSpawns = GameObject.FindObjectsOfType<FormationSpawn>();
+            var formationSpawnMap = SpawnFormations(World.Active.EntityManager, formationSpawns);
+
             UnitSpawn[] unitSpawns = GameObject.FindObjectsOfType<UnitSpawn>();
-            SpawnUnits(World.Active.EntityManager, unitSpawns);
+            SpawnUnits(World.Active.EntityManager, formationSpawnMap, unitSpawns);
             for (int i = 0; i < unitSpawns.Length; i++)
             {
                 GameObject.Destroy(unitSpawns[i]);
             }
         }
 
-        public void SpawnUnits(EntityManager manager, UnitSpawn[] unitSpawns)
+        public Dictionary<FormationSpawn, Entity> SpawnFormations(EntityManager manager, FormationSpawn[] formationSpawns)
         {
-            var entityManager = World.Active.EntityManager;
+            Dictionary<FormationSpawn, Entity> formationSpawnMap = new Dictionary<FormationSpawn, Entity>();
+            foreach (var formationSpawn in formationSpawns)
+            {
+                formationSpawnMap[formationSpawn] = formationSpawn.SpawnFormation(manager);
+            }
+            return formationSpawnMap;   
+        }
 
-            Dictionary<UnitSpawn, Entity> map = new Dictionary<UnitSpawn, Entity>();
+        public void SpawnUnits(EntityManager manager, Dictionary<FormationSpawn, Entity> formationSpawnMap, UnitSpawn[] unitSpawns)
+        {
+            Dictionary<UnitSpawn, Entity> unitSpawnMap = new Dictionary<UnitSpawn, Entity>();
             foreach (var unitSpawn in unitSpawns)
             {
-                map[unitSpawn] = unitSpawn.SpawnUnit(entityManager);
+                unitSpawnMap[unitSpawn] = unitSpawn.SpawnUnit(manager);
             }
 
             int i = 0;
-            foreach (var outer in map)
+            foreach (var outer in unitSpawnMap)
             {
                 var unitSpawn = outer.Key;
                 var unitEntity = outer.Value;
 
                 if (unitSpawn.superior == null) continue;
 
-                Debug.Log("Setting entity reference to " + unitSpawn.superior, unitSpawn);
+                Debug.Log("Setting Superior entity reference to " + unitSpawn.superior, unitSpawn);
 
-                var superiorEntity = map[unitSpawn.superior];
-                entityManager.AddComponentData(unitEntity, new FormationMember
+                var superiorEntity = formationSpawnMap[unitSpawn.superior];
+                manager.AddComponentData(unitEntity, new FormationMember
                 {
                     Index = i++,
                     Position = new float3(0, 0, i),
                     Parent = superiorEntity
                 });
 
-                entityManager.AddSharedComponentData(unitEntity, new FormationGroup
+                manager.AddSharedComponentData(unitEntity, new FormationGroup
                 {
                     Parent = superiorEntity
                 });

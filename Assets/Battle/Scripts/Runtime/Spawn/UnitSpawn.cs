@@ -20,7 +20,7 @@ namespace UnitAgent
         [Header("Unit")]
         public UnitProxy unitPrefab;
 
-        public UnitSpawn superior;
+        public FormationSpawn superior;
         public EOrder initialOrders;
 
         [Header("Agent")]

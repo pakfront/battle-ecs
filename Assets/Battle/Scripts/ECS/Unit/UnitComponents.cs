@@ -4,7 +4,7 @@ using Unity.Mathematics;
 
 namespace UnitAgent
 {
-    //[Serializable] public struct Subordinate : IComponentData { public Entity Superior; }    
+    [Serializable] public struct FormationMarker : IComponentData { }   
     [Serializable] public struct Unit : IComponentData { }   
 
     [Serializable] public struct Team : ISharedComponentData { public int Value; }

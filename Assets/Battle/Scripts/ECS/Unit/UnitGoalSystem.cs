@@ -26,10 +26,11 @@ namespace UnitAgent
         [BurstCompile]
         struct OrderFormationMoveToJob : IJobForEach<MoveToGoal, OrderFormationMoveTo>
         {
-            public void Execute(ref MoveToGoal goalMoveTo, [ReadOnly] [ChangedFilter] ref OrderFormationMoveTo orderMoveTo)
+            public void Execute(ref MoveToGoal goalMoveTo, [ReadOnly] ref OrderFormationMoveTo orderMoveTo)
             {
                 goalMoveTo.Position = orderMoveTo.Position;
                 goalMoveTo.Heading = orderMoveTo.Heading;
+                // UnityEngine.Debug.Log("OrderFormationMoveToJob "+goalMoveTo.Position +" "+ orderMoveTo.Position);
             }
         }
 
@@ -68,11 +69,16 @@ namespace UnitAgent
 
             var outputDeps = new OrderMoveToJob {}.Schedule(this, inputDependencies);
 
+            outputDeps = new OrderFormationMoveToJob
+            {
+            }.Schedule(this, outputDeps);
+
             outputDeps = new OrderAttackJob
             {
                 Others = allXforms
             }.Schedule(this, outputDeps);
  
+
             outputDeps = new OrderHoldJob
             {
             }.Schedule(this, outputDeps);
