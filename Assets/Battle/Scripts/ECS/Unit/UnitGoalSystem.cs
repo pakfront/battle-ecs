@@ -16,16 +16,26 @@ namespace UnitAgent
         [BurstCompile]
         struct OrderMoveToJob : IJobForEach<MoveToGoal, OrderMoveTo>
         {
-            public void Execute(ref MoveToGoal goalMoveTo, [ReadOnly] ref OrderMoveTo orderMoveTo)
+            public void Execute(ref MoveToGoal goalMoveTo, [ReadOnly] [ChangedFilter] ref OrderMoveTo orderMoveTo)
             {
                 goalMoveTo.Position = orderMoveTo.Position;
                 goalMoveTo.Heading = new float3(0,0,1);
             }
         }
 
-        // TODO run only when target has moved
+        [BurstCompile]
+        struct OrderFormationMoveToJob : IJobForEach<MoveToGoal, OrderFormationMoveTo>
+        {
+            public void Execute(ref MoveToGoal goalMoveTo, [ReadOnly] [ChangedFilter] ref OrderFormationMoveTo orderMoveTo)
+            {
+                goalMoveTo.Position = orderMoveTo.Position;
+                goalMoveTo.Heading = orderMoveTo.Heading;
+            }
+        }
+
         [BurstCompile]
         [ExcludeComponent(typeof(OrderMoveTo))]
+        //TODO only update if target has moved?
         struct OrderAttackJob : IJobForEach<MoveToGoal, OrderAttack>
         {
             [ReadOnly] public ComponentDataFromEntity<LocalToWorld> Others;

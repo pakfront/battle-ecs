@@ -28,7 +28,7 @@ namespace UnitAgent
                     ComponentType.ReadOnly<OrderMoveTo>(),
                     ComponentType.ReadOnly<OrderAttack>(),
                     ComponentType.ReadOnly<OrderMarch>(),
-                    ComponentType.ReadOnly<OrderFormation>()
+                    ComponentType.ReadOnly<OrderFormationMoveTo>()
                 }
             });
 
@@ -39,7 +39,7 @@ namespace UnitAgent
                     ComponentType.ReadOnly<OrderMoveTo>(),
                     ComponentType.ReadOnly<OrderAttack>(),
                     ComponentType.ReadOnly<OrderMarch>(),
-                    ComponentType.ReadOnly<OrderFormation>()
+                    ComponentType.ReadOnly<OrderFormationMoveTo>()
                 }
             });
         }

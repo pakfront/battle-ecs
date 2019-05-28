@@ -19,9 +19,9 @@ namespace UnitAgent
         {
             [ReadOnly] public float3 ClickLocation;
 
-            public void Execute(ref OrderMoveTo goalMoveTo)
+            public void Execute(ref OrderMoveTo orderMoveTo)
             {
-                goalMoveTo.Position = ClickLocation; // + some offset
+                orderMoveTo.Position = ClickLocation; // + some offset
             }
         }
 

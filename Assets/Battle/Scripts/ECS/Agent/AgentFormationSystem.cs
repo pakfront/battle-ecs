@@ -23,13 +23,15 @@ namespace UnitAgent
         struct SetGoalJob : IJobForEach<MoveToGoal, FormationMember>
         {
             [ReadOnly] public ComponentDataFromEntity<LocalToWorld> Others;
-            public void Execute(ref MoveToGoal goal, [ReadOnly] ref FormationMember formationElement)
+            public void Execute(ref MoveToGoal goal, [ReadOnly] ref FormationMember formationMember)
             {
-                Entity parent = formationElement.Parent;
+                Entity parent = formationMember.Parent;
                 float4x4 xform = Others[parent].Value;
-                goal.Position = math.transform(xform, formationElement.Position);
-                // heterogenous as it's a direction vector;
-                goal.Heading = math.mul( xform, new float4(0,0,1,0) ).xyz;
+                Movement.SetGoalToFormationPosition(xform, formationMember.Position, ref goal.Position, ref goal.Heading);
+
+                // goal.Position = math.transform(xform, formationElement.Position);
+                // // heterogenous as it's a direction vector;
+                // goal.Heading = math.mul( xform, new float4(0,0,1,0) ).xyz;
             }
         }
 

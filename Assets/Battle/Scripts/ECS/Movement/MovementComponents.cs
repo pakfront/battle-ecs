@@ -44,14 +44,11 @@ namespace UnitAgent
             return false;
         }
 
-            // public static void SetGoalToFormationPosition(float4x4 xform, [REa])
-            // {
-            //     Entity superior = formationElement.Parent;
-            //     float4x4 xform = Others[superior].Value;
-            //     math.transform(xform, ormationElement.Position);
-            //     goal.Position = math.mul (xform, formationElement.Position).xyz;
-            //     // heterogenous as it's a direction vector;
-            //     goal.Heading = math.mul( xform, new float4(0,0,1,0) ).xyz;
-            // }
+        public static void SetGoalToFormationPosition(float4x4 xform, float3 offset, ref float3 goalPosition, ref float3 goalHeading )
+        {
+                goalPosition = math.transform(xform, offset);
+                // heterogenous as it's a direction vector;
+                goalHeading = math.mul( xform, new float4(0,0,1,0)).xyz;
+        }
     }
 }
