@@ -24,12 +24,37 @@ namespace UnitAgent
 
         public Dictionary<FormationSpawn, Entity> SpawnFormations(EntityManager manager, FormationSpawn[] formationSpawns)
         {
-            Dictionary<FormationSpawn, Entity> formationSpawnMap = new Dictionary<FormationSpawn, Entity>();
+            Dictionary<FormationSpawn, Entity> spawnMap = new Dictionary<FormationSpawn, Entity>();
             foreach (var formationSpawn in formationSpawns)
             {
-                formationSpawnMap[formationSpawn] = formationSpawn.SpawnFormation(manager);
+                spawnMap[formationSpawn] = formationSpawn.SpawnFormation(manager);
             }
-            return formationSpawnMap;   
+
+            int i = 0;
+            foreach (var outer in spawnMap)
+            {
+                var spawn = outer.Key;
+                var entity = outer.Value;
+
+                if (spawn.superior == null) continue;
+
+                Debug.Log("Setting Superior entity reference to " + spawn.superior, spawn);
+
+                var superiorEntity = spawnMap[spawn.superior];
+                manager.AddComponentData(entity, new FormationMember
+                {
+                    Index = i++,
+                    Position = new float3(0, 0, i),
+                    Parent = superiorEntity
+                });
+
+                manager.AddSharedComponentData(entity, new FormationGroup
+                {
+                    Parent = superiorEntity
+                });
+            }
+
+            return spawnMap;   
         }
 
         public void SpawnUnits(EntityManager manager, Dictionary<FormationSpawn, Entity> formationSpawnMap, UnitSpawn[] unitSpawns)
