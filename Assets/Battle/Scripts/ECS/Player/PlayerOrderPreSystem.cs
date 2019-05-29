@@ -38,7 +38,6 @@ namespace UnitAgent
 
         protected override void OnUpdate()
         {
-
             var playerPointer = GetSingleton<PlayerPointer>();
             if (playerPointer.Click == (uint)EClick.MoveTo)
             {
@@ -51,9 +50,9 @@ namespace UnitAgent
                 Debug.Log("Adding FormationMoveTo "+playerPointer.CurrentEntity);
                 m_NeedsOrderFormationMoveTo.SetFilter( new FormationGroup { Parent = playerPointer.CurrentEntity} );
                 EntityManager.AddComponent(m_NeedsOrderFormationMoveTo, typeof(OrderFormationMoveTo));
+                EntityManager.SetComponentData(playerPointer.CurrentEntity, new Translation { Value = playerPointer.Position} );
                 return;
             }
-
         }
     }
 }
