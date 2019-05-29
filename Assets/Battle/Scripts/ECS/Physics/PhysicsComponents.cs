@@ -7,5 +7,7 @@ namespace UnitAgent
     {
         public float3 min;
         public float3 max;
+        public float3 center;
+        public float3 halfwidth;
     }
 }

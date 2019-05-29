@@ -1,41 +1,61 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
+using UnityEngine;
 
 namespace UnitAgent
 {
-    public static class Spawn
+    public class Spawn : MonoBehaviour
     {
-        public struct UnitSettings
+
+        [Header("Team")]
+        public int team = 0;
+
+        public FormationSpawn superior;
+
+        protected Entity CreateEntity(EntityManager entityManager, GameObject gameObjectPrefab)
         {
-            public enum EOrder { None, InFormation, HoldPosition, MoveToPosition, FollowUnit, PursueUnit }
+            Entity prefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(gameObjectPrefab, entityManager.World);
+            var entity = entityManager.Instantiate(prefab);
+            entityManager.SetName(entity, name);
 
-            [Header("Team")]
-            public int team;
 
-            [Header("Unit")]
-            public UnitProxy unitPrefab;
+            // Place the instantiated entity in a grid with some noise
+            float3 spawnPosition = transform.TransformPoint(new float3(0, 0, 0));
+            entityManager.SetComponentData(entity, new Translation { Value = spawnPosition });
+            entityManager.SetComponentData(entity, new Rotation { Value = transform.rotation });
 
-            public UnitSpawn superior;
-            public float unitTranslationUnitsPerSecond;
-            public EOrder initialOrders;
+            var combinedBounds = new Bounds(new Vector3(0, .5f, 0), new Vector3(1, 1, 1));
+            var renderers = gameObjectPrefab.GetComponentsInChildren<Renderer>();
+            foreach (var renderer in renderers)
+            {
+                combinedBounds.Encapsulate(renderer.bounds);
+            }
 
-            [Header("Agent")]
-            public AgentProxy agentPrefab;
-            public float agentSpacing;
-            public int columns, rows;
-            public float agentTranslationUnitsPerSecond;
-            // public UnitSettings()
-            // {
-            //     unitTranslationUnitsPerSecond = 1;
-            //     agentSpacing = 1.3F;
-            //     columns = 6;
-            //     rows = 2;
-            //     agentTranslationUnitsPerSecond = .5f;
+            entityManager.AddComponentData(entity, new AABB
+            {
+                //TODO add mesh bounds calc
+                //0.5f will represent halfwidth for now
+                center = combinedBounds.center,
+                halfwidth = combinedBounds.extents,
+                max = spawnPosition + (float3)combinedBounds.extents,
+                min = spawnPosition - (float3)combinedBounds.extents,
+            });
 
-            // }
+            entityManager.AddSharedComponentData(entity, new Team { Value = team });
+            if (team == LocalPlayer.Team)
+            {
+                entityManager.AddSharedComponentData(entity, new PlayerOwned());
+            }
+            else
+            {
+                entityManager.AddSharedComponentData(entity, new PlayerEnemy());
+            }
+
+            return entity;
         }
-
     }
 }

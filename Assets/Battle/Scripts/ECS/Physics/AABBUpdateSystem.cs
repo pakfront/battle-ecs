@@ -14,8 +14,11 @@ namespace UnitAgent
             //Keep our box collider in sync with the position of the player
             public void Execute(ref AABB aabb, [ChangedFilter] ref Translation pos)
             {
-                aabb.max = pos.Value + 0.5f;
-                aabb.min = pos.Value - 0.5f;
+                aabb.max = pos.Value + aabb.center + aabb.halfwidth;
+                aabb.min = pos.Value + aabb.center - aabb.halfwidth;
+
+                // aabb.max = pos.Value + 0.5f;
+                // aabb.min = pos.Value - 0.5f;
             }
         }
 
