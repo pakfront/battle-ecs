@@ -17,17 +17,17 @@ namespace UnitAgent
     {
 
         protected override void OnCreate() {
-            var entity = EntityManager.CreateEntity(typeof(FormationSingleton));
-            EntityManager.SetName(entity, "FormationSingleton");
+            var formationSingletonEntity = EntityManager.CreateEntity(typeof(FormationSingleton));
+            EntityManager.SetName(formationSingletonEntity, "FormationSingleton");
             SetSingleton(new FormationSingleton{ });
 
-            EntityManager.AddBuffer<FormationOffsets>(entity);
-            var buffer = EntityManager.GetBuffer<FormationOffsets>(entity);
+            EntityManager.AddBuffer<FormationOffsets>(formationSingletonEntity);
+            var buffer = EntityManager.GetBuffer<FormationOffsets>(formationSingletonEntity);
             for (int i = 0; i < 8; i++)
             {
-                buffer.Add(new float3(i*20,0,0));
+                // temp data for testing
+                buffer.Add(new float3(i*20,0,i*100));
             }
-
         }
 
         // TODO run only when unit has moved
@@ -46,14 +46,38 @@ namespace UnitAgent
             }
         }
 
+        [BurstCompile]
+        [RequireComponentTag(typeof(Unit))]
+        struct SetOffsetJob : IJobForEach<FormationMember>
+        {
+            [ReadOnly] public DynamicBuffer<FormationOffsets> Offsets;
+            public void Execute(ref FormationMember formationElement)
+            {
+                formationElement.Position = Offsets[formationElement.Index];
+            }
+        }
+
         protected override JobHandle OnUpdate(JobHandle inputDependencies)
         {
-            var setGoalJob = new SetGoalJob()
+
+            var formationSingletonEntity = GetSingletonEntity<FormationSingleton>();
+            // this also works, but may not have readonly flag:
+            // var buffer = EntityManager.GetBuffer<FormationOffsets>(formationSingletonEntity);
+
+            var lookup = GetBufferFromEntity<FormationOffsets>(true);
+            var buffer = lookup[formationSingletonEntity];
+            
+            var outputDeps = new SetOffsetJob()
+            {
+                Offsets = buffer
+            }.Schedule(this, inputDependencies);
+
+            outputDeps = new SetGoalJob()
             {
                 Others = GetComponentDataFromEntity<LocalToWorld>(true)
-            };
+            }.Schedule(this, outputDeps);
 
-            return setGoalJob.Schedule(this, inputDependencies);
+            return outputDeps;
         }
     }
 }
