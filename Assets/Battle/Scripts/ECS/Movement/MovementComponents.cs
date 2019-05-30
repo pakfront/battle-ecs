@@ -5,16 +5,6 @@ using Unity.Mathematics;
 namespace UnitAgent
 {
 
-    [Serializable] public struct FormationGroup : ISharedComponentData { public Entity Parent; }   
-
-    [Serializable]
-    public struct FormationMember : IComponentData
-    {
-        public int Index;
-        public Entity Parent;
-        public float3 Position;
-    }
-
     [Serializable] public struct MoveSettings : IComponentData { 
         public float TranslateSpeed;
         public float RotateSpeed;

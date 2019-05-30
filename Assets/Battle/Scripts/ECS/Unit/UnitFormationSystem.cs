@@ -16,6 +16,20 @@ namespace UnitAgent
     public class UnitFormationSystem : JobComponentSystem
     {
 
+        protected override void OnCreate() {
+            var entity = EntityManager.CreateEntity(typeof(FormationSingleton));
+            EntityManager.SetName(entity, "FormationSingleton");
+            SetSingleton(new FormationSingleton{ });
+
+            EntityManager.AddBuffer<FormationOffsets>(entity);
+            var buffer = EntityManager.GetBuffer<FormationOffsets>(entity);
+            for (int i = 0; i < 8; i++)
+            {
+                buffer.Add(new float3(i*20,0,0));
+            }
+
+        }
+
         // TODO run only when unit has moved
         [BurstCompile]
         [RequireComponentTag(typeof(Unit))]
