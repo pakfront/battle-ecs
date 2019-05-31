@@ -91,11 +91,11 @@ namespace UnitAgent
                     TranslateSpeed = translationUnitsPerSecond,
                     RotateSpeed = rotationsPerSecond
                 });
-                entityManager.AddComponentData(agents[i], new FormationMember
+                entityManager.AddComponentData(agents[i], new AgentFormationMember
                 {
                     Index = i,
                     Parent = unit,
-                    Position = formationPosition
+                    Offset = formationPosition
                 });
 
                 entityManager.SetComponentData(agents[i], new Translation { Value = spawnPosition });

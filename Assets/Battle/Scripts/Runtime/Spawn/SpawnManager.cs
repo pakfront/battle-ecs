@@ -44,7 +44,7 @@ namespace UnitAgent
                 manager.AddComponentData(entity, new FormationMember
                 {
                     Index = i++,
-                    Position = new float3(0, 0, i),
+                    Offset = new float3(0, 0, i),
                     Parent = superiorEntity
                 });
 
@@ -79,7 +79,7 @@ namespace UnitAgent
                 manager.AddComponentData(unitEntity, new FormationMember
                 {
                     Index = i++,
-                    Position = new float3(0, 0, i),
+                    Offset = new float3(0, 0, i),
                     Parent = superiorEntity
                 });
 

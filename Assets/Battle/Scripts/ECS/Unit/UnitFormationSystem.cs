@@ -15,19 +15,20 @@ namespace UnitAgent
     [UpdateInGroup(typeof(GameSystemGroup))]
     public class UnitFormationSystem : JobComponentSystem
     {
+        readonly int maxformations = 3000;
+        public NativeArray<float3> FormationOffsets;
+        protected override void OnCreate()
+        {
+            FormationOffsets = new NativeArray<float3>(maxformations, Allocator.Persistent);
 
-        protected override void OnCreate() {
-            var formationSingletonEntity = EntityManager.CreateEntity(typeof(FormationSingleton));
-            EntityManager.SetName(formationSingletonEntity, "FormationSingleton");
-            SetSingleton(new FormationSingleton{ });
-
-            EntityManager.AddBuffer<FormationOffsets>(formationSingletonEntity);
-            var buffer = EntityManager.GetBuffer<FormationOffsets>(formationSingletonEntity);
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < maxformations; i++)
             {
                 // temp data for testing
-                buffer.Add(new float3(i*20,0,i*100));
+                FormationOffsets[i] = new float3(i * 20, 0, i * 100);
             }
+        }
+        protected override void OnDestroy() { 
+            FormationOffsets.Dispose();
         }
 
         // TODO run only when unit has moved
@@ -40,9 +41,9 @@ namespace UnitAgent
             {
                 Entity parent = formationElement.Parent;
                 float4x4 xform = Others[parent].Value;
-                goal.Position = math.transform(xform, formationElement.Position);
+                goal.Position = math.transform(xform, formationElement.Offset);
                 // heterogenous as it's a direction vector;
-                goal.Heading = math.mul( xform, new float4(0,0,1,0) ).xyz;
+                goal.Heading = math.mul(xform, new float4(0, 0, 1, 0)).xyz;
             }
         }
 
@@ -50,26 +51,19 @@ namespace UnitAgent
         [RequireComponentTag(typeof(Unit))]
         struct SetOffsetJob : IJobForEach<FormationMember>
         {
-            [ReadOnly] public DynamicBuffer<FormationOffsets> Offsets;
+            [ReadOnly] public NativeArray<float3> Offsets;
             public void Execute(ref FormationMember formationElement)
             {
-                formationElement.Position = Offsets[formationElement.Index];
+                formationElement.Offset = Offsets[formationElement.Index];
             }
         }
 
         protected override JobHandle OnUpdate(JobHandle inputDependencies)
         {
 
-            var formationSingletonEntity = GetSingletonEntity<FormationSingleton>();
-            // this also works, but may not have readonly flag:
-            // var buffer = EntityManager.GetBuffer<FormationOffsets>(formationSingletonEntity);
-
-            var lookup = GetBufferFromEntity<FormationOffsets>(true);
-            var buffer = lookup[formationSingletonEntity];
-            
             var outputDeps = new SetOffsetJob()
             {
-                Offsets = buffer
+                Offsets = FormationOffsets
             }.Schedule(this, inputDependencies);
 
             outputDeps = new SetGoalJob()

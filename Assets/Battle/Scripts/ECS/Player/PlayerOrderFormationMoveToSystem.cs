@@ -22,7 +22,7 @@ namespace UnitAgent
 
             public void Execute(ref OrderFormationMoveTo orderMoveTo, [ReadOnly] ref FormationMember formationMember)
             {
-                Movement.SetGoalToFormationPosition(ClickTransform, formationMember.Position, ref orderMoveTo.Position, ref orderMoveTo.Heading);
+                Movement.SetGoalToFormationPosition(ClickTransform, formationMember.Offset, ref orderMoveTo.Position, ref orderMoveTo.Heading);
                 // Debug.Log("Execute "+orderMoveTo.Position);
             }
         }

@@ -20,14 +20,14 @@ namespace UnitAgent
         [BurstCompile]
         [RequireComponentTag(typeof(Agent))]
 
-        struct SetGoalJob : IJobForEach<MoveToGoal, FormationMember>
+        struct SetGoalJob : IJobForEach<MoveToGoal, AgentFormationMember>
         {
             [ReadOnly] public ComponentDataFromEntity<LocalToWorld> Others;
-            public void Execute(ref MoveToGoal goal, [ReadOnly] ref FormationMember formationMember)
+            public void Execute(ref MoveToGoal goal, [ReadOnly] ref AgentFormationMember formationMember)
             {
                 Entity parent = formationMember.Parent;
                 float4x4 xform = Others[parent].Value;
-                Movement.SetGoalToFormationPosition(xform, formationMember.Position, ref goal.Position, ref goal.Heading);
+                Movement.SetGoalToFormationPosition(xform, formationMember.Offset, ref goal.Position, ref goal.Heading);
 
                 // goal.Position = math.transform(xform, formationElement.Position);
                 // // heterogenous as it's a direction vector;
