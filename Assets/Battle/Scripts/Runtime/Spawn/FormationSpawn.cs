@@ -12,11 +12,57 @@ namespace UnitAgent
     public class FormationSpawn : Spawn
     {
         public FormationProxy formationPrefab;
+        public EFormation initialFormation;
 
-      public Entity SpawnFormation(EntityManager entityManager)
+        public Entity SpawnFormation(EntityManager entityManager)
         {
             var entity = CreateSelectableEntity(entityManager, formationPrefab.gameObject);
             return entity;
         }
+
+        void OnDrawGizmosSelected()
+        {
+
+            int formationIndex = (int)initialFormation;
+            if (formationIndex < 0 || formationIndex >= FormationUtils.FormationCount) return;
+
+            UnityEditor.Handles.matrix  = transform.localToWorldMatrix;
+
+            float3[] formationOffsets = FormationUtils.CalcUnitFormations();
+            for (int i = 0; i < FormationUtils.UnitOffsetsPerFormation; i++)
+            {
+                Vector3 p = formationOffsets[formationIndex * FormationUtils.UnitOffsetsPerFormation + i];
+#if UNITY_EDITOR
+                UnityEditor.Handles.Label(p, i.ToString());
+#endif
+
+            }
+
+        }
+
+        void OnDrawGizmos()
+        {
+            // Draw a yellow sphere at the transform's position
+            switch (team)
+            {
+                case 0:
+                    Gizmos.color = Color.red;
+                    break;
+                case 1:
+                    Gizmos.color = Color.blue;
+                    break;
+                default:
+                    Gizmos.color = Color.yellow;
+                    break;
+
+            }
+            Gizmos.matrix = transform.localToWorldMatrix;
+                Gizmos.DrawCube(
+                  Vector3.zero,
+                  Vector3.one
+              );
+
+        }
     }
+
 }

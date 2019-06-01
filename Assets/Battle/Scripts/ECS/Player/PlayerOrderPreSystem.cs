@@ -61,10 +61,10 @@ namespace UnitAgent
                 return;
             }
 
-            if (playerPointer.Formation != (int)EFormation.None)
+            if (playerPointer.FormationIndex != (int)EFormation.None)
             {
-                Debug.Log("Setting Formation "+playerPointer.CurrentEntity+" to "+(EFormation)playerPointer.Formation);
-                EntityManager.SetComponentData(playerPointer.CurrentEntity, new FormationLeader { FormationIndex = playerPointer.Formation} );
+                Debug.Log("Setting Formation "+playerPointer.CurrentEntity+" to "+(EFormation)playerPointer.FormationIndex);
+                EntityManager.SetComponentData(playerPointer.CurrentEntity, new FormationLeader { FormationIndex = playerPointer.FormationIndex} );
                 m_NeedsOrderFormationMoveTo.SetFilter( new FormationGroup { Parent = playerPointer.CurrentEntity} );
                 EntityManager.AddComponent(m_NeedsOrderFormationMoveTo, typeof(OrderFormationMoveTo));
                 return;

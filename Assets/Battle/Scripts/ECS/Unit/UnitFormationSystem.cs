@@ -15,41 +15,10 @@ namespace UnitAgent
     [UpdateInGroup(typeof(GameSystemGroup))]
     public class UnitFormationSystem : JobComponentSystem
     {
-        public static readonly int FormationCount = 4;
-        public static readonly int OffsetsPerFormation = 12;
-        public static readonly int FormationOffsetsLength = FormationCount * OffsetsPerFormation;
-
         public NativeArray<float3> FormationOffsets;
         protected override void OnCreate()
         {
-            FormationOffsets = new NativeArray<float3>(FormationOffsetsLength, Allocator.Persistent);
-
-            // these could be read from disk and there could be a lot more than these few variations
-            int f = (int)EFormation.Mob;
-            for (int i = 0; i < OffsetsPerFormation; i++)
-            {
-                FormationOffsets[f * OffsetsPerFormation + i] = new float3(i * 20, 0, i * 20);
-            }
-
-            f = (int)EFormation.Line;
-            for (int i = 0; i < OffsetsPerFormation; i++)
-            {
-                FormationUtils.DistributeAcrossColumns(5, i, out int row, out int col);
-                FormationOffsets[f * OffsetsPerFormation + i] = new float3(col * 80, 0, row * 20);
-            }
-
-            f = (int)EFormation.Column;
-            for (int i = 0; i < OffsetsPerFormation; i++)
-            {
-                FormationOffsets[f * OffsetsPerFormation + i] = new float3(0, 0, i * -20);
-            }
-
-            f = (int)EFormation.Reserve;
-            for (int i = 0; i < OffsetsPerFormation; i++)
-            {
-                FormationUtils.DistributeAcrossColumns(5, i, out int row, out int col);
-                FormationOffsets[f * OffsetsPerFormation + i] = new float3(col * 80, 0, row * 20);
-            }
+            FormationOffsets = new NativeArray<float3>(FormationUtils.CalcUnitFormations(), Allocator.Persistent);
         }
 
 
@@ -69,7 +38,7 @@ namespace UnitAgent
                 Entity parent = formationElement.Parent;
                 int formationIndex = Leaders[parent].FormationIndex;
                 
-                formationElement.PositionOffset = Offsets[formationIndex + formationElement.IndexOffset];
+                formationElement.PositionOffset = Offsets[formationIndex*FormationUtils.UnitOffsetsPerFormation + formationElement.IndexOffset];
             }
         }
 

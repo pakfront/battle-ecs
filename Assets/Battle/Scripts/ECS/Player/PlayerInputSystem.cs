@@ -28,7 +28,7 @@ namespace UnitAgent
             {
                 MousePosition = Input.mousePosition,
                 Click = (uint)EClick.None,
-                Formation = (int)EFormation.None,
+                FormationIndex = (int)EFormation.None,
                 CurrentEntity = playerPointer.CurrentEntity,
             };
             // mouse
@@ -40,10 +40,10 @@ namespace UnitAgent
             if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) playerPointer.Click |= (uint)EClick.Shift;
             
             // commands
-            if (Input.GetKeyDown(KeyCode.Alpha0))  playerPointer.Formation = (int)EFormation.Mob;
-            else if (Input.GetKeyDown(KeyCode.Alpha1))  playerPointer.Formation = (int)EFormation.Line;
-            else if (Input.GetKeyDown(KeyCode.Alpha2))  playerPointer.Formation = (int)EFormation.Column;
-            else if (Input.GetKeyDown(KeyCode.Alpha3))  playerPointer.Formation = (int)EFormation.Reserve;
+            if (Input.GetKeyDown(KeyCode.Alpha0))  playerPointer.FormationIndex = (int)EFormation.Mob;
+            else if (Input.GetKeyDown(KeyCode.Alpha1))  playerPointer.FormationIndex = (int)EFormation.Line;
+            else if (Input.GetKeyDown(KeyCode.Alpha2))  playerPointer.FormationIndex = (int)EFormation.Column;
+            else if (Input.GetKeyDown(KeyCode.Alpha3))  playerPointer.FormationIndex = (int)EFormation.Reserve;
             
 
             SetSingleton(playerPointer);

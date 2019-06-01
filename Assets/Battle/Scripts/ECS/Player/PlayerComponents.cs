@@ -39,7 +39,7 @@ namespace UnitAgent
     {
         public float3 WorldHitPosition, MousePosition;
         public uint Click;
-        public int Formation;
+        public int FormationIndex;
 
         public Entity CurrentEntity;
     }

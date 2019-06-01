@@ -50,10 +50,9 @@ MonoBehaviour:
   unitGoalMarkerPrefab: {fileID: 1023583763944560554, guid: 05d50cab70152a64fb9d7f50e745612b,
     type: 3}
   initialOrders: 2
+  agentFormation: 0
+  agentCount: 60
   agentPrefab: {fileID: 8478563898956065711, guid: 8073a763f7b654e3cbeb52c2c078dfd4,
     type: 3}
-  agentSpacing: 1.3
-  columns: 6
-  rows: 2
   translationUnitsPerSecond: 1
   rotationsPerSecond: 2
