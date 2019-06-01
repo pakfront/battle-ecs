@@ -15,6 +15,7 @@ namespace UnitAgent
 
         [Header("Unit")]
         public UnitProxy unitPrefab;
+        public UnitGoalMarkerProxy unitGoalMarkerPrefab;
         public EOrder initialOrders;
 
         [Header("Agent")]
@@ -33,9 +34,8 @@ namespace UnitAgent
         {
 
             // Create entity prefab from the game object hierarchy once
-            var entity = CreateEntity(entityManager, unitPrefab.gameObject);
-
-            entityManager.AddComponentData(entity, new MoveSettings
+            var unitEntity = CreateSelectableEntity(entityManager, unitPrefab.gameObject);
+            entityManager.AddComponentData(unitEntity, new MoveSettings
             {
                 TranslateSpeed = translationUnitsPerSecond,
                 RotateSpeed = rotationsPerSecond
@@ -46,18 +46,21 @@ namespace UnitAgent
             switch (initialOrders)
             {
                 case EOrder.PursueUnit:
-                    entityManager.AddComponentData(entity, new OrderAttack { });
+                    entityManager.AddComponentData(unitEntity, new OrderAttack { });
                     break;
                 case EOrder.HoldPosition:
-                    entityManager.AddComponentData(entity, new OrderHold { });
+                    entityManager.AddComponentData(unitEntity, new OrderHold { });
                     break;
                 default:
                     break;
             }
 
-            SpawnAgents(entity, entityManager);
+            SpawnAgents(unitEntity, entityManager);
 
-            return entity;
+            var unitGoalMarkerEntity = CreateEntity(entityManager, unitGoalMarkerPrefab.gameObject);
+            entityManager.SetComponentData(unitGoalMarkerEntity, new UnitGoalMarker { Unit = unitEntity });
+
+            return unitEntity;
         }
 
 

@@ -1110,6 +1110,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: RedBrigade
       objectReference: {fileID: 0}
+    - target: {fileID: 8466225151452734828, guid: eb400940a0dea4051bc9491a558815cb,
+        type: 3}
+      propertyPath: superior
+      value: 
+      objectReference: {fileID: 796606865}
     - target: {fileID: 8466225151452734829, guid: eb400940a0dea4051bc9491a558815cb,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1165,10 +1170,5 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8466225151452734828, guid: eb400940a0dea4051bc9491a558815cb,
-        type: 3}
-      propertyPath: superior
-      value: 
-      objectReference: {fileID: 796606865}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: eb400940a0dea4051bc9491a558815cb, type: 3}

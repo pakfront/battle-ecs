@@ -22,18 +22,26 @@ namespace UnitAgent
             var entity = entityManager.Instantiate(prefab);
             entityManager.SetName(entity, name);
 
-
             // Place the instantiated entity in a grid with some noise
             float3 spawnPosition = transform.TransformPoint(new float3(0, 0, 0));
             entityManager.SetComponentData(entity, new Translation { Value = spawnPosition });
             entityManager.SetComponentData(entity, new Rotation { Value = transform.rotation });
 
-            var combinedBounds = new Bounds(new Vector3(0, .5f, 0), new Vector3(1, 1, 1));
+            return entity;
+        }
+
+        protected Entity CreateSelectableEntity(EntityManager entityManager, GameObject gameObjectPrefab)
+        {
+            var entity = CreateEntity(entityManager, gameObjectPrefab);
+
+            var combinedBounds = new Bounds(new Vector3(0, .125f, 0), new Vector3(1, 1, 0.25f));
             var renderers = gameObjectPrefab.GetComponentsInChildren<Renderer>();
             foreach (var renderer in renderers)
             {
                 combinedBounds.Encapsulate(renderer.bounds);
             }
+
+            float3 spawnPosition = transform.TransformPoint(new float3(0, 0, 0));
 
             entityManager.AddComponentData(entity, new AABB
             {

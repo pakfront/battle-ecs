@@ -15,7 +15,7 @@ namespace UnitAgent
 
       public Entity SpawnFormation(EntityManager entityManager)
         {
-            var entity = CreateEntity(entityManager, formationPrefab.gameObject);
+            var entity = CreateSelectableEntity(entityManager, formationPrefab.gameObject);
             return entity;
         }
     }
