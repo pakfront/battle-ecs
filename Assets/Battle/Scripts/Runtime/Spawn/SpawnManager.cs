@@ -43,8 +43,8 @@ namespace UnitAgent
                 var superiorEntity = spawnMap[spawn.superior];
                 manager.AddComponentData(entity, new FormationMember
                 {
-                    Index = i++,
-                    Offset = new float3(0, 0, i),
+                    IndexOffset = i++,
+                    PositionOffset = new float3(0, 0, i),
                     Parent = superiorEntity
                 });
 
@@ -78,8 +78,8 @@ namespace UnitAgent
                 var superiorEntity = formationSpawnMap[unitSpawn.superior];
                 manager.AddComponentData(unitEntity, new FormationMember
                 {
-                    Index = i++,
-                    Offset = new float3(0, 0, i),
+                    IndexOffset = i++,
+                    PositionOffset = new float3(0, 0, i),
                     Parent = superiorEntity
                 });
 

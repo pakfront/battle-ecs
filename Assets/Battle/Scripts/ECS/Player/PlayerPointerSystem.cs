@@ -89,7 +89,8 @@ namespace UnitAgent
             var chunks = m_group.CreateArchetypeChunkArray(Allocator.TempJob);
             var nchunks = chunks.Length;
 
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            // TODO move to 
+            Ray ray = Camera.main.ScreenPointToRay(playerPointer.MousePosition);
             RTSRay rtsRay = new RTSRay
             {
                 origin = ray.origin,
@@ -127,7 +128,7 @@ namespace UnitAgent
             {
                 if (groundplane.Raycast(ray, out enter))
                 {
-                    playerPointer.Position = ray.GetPoint(enter);
+                    playerPointer.WorldHitPosition = ray.GetPoint(enter);
                     playerPointer.Click |=  (uint)EClick.Terrain;
                 }
                 // else

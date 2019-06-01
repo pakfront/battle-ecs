@@ -22,7 +22,7 @@ namespace UnitAgent
 
             public void Execute(ref OrderFormationMoveTo orderMoveTo, [ReadOnly] ref FormationMember formationMember)
             {
-                Movement.SetGoalToFormationPosition(ClickTransform, formationMember.Offset, ref orderMoveTo.Position, ref orderMoveTo.Heading);
+                Movement.SetGoalToFormationPosition(ClickTransform, formationMember.PositionOffset, ref orderMoveTo.Position, ref orderMoveTo.Heading);
                 // Debug.Log("Execute "+orderMoveTo.Position);
             }
         }
@@ -32,7 +32,7 @@ namespace UnitAgent
             var playerPointer = GetSingleton<PlayerPointer>();
 
             if (playerPointer.Click != (uint)EClick.FormationMoveTo) return inputDeps;
-            var clickTransform = float4x4.Translate(playerPointer.Position);
+            var clickTransform = float4x4.Translate(playerPointer.WorldHitPosition);
 
             Debug.Log("PlayerOrderFormationMoveToSystem DidClick:" + playerPointer.Click + " " +clickTransform);
 

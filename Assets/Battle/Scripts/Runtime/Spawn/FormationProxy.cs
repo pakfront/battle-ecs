@@ -10,7 +10,7 @@ namespace UnitAgent
     {
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
-            dstManager.AddComponentData(entity, new FormationMarker {} );
+            dstManager.AddComponentData(entity, new FormationLeader {} );
         }
     }
 }

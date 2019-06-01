@@ -23,13 +23,30 @@ namespace UnitAgent
         FormationMoveTo = MoveTo | Ctrl,
         FormationAttack = Attack | Ctrl
     }
+
+    public enum EFormation : int
+    {
+        None = -1,
+        
+        Line = 0,
+        Column = 1,
+        Reserve = 2,
+        Mob = 3
+    }
+
     [Serializable]
     public struct PlayerPointer : IComponentData
     {
-        public float3 Position;
+        public float3 WorldHitPosition, MousePosition;
         public uint Click;
+        public int Formation;
+
         public Entity CurrentEntity;
     }
+
+
+
+
 
     [Serializable] public struct PlayerSelection : IComponentData { }
     [Serializable] public struct PlayerTarget : IComponentData { }

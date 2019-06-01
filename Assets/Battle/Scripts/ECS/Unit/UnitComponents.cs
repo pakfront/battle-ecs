@@ -11,13 +11,15 @@ namespace UnitAgent
     // Formations
     [Serializable] public struct FormationGroup : ISharedComponentData { public Entity Parent; }
 
-    [Serializable] public struct FormationMarker : IComponentData { }
+    [Serializable] public struct FormationLeader : IComponentData {
+        public int FormationIndex;
+     }
     [Serializable]
     public struct FormationMember : IComponentData
     {
-        public int Index;
+        public int IndexOffset;
         public Entity Parent;
-        public float3 Offset;
+        public float3 PositionOffset;
     }
 
     [Serializable] public struct Detached : IComponentData { }

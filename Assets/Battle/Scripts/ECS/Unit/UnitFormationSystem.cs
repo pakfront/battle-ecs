@@ -15,23 +15,65 @@ namespace UnitAgent
     [UpdateInGroup(typeof(GameSystemGroup))]
     public class UnitFormationSystem : JobComponentSystem
     {
-        readonly int maxformations = 3000;
+        public static readonly int FormationCount = 4;
+        public static readonly int OffsetsPerFormation = 12;
+        public static readonly int FormationOffsetsLength = FormationCount * OffsetsPerFormation;
+
         public NativeArray<float3> FormationOffsets;
         protected override void OnCreate()
         {
-            FormationOffsets = new NativeArray<float3>(maxformations, Allocator.Persistent);
+            FormationOffsets = new NativeArray<float3>(FormationOffsetsLength, Allocator.Persistent);
 
-            for (int i = 0; i < maxformations; i++)
+            // these could be read from disk and there could be a lot more than these few variations
+            int f = (int)EFormation.Mob;
+            for (int i = 0; i < OffsetsPerFormation; i++)
             {
-                // temp data for testing
-                FormationOffsets[i] = new float3(i * 20, 0, i * 100);
+                FormationOffsets[f * OffsetsPerFormation + i] = new float3(i * 20, 0, i * 20);
+            }
+
+            f = (int)EFormation.Line;
+            for (int i = 0; i < OffsetsPerFormation; i++)
+            {
+                FormationUtils.DistributeAcrossColumns(5, i, out int row, out int col);
+                FormationOffsets[f * OffsetsPerFormation + i] = new float3(col * 80, 0, row * 20);
+            }
+
+            f = (int)EFormation.Column;
+            for (int i = 0; i < OffsetsPerFormation; i++)
+            {
+                FormationOffsets[f * OffsetsPerFormation + i] = new float3(0, 0, i * -20);
+            }
+
+            f = (int)EFormation.Reserve;
+            for (int i = 0; i < OffsetsPerFormation; i++)
+            {
+                FormationUtils.DistributeAcrossColumns(5, i, out int row, out int col);
+                FormationOffsets[f * OffsetsPerFormation + i] = new float3(col * 80, 0, row * 20);
             }
         }
-        protected override void OnDestroy() { 
+
+
+        protected override void OnDestroy()
+        {
             FormationOffsets.Dispose();
         }
 
-        // TODO run only when unit has moved
+        [BurstCompile]
+        [RequireComponentTag(typeof(Unit))]
+        struct SetOffsetJob : IJobForEach<FormationMember>
+        {
+            [ReadOnly] public ComponentDataFromEntity<FormationLeader> Leaders;
+            [ReadOnly] public NativeArray<float3> Offsets;
+            public void Execute(ref FormationMember formationElement)
+            {
+                Entity parent = formationElement.Parent;
+                int formationIndex = Leaders[parent].FormationIndex;
+                
+                formationElement.PositionOffset = Offsets[formationIndex + formationElement.IndexOffset];
+            }
+        }
+
+        // TODO run only when parent has moved
         [BurstCompile]
         [RequireComponentTag(typeof(Unit))]
         struct SetGoalJob : IJobForEach<MoveToGoal, FormationMember>
@@ -41,31 +83,24 @@ namespace UnitAgent
             {
                 Entity parent = formationElement.Parent;
                 float4x4 xform = Others[parent].Value;
-                goal.Position = math.transform(xform, formationElement.Offset);
+                goal.Position = math.transform(xform, formationElement.PositionOffset);
                 // heterogenous as it's a direction vector;
                 goal.Heading = math.mul(xform, new float4(0, 0, 1, 0)).xyz;
-            }
-        }
-
-        [BurstCompile]
-        [RequireComponentTag(typeof(Unit))]
-        struct SetOffsetJob : IJobForEach<FormationMember>
-        {
-            [ReadOnly] public NativeArray<float3> Offsets;
-            public void Execute(ref FormationMember formationElement)
-            {
-                formationElement.Offset = Offsets[formationElement.Index];
             }
         }
 
         protected override JobHandle OnUpdate(JobHandle inputDependencies)
         {
 
-            var outputDeps = new SetOffsetJob()
-            {
-                Offsets = FormationOffsets
-            }.Schedule(this, inputDependencies);
+            var outputDeps = inputDependencies;
 
+            outputDeps = new SetOffsetJob()
+            {
+                Leaders = GetComponentDataFromEntity<FormationLeader>(true),
+                Offsets = FormationOffsets
+            }.Schedule(this, outputDeps);
+
+            //if moved or formation changed
             outputDeps = new SetGoalJob()
             {
                 Others = GetComponentDataFromEntity<LocalToWorld>(true)

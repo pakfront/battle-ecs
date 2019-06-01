@@ -12,7 +12,8 @@ namespace UnitAgent
     [UpdateAfter(typeof(PlayerPointerSystem))]
     public class PlayerOrderPreSystem : ComponentSystem
     {
-        private EntityQuery m_NeedsOrderAttack, m_NeedsOrderMoveTo, m_NeedsOrderFormationMoveTo;
+        private EntityQuery m_NeedsOrderAttack, m_NeedsOrderMoveTo, m_NeedsOrderFormationMoveTo,
+        m__NeedsSetFormation;
 
         protected override void OnCreate()
         {
@@ -34,6 +35,11 @@ namespace UnitAgent
                 None = new ComponentType[] { typeof(OrderFormationMoveTo) },
                 All = new ComponentType[] { ComponentType.ReadOnly<FormationGroup>(), ComponentType.ReadOnly<PlayerOwned>() }
             });
+
+            m__NeedsSetFormation = GetEntityQuery(new EntityQueryDesc
+            {
+                All = new ComponentType[] { ComponentType.ReadOnly<FormationLeader>(), ComponentType.ReadOnly<PlayerOwned>() }
+            });
         }
 
         protected override void OnUpdate()
@@ -45,14 +51,25 @@ namespace UnitAgent
                 EntityManager.AddComponent(m_NeedsOrderMoveTo, typeof(OrderMoveTo));
                 return;
             }
+
             if (playerPointer.Click == (uint)EClick.FormationMoveTo)
             {
                 Debug.Log("Adding FormationMoveTo "+playerPointer.CurrentEntity);
+                EntityManager.SetComponentData(playerPointer.CurrentEntity, new Translation { Value = playerPointer.WorldHitPosition} );
                 m_NeedsOrderFormationMoveTo.SetFilter( new FormationGroup { Parent = playerPointer.CurrentEntity} );
                 EntityManager.AddComponent(m_NeedsOrderFormationMoveTo, typeof(OrderFormationMoveTo));
-                EntityManager.SetComponentData(playerPointer.CurrentEntity, new Translation { Value = playerPointer.Position} );
                 return;
             }
+
+            if (playerPointer.Formation != (int)EFormation.None)
+            {
+                Debug.Log("Setting Formation "+playerPointer.CurrentEntity+" to "+(EFormation)playerPointer.Formation);
+                EntityManager.SetComponentData(playerPointer.CurrentEntity, new FormationLeader { FormationIndex = playerPointer.Formation} );
+                m_NeedsOrderFormationMoveTo.SetFilter( new FormationGroup { Parent = playerPointer.CurrentEntity} );
+                EntityManager.AddComponent(m_NeedsOrderFormationMoveTo, typeof(OrderFormationMoveTo));
+                return;
+            }
+
         }
     }
 }

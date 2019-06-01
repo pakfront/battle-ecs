@@ -31,11 +31,11 @@ namespace UnitAgent
 
             if (playerPointer.Click != (uint)EClick.MoveTo) return inputDeps;
 
-            Debug.Log("PlayerOrderMoveSystem DidClick:" + playerPointer.Click + " " + playerPointer.Position);
+            Debug.Log("PlayerOrderMoveSystem DidClick:" + playerPointer.Click + " " + playerPointer.WorldHitPosition);
 
             var outputDeps = new SetOrderMoveTo
             {
-                ClickLocation = playerPointer.Position
+                ClickLocation = playerPointer.WorldHitPosition
             }.Schedule(this, inputDeps);
 
 
