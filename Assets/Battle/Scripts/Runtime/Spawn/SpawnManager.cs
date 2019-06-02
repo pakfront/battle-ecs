@@ -24,37 +24,39 @@ namespace UnitAgent
 
         public Dictionary<FormationSpawn, Entity> SpawnFormations(EntityManager manager, FormationSpawn[] formationSpawns)
         {
-            Dictionary<FormationSpawn, Entity> spawnMap = new Dictionary<FormationSpawn, Entity>();
+            Dictionary<FormationSpawn, Entity> formationSpawnMap = new Dictionary<FormationSpawn, Entity>();
             foreach (var formationSpawn in formationSpawns)
             {
-                spawnMap[formationSpawn] = formationSpawn.SpawnFormation(manager);
+                formationSpawnMap[formationSpawn] = formationSpawn.SpawnFormation(manager);
             }
 
-            int i = 0;
-            foreach (var outer in spawnMap)
+            foreach (var outer in formationSpawnMap)
             {
                 var spawn = outer.Key;
                 var entity = outer.Value;
+                TryAssignSuperior(manager, formationSpawnMap, spawn, entity);
+                // var superior = null;
+                // if (spawn.transform.Parent != null) superior = spawn.transform.Parent.GetComponent<FormationSpawn>();
 
-                if (spawn.superior == null) continue;
+                // if (superior == null) continue;
 
-                Debug.Log("Setting Superior entity reference to " + spawn.superior, spawn);
+                // Debug.Log("Setting Superior entity reference to " + superior, spawn);
 
-                var superiorEntity = spawnMap[spawn.superior];
-                manager.AddComponentData(entity, new FormationMember
-                {
-                    IndexOffset = i++,
-                    PositionOffset = new float3(0, 0, i),
-                    Parent = superiorEntity
-                });
+                // var superiorEntity = formationSpawnMap[spawn.superior];
+                // manager.AddComponentData(entity, new FormationMember
+                // {
+                //     IndexOffset = i++,
+                //     PositionOffset = new float3(0, 0, i),
+                //     Parent = superiorEntity
+                // });
 
-                manager.AddSharedComponentData(entity, new FormationGroup
-                {
-                    Parent = superiorEntity
-                });
+                // manager.AddSharedComponentData(entity, new FormationGroup
+                // {
+                //     Parent = superiorEntity
+                // });
             }
 
-            return spawnMap;   
+            return formationSpawnMap;   
         }
 
         public void SpawnUnits(EntityManager manager, Dictionary<FormationSpawn, Entity> formationSpawnMap, UnitSpawn[] unitSpawns)
@@ -65,29 +67,54 @@ namespace UnitAgent
                 unitSpawnMap[unitSpawn] = unitSpawn.SpawnUnit(manager);
             }
 
-            int i = 0;
             foreach (var outer in unitSpawnMap)
             {
                 var unitSpawn = outer.Key;
                 var unitEntity = outer.Value;
+                TryAssignSuperior(manager, formationSpawnMap, unitSpawn, unitEntity);
 
-                if (unitSpawn.superior == null) continue;
+                // if (unitSpawn.superior == null) continue;
 
-                Debug.Log("Setting Superior entity reference to " + unitSpawn.superior, unitSpawn);
+                // Debug.Log("Setting Superior entity reference to " + unitSpawn.superior, unitSpawn);
 
-                var superiorEntity = formationSpawnMap[unitSpawn.superior];
-                manager.AddComponentData(unitEntity, new FormationMember
-                {
-                    IndexOffset = i++,
-                    PositionOffset = new float3(0, 0, i),
-                    Parent = superiorEntity
-                });
+                // var superiorEntity = formationSpawnMap[unitSpawn.superior];
+                // manager.AddComponentData(unitEntity, new FormationMember
+                // {
+                //     IndexOffset = i++,
+                //     PositionOffset = new float3(0, 0, i),
+                //     Parent = superiorEntity
+                // });
 
-                manager.AddSharedComponentData(unitEntity, new FormationGroup
-                {
-                    Parent = superiorEntity
-                });
+                // manager.AddSharedComponentData(unitEntity, new FormationGroup
+                // {
+                //     Parent = superiorEntity
+                // });
             }
+        }
+
+        public bool TryAssignSuperior(EntityManager manager, Dictionary<FormationSpawn, Entity> formationSpawnMap, Spawn spawn, Entity entity)
+        {
+                FormationSpawn superior = null;
+                if (spawn.transform.parent != null) superior = spawn.transform.parent.GetComponent<FormationSpawn>();
+
+                if (superior == null) return false;
+
+                Debug.Log("Setting Superior entity reference to " + superior, spawn);
+
+                var superiorEntity = formationSpawnMap[superior];
+                manager.AddComponentData(entity, new FormationMember
+                {
+                    IndexOffset = spawn.transform.GetSiblingIndex(),
+                    PositionOffset = new float3(0, 0, spawn.transform.GetSiblingIndex()),
+                    Parent = superiorEntity
+                });
+
+                manager.AddSharedComponentData(entity, new FormationGroup
+                {
+                    Parent = superiorEntity
+                });   
+
+                return true;
         }
     }
 }

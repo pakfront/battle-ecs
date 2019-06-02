@@ -14,7 +14,7 @@ namespace UnitAgent
         [Header("Team")]
         public int team = 0;
 
-        public FormationSpawn superior;
+        // public FormationSpawn superior;
 
         protected Entity CreateEntity(EntityManager entityManager, GameObject gameObjectPrefab)
         {

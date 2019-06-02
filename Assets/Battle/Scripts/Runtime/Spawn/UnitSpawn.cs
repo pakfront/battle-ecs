@@ -58,6 +58,7 @@ namespace UnitAgent
 
             SpawnAgents(unitEntity, entityManager);
 
+            // create a secondary entity that draws the goal
             var unitGoalMarkerEntity = CreateEntity(entityManager, unitGoalMarkerPrefab.gameObject);
             entityManager.SetComponentData(unitGoalMarkerEntity, new UnitGoalMarker { Unit = unitEntity });
 
