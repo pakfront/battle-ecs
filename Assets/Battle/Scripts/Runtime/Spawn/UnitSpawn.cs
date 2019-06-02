@@ -73,7 +73,7 @@ namespace UnitAgent
             float3[] formationPositions = FormationUtils.CalcAgentFormations();
             float3[] spawnPositions = GetAgentSpawnPositions(formationPositions);
 
-            NativeArray<Entity> agents = new NativeArray<Entity>(formationPositions.Length, Allocator.Temp);
+            NativeArray<Entity> agents = new NativeArray<Entity>(agentCount, Allocator.Temp);
             entityManager.Instantiate(prefab, agents);
 
             // SharedComponent placed on Agents o we can process by chunk
@@ -120,35 +120,6 @@ namespace UnitAgent
                 formationPositions[i] = formationOffsets[formationIndex * FormationUtils.UnitOffsetsPerFormation + i];
             }
             return formationPositions;
-
-            // int count = columns * rows;
-            // if (formationPositions == null || formationPositions.Length != count)
-            // {
-            //     formationPositions = new float3[count];
-            // }
-            // else
-            // {
-            //     return formationPositions;
-            // }
-
-            // for (int x = 0; x < columns; x++)
-            // {
-            //     for (int y = 0; y < rows; y++)
-            //     {
-            //         int i = x * rows + y;
-            //         // formationPositions[i] = transform.TransformPoint(new float3(x * 1.3F, 0, y * 1.3F));
-            //         formationPositions[i] = new float3((x - columns / 2) * agentSpacing, 0, -y * agentSpacing);
-            //     }
-            // }
-
-            // for (int i = 0; i < count; i++)
-            // {
-            //     FormationUtils.DistributeAcrossColumns(columns, i, out int row, out int col);
-            //     formationPositions[i] = new float3(col * agentSpacing, 0, row * agentSpacing);
-            // }
-
-               
-            // return formationPositions;
         }
 
 
