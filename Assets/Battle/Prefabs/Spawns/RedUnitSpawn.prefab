@@ -12,6 +12,34 @@ PrefabInstance:
       propertyPath: m_Name
       value: RedUnitSpawn
       objectReference: {fileID: 0}
+    - target: {fileID: 1405471091258156789, guid: 070fc4462b64549c08ac4550ab44f92b,
+        type: 3}
+      propertyPath: unitTranslationUnitsPerSecond
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405471091258156789, guid: 070fc4462b64549c08ac4550ab44f92b,
+        type: 3}
+      propertyPath: columns
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405471091258156789, guid: 070fc4462b64549c08ac4550ab44f92b,
+        type: 3}
+      propertyPath: unitPrefab
+      value: 
+      objectReference: {fileID: 5217244842518333185, guid: c15220f74e66e49c1a2d3d9689633ea8,
+        type: 3}
+    - target: {fileID: 1405471091258156789, guid: 070fc4462b64549c08ac4550ab44f92b,
+        type: 3}
+      propertyPath: agentPrefab
+      value: 
+      objectReference: {fileID: 1929294028445364284, guid: bb922b225f4a74a19a17fe906099773a,
+        type: 3}
+    - target: {fileID: 1405471091258156789, guid: 070fc4462b64549c08ac4550ab44f92b,
+        type: 3}
+      propertyPath: unitGoalMarkerPrefab
+      value: 
+      objectReference: {fileID: 943447095595061671, guid: 74bd36d366893764e9586e8c65a1ae8a,
+        type: 3}
     - target: {fileID: 1405471091258156788, guid: 070fc4462b64549c08ac4550ab44f92b,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -67,27 +95,5 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1405471091258156789, guid: 070fc4462b64549c08ac4550ab44f92b,
-        type: 3}
-      propertyPath: unitTranslationUnitsPerSecond
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1405471091258156789, guid: 070fc4462b64549c08ac4550ab44f92b,
-        type: 3}
-      propertyPath: columns
-      value: 25
-      objectReference: {fileID: 0}
-    - target: {fileID: 1405471091258156789, guid: 070fc4462b64549c08ac4550ab44f92b,
-        type: 3}
-      propertyPath: unitPrefab
-      value: 
-      objectReference: {fileID: 5217244842518333185, guid: c15220f74e66e49c1a2d3d9689633ea8,
-        type: 3}
-    - target: {fileID: 1405471091258156789, guid: 070fc4462b64549c08ac4550ab44f92b,
-        type: 3}
-      propertyPath: agentPrefab
-      value: 
-      objectReference: {fileID: 1929294028445364284, guid: bb922b225f4a74a19a17fe906099773a,
-        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 070fc4462b64549c08ac4550ab44f92b, type: 3}

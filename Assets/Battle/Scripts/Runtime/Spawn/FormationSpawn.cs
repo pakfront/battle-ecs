@@ -45,14 +45,14 @@ namespace UnitAgent
             // Draw a yellow sphere at the transform's position
             switch (team)
             {
-                case 0:
+                case ETeam.Red:
                     Gizmos.color = Color.red;
                     break;
-                case 1:
+                case ETeam.Blue:
                     Gizmos.color = Color.blue;
                     break;
                 default:
-                    Gizmos.color = Color.yellow;
+                    Gizmos.color = Color.white;
                     break;
 
             }

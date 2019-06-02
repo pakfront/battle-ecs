@@ -8,11 +8,13 @@ using UnityEngine;
 
 namespace UnitAgent
 {
+    public enum ETeam : byte {None=0, Red, Blue}
+
     public class Spawn : MonoBehaviour
     {
 
         [Header("Team")]
-        public int team = 0;
+        public ETeam team;
 
         // public FormationSpawn superior;
 
@@ -53,7 +55,7 @@ namespace UnitAgent
                 min = spawnPosition - (float3)combinedBounds.extents,
             });
 
-            entityManager.AddSharedComponentData(entity, new Team { Value = team });
+            entityManager.AddSharedComponentData(entity, new Team { Value = (int)team });
             if (team == LocalPlayer.Team)
             {
                 entityManager.AddSharedComponentData(entity, new PlayerOwned());

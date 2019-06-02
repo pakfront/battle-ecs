@@ -10,8 +10,46 @@ PrefabInstance:
     - target: {fileID: 1405471091258156790, guid: 070fc4462b64549c08ac4550ab44f92b,
         type: 3}
       propertyPath: m_Name
-      value: BlueUnitSpawn (1)
+      value: BlueUnitSpawn
       objectReference: {fileID: 0}
+    - target: {fileID: 1405471091258156789, guid: 070fc4462b64549c08ac4550ab44f92b,
+        type: 3}
+      propertyPath: unitIndex
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405471091258156789, guid: 070fc4462b64549c08ac4550ab44f92b,
+        type: 3}
+      propertyPath: unitTranslationUnitsPerSecond
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405471091258156789, guid: 070fc4462b64549c08ac4550ab44f92b,
+        type: 3}
+      propertyPath: team
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405471091258156789, guid: 070fc4462b64549c08ac4550ab44f92b,
+        type: 3}
+      propertyPath: columns
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405471091258156789, guid: 070fc4462b64549c08ac4550ab44f92b,
+        type: 3}
+      propertyPath: unitPrefab
+      value: 
+      objectReference: {fileID: 8499803135485904712, guid: 0a493c61a8b674a308231a2cf3b5a71d,
+        type: 3}
+    - target: {fileID: 1405471091258156789, guid: 070fc4462b64549c08ac4550ab44f92b,
+        type: 3}
+      propertyPath: agentPrefab
+      value: 
+      objectReference: {fileID: 4508414093650897404, guid: b846685b4aeed409cb113fd9e946bb85,
+        type: 3}
+    - target: {fileID: 1405471091258156789, guid: 070fc4462b64549c08ac4550ab44f92b,
+        type: 3}
+      propertyPath: unitGoalMarkerPrefab
+      value: 
+      objectReference: {fileID: 1671604156086438254, guid: 8e2800185cf756b4e82a27f44f97a889,
+        type: 3}
     - target: {fileID: 1405471091258156788, guid: 070fc4462b64549c08ac4550ab44f92b,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -67,37 +105,5 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1405471091258156789, guid: 070fc4462b64549c08ac4550ab44f92b,
-        type: 3}
-      propertyPath: unitIndex
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1405471091258156789, guid: 070fc4462b64549c08ac4550ab44f92b,
-        type: 3}
-      propertyPath: unitTranslationUnitsPerSecond
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1405471091258156789, guid: 070fc4462b64549c08ac4550ab44f92b,
-        type: 3}
-      propertyPath: team
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1405471091258156789, guid: 070fc4462b64549c08ac4550ab44f92b,
-        type: 3}
-      propertyPath: columns
-      value: 25
-      objectReference: {fileID: 0}
-    - target: {fileID: 1405471091258156789, guid: 070fc4462b64549c08ac4550ab44f92b,
-        type: 3}
-      propertyPath: unitPrefab
-      value: 
-      objectReference: {fileID: 8499803135485904712, guid: 0a493c61a8b674a308231a2cf3b5a71d,
-        type: 3}
-    - target: {fileID: 1405471091258156789, guid: 070fc4462b64549c08ac4550ab44f92b,
-        type: 3}
-      propertyPath: agentPrefab
-      value: 
-      objectReference: {fileID: 4508414093650897404, guid: b846685b4aeed409cb113fd9e946bb85,
-        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 070fc4462b64549c08ac4550ab44f92b, type: 3}
