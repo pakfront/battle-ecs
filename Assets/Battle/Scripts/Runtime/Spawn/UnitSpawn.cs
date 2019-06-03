@@ -12,10 +12,12 @@ namespace UnitAgent
     public class UnitSpawn : Spawn
     {
         public enum EOrder { None, InFormation, HoldPosition, MoveToPosition, FollowUnit, PursueUnit }
+        public enum EMobility { None, Foot, Horse, Wheeled }
 
         [Header("Unit")]
         public UnitProxy unitPrefab;
         public UnitGoalMarkerProxy unitGoalMarkerPrefab;
+        public EMobility mobility = EMobility.Foot;
         public EOrder initialOrders;
 
         [Header("Agent")]
@@ -111,7 +113,7 @@ namespace UnitAgent
 
         public float3[] GetAgentFormationPositions()
         {
-            float3 [] formationPositions = new float3[agentCount];
+            float3[] formationPositions = new float3[agentCount];
             int formationIndex = (int)agentFormation;
             if (formationIndex < 0 || formationIndex >= FormationUtils.FormationCount) return formationPositions;
 
@@ -139,7 +141,7 @@ namespace UnitAgent
 
         void OnDrawGizmos()
         {
-            // Draw a yellow sphere at the transform's position
+
             switch (team)
             {
                 case ETeam.Red:
@@ -154,16 +156,18 @@ namespace UnitAgent
 
             }
             Gizmos.matrix = transform.localToWorldMatrix;
-            Bounds bounds = new Bounds( Vector3.zero, Vector3.one);
+            Bounds bounds = new Bounds(Vector3.zero, Vector3.one);
 
-           float3[] pos = GetAgentFormationPositions();
+            float3[] pos = GetAgentFormationPositions();
             for (int i = 0; i < pos.Length; i++)
+            {
                 bounds.Encapsulate(pos[i]);
+            }
 
-            Gizmos.DrawCube(
-                bounds.center,
-               bounds.size
-            );        
+            if (UnityEditor.Selection.activeGameObject == this.gameObject)
+                Gizmos.DrawWireCube( bounds.center, bounds.size );
+            else
+                Gizmos.DrawCube( bounds.center, bounds.size);
 
             // float agentRadius = agentSpacing / 2f;
             // Gizmos.DrawCube(
@@ -174,13 +178,32 @@ namespace UnitAgent
 
         void OnDrawGizmosSelected()
         {
+            if (UnityEditor.Selection.activeGameObject != this.gameObject) return;
+
             Gizmos.color = Color.gray;
             Gizmos.matrix = transform.localToWorldMatrix;
+            Bounds bounds = new Bounds(Vector3.zero, Vector3.one);
+            switch (team)
+            {
+                case ETeam.Red:
+                    Gizmos.color = Color.red;
+                    break;
+                case ETeam.Blue:
+                    Gizmos.color = Color.blue;
+                    break;
+                default:
+                    Gizmos.color = Color.white;
+                    break;
+
+            }
             float3[] pos = GetAgentFormationPositions();
             for (int i = 0; i < pos.Length; i++)
+            {
                 Gizmos.DrawSphere(
                         pos[i], 1.6f / 2f
                 );
+            }
+
         }
     }
 }

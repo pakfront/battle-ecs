@@ -20,6 +20,23 @@ namespace UnitAgent
             return entity;
         }
 
+        
+        public void ApplyFormation()
+        {
+            float3 []  formationOffsets = FormationUtils.CalcUnitFormations();
+            int formationIndex = (int)initialFormation;
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                var childXform =  transform.GetChild(i);
+                var childSpawn = childXform.GetComponent<Spawn>();
+                if (childSpawn == null) continue;
+
+                Vector3 p = formationOffsets[formationIndex*FormationUtils.UnitOffsetsPerFormation +i];
+                childXform.position = transform.TransformPoint(formationOffsets[i]);
+                childXform.rotation = Quaternion.LookRotation(transform.TransformDirection(Vector3.forward), Vector3.up);
+            }
+        }
+
         void OnDrawGizmosSelected()
         {
 

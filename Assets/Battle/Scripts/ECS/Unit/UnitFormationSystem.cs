@@ -32,13 +32,13 @@ namespace UnitAgent
         struct SetOffsetJob : IJobForEach<FormationMember>
         {
             [ReadOnly] public ComponentDataFromEntity<FormationLeader> Leaders;
-            [ReadOnly] public NativeArray<float3> Offsets;
+            [ReadOnly] public NativeArray<float3> FormationOffsets;
             public void Execute(ref FormationMember formationElement)
             {
                 Entity parent = formationElement.Parent;
                 int formationIndex = Leaders[parent].FormationIndex;
                 
-                formationElement.PositionOffset = Offsets[formationIndex*FormationUtils.UnitOffsetsPerFormation + formationElement.IndexOffset];
+                formationElement.PositionOffset = FormationOffsets[formationIndex*FormationUtils.UnitOffsetsPerFormation + formationElement.IndexOffset];
             }
         }
 
@@ -66,7 +66,7 @@ namespace UnitAgent
             outputDeps = new SetOffsetJob()
             {
                 Leaders = GetComponentDataFromEntity<FormationLeader>(true),
-                Offsets = FormationOffsets
+                FormationOffsets = FormationOffsets
             }.Schedule(this, outputDeps);
 
             //if moved or formation changed
