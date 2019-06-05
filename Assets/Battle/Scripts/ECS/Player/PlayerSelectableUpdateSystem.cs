@@ -5,7 +5,7 @@ using Unity.Transforms;
 
 namespace UnitAgent
 {
-    [UpdateInGroup(typeof(GameSystemGroup))]
+    [UpdateInGroup(typeof(PlayerSystemGroup))]
     [UpdateBefore(typeof(PlayerPointerSystem))]
     public class PlayerSelectableUpdateSystem : JobComponentSystem
     {

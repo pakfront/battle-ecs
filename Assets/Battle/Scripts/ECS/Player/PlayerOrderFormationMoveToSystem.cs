@@ -8,7 +8,7 @@ using Unity.Collections;
 namespace UnitAgent
 {
     // [DisableAutoCreation] 
-    [UpdateInGroup(typeof(GameSystemGroup))]
+    [UpdateInGroup(typeof(PlayerSystemGroup))]
     [UpdateAfter(typeof(PlayerOrderPreSystem))]
     [UpdateBefore(typeof(PlayerOrderPostSystem))]
     public class PlayerOrderFormationMoveToSystem : JobComponentSystem
@@ -30,12 +30,10 @@ namespace UnitAgent
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
             var playerPointer = GetSingleton<PlayerPointer>();
-
-            if (playerPointer.Click != (uint)EClick.FormationMoveTo) return inputDeps;
             
             var clickTransform = float4x4.Translate(playerPointer.WorldHitPosition);
 
-            Debug.Log("PlayerOrderFormationMoveToSystem DidClick:" + playerPointer.Click + " " +clickTransform);
+            // Debug.Log("PlayerOrderFormationMoveToSystem DidClick:" + playerPointer.Click + " " +clickTransform);
 
             var outputDeps = new SetOrderFormationMoveTo
             {

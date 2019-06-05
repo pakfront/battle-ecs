@@ -9,9 +9,9 @@ using static Unity.Mathematics.math;
 namespace UnitAgent
 {
 
-    [UpdateInGroup(typeof(GameSystemGroup))]
-    [UpdateAfter(typeof(PlayerOrderPostSystem))]
-    public class UnitGoalSystem : JobComponentSystem
+    [UpdateInGroup(typeof(UnitSystemGroup))]
+    [UpdateAfter(typeof(UnitOrderPreSystem))]
+    public class UnitOrderSystem : JobComponentSystem
     {
         [BurstCompile]
         struct OrderMoveToJob : IJobForEach<MoveToGoal, OrderMoveTo>
@@ -50,16 +50,16 @@ namespace UnitAgent
             }
         }
 
-        // TODO run only when target has moved
-        // [BurstCompile]
-        [ExcludeComponent(typeof(OrderMoveTo),typeof(OrderAttack))]
-        struct OrderHoldJob : IJobForEach<OrderHold>
-        {
-            public void Execute([ReadOnly] ref OrderHold OrderAttack)
-            {
-                // UnityEngine.Debug.Log("OrderHold");
-            }
-        }
+        // // TODO run only when target has moved
+        // // [BurstCompile]
+        // [ExcludeComponent(typeof(OrderMoveTo),typeof(OrderAttack))]
+        // struct OrderHoldJob : IJobForEach<OrderHold>
+        // {
+        //     public void Execute([ReadOnly] ref OrderHold OrderAttack)
+        //     {
+        //         // UnityEngine.Debug.Log("OrderHold");
+        //     }
+        // }
 
         protected override JobHandle OnUpdate(JobHandle inputDependencies)
         {
@@ -78,10 +78,9 @@ namespace UnitAgent
                 Others = allXforms
             }.Schedule(this, outputDeps);
  
-
-            outputDeps = new OrderHoldJob
-            {
-            }.Schedule(this, outputDeps);
+            // outputDeps = new OrderHoldJob
+            // {
+            // }.Schedule(this, outputDeps);
 
             return outputDeps;
         }

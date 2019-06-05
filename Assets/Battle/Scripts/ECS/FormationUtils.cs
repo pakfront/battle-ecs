@@ -46,33 +46,34 @@ namespace UnitAgent
         {
             float3[] formationOffsets = new float3[UnitFormationOffsetsLength];
             float3 agentSpacing = new float3(AgentColumnWidth, 0, AgentRowHeight);
+            float3 originOffset = new float3(0, 0, AgentRowHeight);
 
             // these could be read from disk and there could be a lot more than these few variations
             int f = (int)EFormation.Mob;
             for (int i = 0; i < UnitOffsetsPerFormation; i++)
             {
-                formationOffsets[f * UnitOffsetsPerFormation + i] = new float3(i , 0, i ) * agentSpacing;
+                formationOffsets[f * UnitOffsetsPerFormation + i] = originOffset + new float3(i , 0, i ) * agentSpacing;
             }
 
             f = (int)EFormation.Line;
             for (int i = 0; i < UnitOffsetsPerFormation; i++)
             {
                 FormationUtils.DistributeAcrossColumns(5, i, out int row, out int col);
-                formationOffsets[f * UnitOffsetsPerFormation + i] = new float3(col * 40, 0, row*2) * agentSpacing;
+                formationOffsets[f * UnitOffsetsPerFormation + i] = originOffset + new float3(col * 40, 0, row*2) * agentSpacing;
             }
 
             f = (int)EFormation.Column;
             for (int i = 0; i < UnitOffsetsPerFormation; i++)
             {
                 FormationUtils.DistributeAcrossColumns(1, i, out int row, out int col);
-                formationOffsets[f * UnitOffsetsPerFormation + i] = new float3(col * 5, 0, row*2) * agentSpacing;
+                formationOffsets[f * UnitOffsetsPerFormation + i] = originOffset + new float3(col * 5, 0, row*2) * agentSpacing;
             }
 
             f = (int)EFormation.Reserve;
             for (int i = 0; i < UnitOffsetsPerFormation; i++)
             {
                 FormationUtils.DistributeAcrossColumns(3, i, out int row, out int col);
-                formationOffsets[f * UnitOffsetsPerFormation + i] = new float3(col, 0, row) * agentSpacing;
+                formationOffsets[f * UnitOffsetsPerFormation + i] = originOffset + new float3(col, 0, row) * agentSpacing;
             }
 
             return formationOffsets;

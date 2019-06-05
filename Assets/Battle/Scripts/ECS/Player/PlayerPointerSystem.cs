@@ -10,7 +10,7 @@ using UnityEngine;
 namespace UnitAgent
 {
     // [DisableAutoCreation] 
-    [UpdateInGroup(typeof(GameSystemGroup))]
+    [UpdateInGroup(typeof(PlayerSystemGroup))]
     [UpdateBefore(typeof(PlayerOrderPreSystem))]
     public class PlayerPointerSystem : JobComponentSystem
     {

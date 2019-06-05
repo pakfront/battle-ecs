@@ -11,8 +11,7 @@ using UnityEngine;
 namespace UnitAgent
 {
 
-    [UpdateInGroup(typeof(GameSystemGroup))]
-    [UpdateAfter(typeof(PlayerOrderPostSystem))]
+    [UpdateInGroup(typeof(UnitSystemGroup))]
     public class UnitGoalMarkerSystem : JobComponentSystem
     {
         [BurstCompile]

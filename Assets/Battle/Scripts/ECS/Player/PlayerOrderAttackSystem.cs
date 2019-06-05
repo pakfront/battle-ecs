@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace UnitAgent
 {
-    [UpdateInGroup(typeof(GameSystemGroup))]
+    [UpdateInGroup(typeof(PlayerSystemGroup))]
     [UpdateAfter(typeof(PlayerOrderPreSystem))]
     [UpdateBefore(typeof(PlayerOrderPostSystem))]
     public class PlayerOrderAttackSystem : JobComponentSystem

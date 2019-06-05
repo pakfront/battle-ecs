@@ -46,17 +46,17 @@ namespace UnitAgent
 
             // entityManager.AddComponentData(entity, new Opponent { });
 
-            switch (initialOrders)
-            {
-                case EOrder.PursueUnit:
-                    entityManager.AddComponentData(unitEntity, new OrderAttack { });
-                    break;
-                case EOrder.HoldPosition:
-                    entityManager.AddComponentData(unitEntity, new OrderHold { });
-                    break;
-                default:
-                    break;
-            }
+            // switch (initialOrders)
+            // {
+            //     case EOrder.PursueUnit:
+            //         entityManager.AddComponentData(unitEntity, new OrderAttack { });
+            //         break;
+            //     case EOrder.HoldPosition:
+            //         entityManager.AddComponentData(unitEntity, new OrderHold { });
+            //         break;
+            //     default:
+            //         break;
+            // }
 
             SpawnAgents(unitEntity, entityManager);
 

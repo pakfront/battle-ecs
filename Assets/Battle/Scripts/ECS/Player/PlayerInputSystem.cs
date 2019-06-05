@@ -9,7 +9,7 @@ using Unity.Collections;
 namespace UnitAgent
 {
     // [DisableAutoCreation] 
-    [UpdateInGroup(typeof(GameSystemGroup))]
+    [UpdateInGroup(typeof(PlayerSystemGroup))]
     [UpdateBefore(typeof(PlayerPointerPreSystem))]
 
     public class PlayerInputSystem : ComponentSystem

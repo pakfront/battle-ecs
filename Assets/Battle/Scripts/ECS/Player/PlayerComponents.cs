@@ -20,8 +20,8 @@ namespace UnitAgent
         AnyPointerButton = PrimaryPointerButton | SecondaryPointerButton,
         MoveTo = SecondaryPointerButton | Terrain,
         Attack = SecondaryPointerButton | PlayerSelectable,
-        FormationMoveTo = MoveTo | Ctrl,
-        FormationAttack = Attack | Ctrl
+        // FormationMoveTo = MoveTo | Ctrl,
+        // FormationAttack = Attack | Ctrl
     }
 
     public enum EFormation : int
