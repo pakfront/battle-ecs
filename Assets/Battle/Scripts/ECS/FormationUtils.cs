@@ -58,14 +58,14 @@ namespace UnitAgent
             for (int i = 0; i < UnitOffsetsPerFormation; i++)
             {
                 FormationUtils.DistributeAcrossColumns(5, i, out int row, out int col);
-                formationOffsets[f * UnitOffsetsPerFormation + i] = new float3(col * 40, 0, row) * agentSpacing;
+                formationOffsets[f * UnitOffsetsPerFormation + i] = new float3(col * 40, 0, row*2) * agentSpacing;
             }
 
             f = (int)EFormation.Column;
             for (int i = 0; i < UnitOffsetsPerFormation; i++)
             {
                 FormationUtils.DistributeAcrossColumns(1, i, out int row, out int col);
-                formationOffsets[f * UnitOffsetsPerFormation + i] = new float3(col * 5, 0, row) * agentSpacing;
+                formationOffsets[f * UnitOffsetsPerFormation + i] = new float3(col * 5, 0, row*2) * agentSpacing;
             }
 
             f = (int)EFormation.Reserve;

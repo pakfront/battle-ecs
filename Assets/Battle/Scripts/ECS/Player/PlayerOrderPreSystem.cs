@@ -45,6 +45,9 @@ namespace UnitAgent
         protected override void OnUpdate()
         {
             var playerPointer = GetSingleton<PlayerPointer>();
+
+            // add to all with PlayerSelection
+
             if (playerPointer.Click == (uint)EClick.MoveTo)
             {
                 Debug.Log("Adding OrderMoveTo");
@@ -52,23 +55,35 @@ namespace UnitAgent
                 return;
             }
 
-            if (playerPointer.Click == (uint)EClick.FormationMoveTo)
-            {
-                Debug.Log("Adding FormationMoveTo "+playerPointer.CurrentEntity);
-                EntityManager.SetComponentData(playerPointer.CurrentEntity, new Translation { Value = playerPointer.WorldHitPosition} );
-                m_NeedsOrderFormationMoveTo.SetFilter( new FormationGroup { Parent = playerPointer.CurrentEntity} );
-                EntityManager.AddComponent(m_NeedsOrderFormationMoveTo, typeof(OrderFormationMoveTo));
+            // add to selection
+
+            if (playerPointer.CurrentEntity == Entity.Null) {
+                // Debug.Log("PlayerOrderPreSystem: No Entity Selected");
                 return;
             }
 
-            if (playerPointer.FormationIndex != (int)EFormation.None)
+            if (EntityManager.HasComponent<FormationLeader>(playerPointer.CurrentEntity))
             {
-                Debug.Log("Setting Formation "+playerPointer.CurrentEntity+" to "+(EFormation)playerPointer.FormationIndex);
-                EntityManager.SetComponentData(playerPointer.CurrentEntity, new FormationLeader { FormationIndex = playerPointer.FormationIndex} );
-                m_NeedsOrderFormationMoveTo.SetFilter( new FormationGroup { Parent = playerPointer.CurrentEntity} );
-                EntityManager.AddComponent(m_NeedsOrderFormationMoveTo, typeof(OrderFormationMoveTo));
-                return;
+                if (playerPointer.Click == (uint)EClick.FormationMoveTo)
+                {
+                    Debug.Log("Adding FormationMoveTo "+playerPointer.CurrentEntity);
+                    EntityManager.SetComponentData(playerPointer.CurrentEntity, new Translation { Value = playerPointer.WorldHitPosition} );
+                    m_NeedsOrderFormationMoveTo.SetFilter( new FormationGroup { Parent = playerPointer.CurrentEntity} );
+                    EntityManager.AddComponent(m_NeedsOrderFormationMoveTo, typeof(OrderFormationMoveTo));
+                    return;
+                }
+
+                if (playerPointer.FormationIndex != (int)EFormation.None)
+                {
+                    Debug.Log("Setting Unit Formation "+playerPointer.CurrentEntity+" to "+(EFormation)playerPointer.FormationIndex);
+                    EntityManager.SetComponentData(playerPointer.CurrentEntity, new FormationLeader { FormationIndex = playerPointer.FormationIndex} );
+                    m_NeedsOrderFormationMoveTo.SetFilter( new FormationGroup { Parent = playerPointer.CurrentEntity} );
+                    EntityManager.AddComponent(m_NeedsOrderFormationMoveTo, typeof(OrderFormationMoveTo));
+                    return;
+                }
             }
+
+            Debug.Log("PlayerOrderPreSystem: Entity not valid for orders");
 
         }
     }

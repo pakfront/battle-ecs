@@ -25,15 +25,17 @@ namespace UnitAgent
         {
             float3 []  formationOffsets = FormationUtils.CalcUnitFormations();
             int formationIndex = (int)initialFormation;
+            int startIndex = formationIndex * FormationUtils.UnitOffsetsPerFormation;
+            Debug.Log(name+" Applying Formation "+initialFormation+" "+startIndex);
             for (int i = 0; i < transform.childCount; i++)
             {
                 var childXform =  transform.GetChild(i);
-                var childSpawn = childXform.GetComponent<Spawn>();
-                if (childSpawn == null) continue;
-
-                Vector3 p = formationOffsets[formationIndex*FormationUtils.UnitOffsetsPerFormation +i];
-                childXform.position = transform.TransformPoint(formationOffsets[i]);
+                Vector3 p = formationOffsets[startIndex +i];
+                childXform.position = transform.TransformPoint(p);
                 childXform.rotation = Quaternion.LookRotation(transform.TransformDirection(Vector3.forward), Vector3.up);
+            
+                var childSpawn = childXform.GetComponent<FormationSpawn>();
+                if (childSpawn != null) childSpawn.ApplyFormation();
             }
         }
 
@@ -46,9 +48,10 @@ namespace UnitAgent
             UnityEditor.Handles.matrix  = transform.localToWorldMatrix;
 
             float3[] formationOffsets = FormationUtils.CalcUnitFormations();
+            int startIndex = formationIndex * FormationUtils.UnitOffsetsPerFormation; 
             for (int i = 0; i < FormationUtils.UnitOffsetsPerFormation; i++)
             {
-                Vector3 p = formationOffsets[formationIndex * FormationUtils.UnitOffsetsPerFormation + i];
+                Vector3 p = formationOffsets[startIndex + i];
 #if UNITY_EDITOR
                 UnityEditor.Handles.Label(p, i.ToString());
 #endif
