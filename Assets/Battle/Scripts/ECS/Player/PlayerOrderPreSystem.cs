@@ -12,11 +12,18 @@ namespace UnitAgent
     [UpdateAfter(typeof(PlayerPointerSystem))]
     public class PlayerOrderPreSystem : ComponentSystem
     {
-        private EntityQuery m_NeedsOrderAttack, m_NeedsOrderMoveTo, m_NeedsOrderFormationMoveTo,
+        private EntityQuery m_NeedsSnapTo, m_NeedsOrderAttack, m_NeedsOrderMoveTo, m_NeedsOrderFormationMoveTo,
         m__NeedsSetFormation;
 
         protected override void OnCreate()
         {
+
+            m_NeedsSnapTo = GetEntityQuery(new EntityQueryDesc
+            {
+                All = new ComponentType[] { ComponentType.ReadOnly<PlayerSelection>(), ComponentType.ReadOnly<PlayerOwned>() }
+            });
+
+
             m_NeedsOrderAttack = GetEntityQuery(new EntityQueryDesc
             {
                 None = new ComponentType[] { typeof(OrderAttack) },
@@ -46,44 +53,46 @@ namespace UnitAgent
         {
             var playerPointer = GetSingleton<PlayerPointer>();
 
-            // add to all with PlayerSelection
-
+            // MultiSelection add to all with PlayerSelection
             if (playerPointer.Click == (uint)EClick.MoveTo)
             {
-                Debug.Log("Adding OrderMoveTo");
+                Debug.Log("PlayerOrderPreSystem EClick.MoveTo");
                 EntityManager.AddComponent(m_NeedsOrderMoveTo, typeof(OrderMoveTo));
+                // EntityManager.SetComponent(m_NeedsSnapTo, new Translation { Value = playerPointer.WorldHitPosition} );
                 return;
             }
 
-            // add to selection
 
-            if (playerPointer.CurrentEntity == Entity.Null) {
-                // Debug.Log("PlayerOrderPreSystem: No Entity Selected");
-                return;
-            }
 
-            if (EntityManager.HasComponent<FormationLeader>(playerPointer.CurrentEntity))
-            {
-                if (playerPointer.Click == (uint)EClick.FormationMoveTo)
-                {
-                    Debug.Log("Adding FormationMoveTo "+playerPointer.CurrentEntity);
-                    EntityManager.SetComponentData(playerPointer.CurrentEntity, new Translation { Value = playerPointer.WorldHitPosition} );
-                    m_NeedsOrderFormationMoveTo.SetFilter( new FormationGroup { Parent = playerPointer.CurrentEntity} );
-                    EntityManager.AddComponent(m_NeedsOrderFormationMoveTo, typeof(OrderFormationMoveTo));
-                    return;
-                }
+            // Add to current selection only
 
-                if (playerPointer.FormationIndex != (int)EFormation.None)
-                {
-                    Debug.Log("Setting Unit Formation "+playerPointer.CurrentEntity+" to "+(EFormation)playerPointer.FormationIndex);
-                    EntityManager.SetComponentData(playerPointer.CurrentEntity, new FormationLeader { FormationIndex = playerPointer.FormationIndex} );
-                    m_NeedsOrderFormationMoveTo.SetFilter( new FormationGroup { Parent = playerPointer.CurrentEntity} );
-                    EntityManager.AddComponent(m_NeedsOrderFormationMoveTo, typeof(OrderFormationMoveTo));
-                    return;
-                }
-            }
+            // if (playerPointer.CurrentEntity == Entity.Null) {
+            //     // Debug.Log("PlayerOrderPreSystem: No Entity Selected");
+            //     return;
+            // }
 
-            Debug.Log("PlayerOrderPreSystem: Entity not valid for orders");
+            // if (EntityManager.HasComponent<FormationLeader>(playerPointer.CurrentEntity))
+            // {
+            //     if (playerPointer.Click == (uint)EClick.FormationMoveTo)
+            //     {
+            //         Debug.Log("Adding FormationMoveTo "+playerPointer.CurrentEntity);
+            //         EntityManager.SetComponentData(playerPointer.CurrentEntity, new Translation { Value = playerPointer.WorldHitPosition} );
+            //         m_NeedsOrderFormationMoveTo.SetFilter( new FormationGroup { Parent = playerPointer.CurrentEntity} );
+            //         EntityManager.AddComponent(m_NeedsOrderFormationMoveTo, typeof(OrderFormationMoveTo));
+            //         return;
+            //     }
+
+            //     if (playerPointer.FormationIndex != (int)EFormation.None)
+            //     {
+            //         Debug.Log("Setting Unit Formation "+playerPointer.CurrentEntity+" to "+(EFormation)playerPointer.FormationIndex);
+            //         EntityManager.SetComponentData(playerPointer.CurrentEntity, new FormationLeader { FormationIndex = playerPointer.FormationIndex} );
+            //         m_NeedsOrderFormationMoveTo.SetFilter( new FormationGroup { Parent = playerPointer.CurrentEntity} );
+            //         EntityManager.AddComponent(m_NeedsOrderFormationMoveTo, typeof(OrderFormationMoveTo));
+            //         return;
+            //     }
+            // }
+
+            // Debug.Log("PlayerOrderPreSystem: Entity not valid for orders");
 
         }
     }

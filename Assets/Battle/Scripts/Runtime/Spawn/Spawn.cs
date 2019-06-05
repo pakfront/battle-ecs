@@ -45,7 +45,7 @@ namespace UnitAgent
 
             float3 spawnPosition = transform.TransformPoint(new float3(0, 0, 0));
 
-            entityManager.AddComponentData(entity, new AABB
+            entityManager.AddComponentData(entity, new PlayerSelectable
             {
                 //TODO add mesh bounds calc
                 //0.5f will represent halfwidth for now

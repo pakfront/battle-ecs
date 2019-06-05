@@ -9,7 +9,11 @@ public class FormationSpawnEditor : Editor
         public override void OnInspectorGUI() {
             DrawDefaultInspector();
             FormationSpawn obj = target as FormationSpawn;
-            if (GUILayout.Button("Apply Formation"))
+            if (GUILayout.Button("ApplyTeam"))
+            {
+                obj.ApplyTeam();
+            }
+            if (GUILayout.Button("ApplyFormation"))
             {
                 obj.ApplyFormation();
             }

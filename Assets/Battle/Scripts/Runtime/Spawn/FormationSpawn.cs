@@ -39,6 +39,14 @@ namespace UnitAgent
             }
         }
 
+        public void ApplyTeam()
+        {
+            foreach (var child in GetComponentsInChildren<Spawn>())
+            {
+                child.team = this.team;
+            }
+        }
+
         void OnDrawGizmosSelected()
         {
 

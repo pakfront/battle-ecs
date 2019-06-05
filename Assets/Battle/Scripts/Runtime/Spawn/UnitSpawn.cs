@@ -71,8 +71,8 @@ namespace UnitAgent
         // spawn multiple agents that follow this unit
         void SpawnAgents(Entity unit, EntityManager entityManager)
         {
-            Entity prefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(agentPrefab.gameObject, entityManager.World);
-            // int count = columns * rows;
+            Entity prefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(
+                agentPrefab.gameObject, entityManager.World);
             float3[] formationPositions = FormationUtils.CalcAgentFormations();
             float3[] spawnPositions = GetAgentSpawnPositions(formationPositions);
 

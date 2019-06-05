@@ -8,18 +8,18 @@ namespace UnitAgent
     public enum EClick : uint
     {
         None = 0,
-        AABB = 1,
-        Terrain = 1<<2,
-        PrimaryPointerButton = 1<<3,
-        SecondaryPointerButton = 1<<4,
-        Shift = 1<<5,
-        Ctrl = 1<<6,
+        PlayerSelectable = 1,
+        Terrain = 1 << 2,
+        PrimaryPointerButton = 1 << 3,
+        SecondaryPointerButton = 1 << 4,
+        Shift = 1 << 5,
+        Ctrl = 1 << 6,
 
         // aliases
         AnyModifier = Shift | Ctrl,
         AnyPointerButton = PrimaryPointerButton | SecondaryPointerButton,
         MoveTo = SecondaryPointerButton | Terrain,
-        Attack =  SecondaryPointerButton | AABB,
+        Attack = SecondaryPointerButton | PlayerSelectable,
         FormationMoveTo = MoveTo | Ctrl,
         FormationAttack = Attack | Ctrl
     }
@@ -27,7 +27,7 @@ namespace UnitAgent
     public enum EFormation : int
     {
         None = -1,
-        
+
         Line = 0,
         Column = 1,
         Reserve = 2,
@@ -46,6 +46,15 @@ namespace UnitAgent
 
 
 
+
+    [Serializable]
+    public struct PlayerSelectable : IComponentData
+    {
+        public float3 min;
+        public float3 max;
+        public float3 center;
+        public float3 halfwidth;
+    }
 
 
     [Serializable] public struct PlayerSelection : IComponentData { }

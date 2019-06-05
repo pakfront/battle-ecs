@@ -26,7 +26,7 @@ namespace UnitAgent
 
             var query = new EntityQueryDesc
             {
-                All = new ComponentType[] { ComponentType.ReadOnly<AABB>(), ComponentType.ReadOnly<Translation>() }
+                All = new ComponentType[] { ComponentType.ReadOnly<PlayerSelectable>(), ComponentType.ReadOnly<Translation>() }
             };
 
             m_group = GetEntityQuery(query);
@@ -37,7 +37,7 @@ namespace UnitAgent
         {
             [DeallocateOnJobCompletion] public NativeArray<ArchetypeChunk> Chunks;
             [ReadOnly] public ArchetypeChunkEntityType EntityType;
-            [ReadOnly] public ArchetypeChunkComponentType<AABB> AABBType;
+            [ReadOnly] public ArchetypeChunkComponentType<PlayerSelectable> PlayerSelectableType;
             [ReadOnly] public ArchetypeChunkComponentType<Translation> TranslationType;
 
             public RTSRay Ray;
@@ -49,19 +49,15 @@ namespace UnitAgent
                 var chunk = Chunks[chunkIndex];
                 var entities = chunk.GetNativeArray(EntityType);
                 var chunkTranslation = chunk.GetNativeArray(TranslationType);
-                var chunkAABB = chunk.GetNativeArray(AABBType);
+                var chunkPlayerSelectable = chunk.GetNativeArray(PlayerSelectableType);
                 var instanceCount = chunk.Count;
                 float nearestDistanceSq = float.MaxValue;
                 int nearestPositionIndex = -1;
 
                 for (int i = 0; i < instanceCount; i++)
                 {
-                    var aabb = chunkAABB[i];
+                    var aabb = chunkPlayerSelectable[i];
                     bool hit = RTSPhysics.Intersect(aabb, Ray);
-                    // if (hit)
-                    // {
-                    //     Debug.Log("PlayerSelectionJob: Click on " + i);
-                    // }
 
                     float distance = math.lengthsq((chunkTranslation[i].Value - Ray.origin));
                     bool nearest = hit && distance < nearestDistanceSq;
@@ -82,7 +78,7 @@ namespace UnitAgent
             var playerPointer = GetSingleton<PlayerPointer>();
 
             // early out if no mouse button clicked
-            if ( (playerPointer.Click &  (uint)EClick.AnyPointerButton) == 0) 
+            if ((playerPointer.Click & (uint)EClick.AnyPointerButton) == 0)
                 return inputDeps;
 
 
@@ -106,7 +102,7 @@ namespace UnitAgent
                 Ray = rtsRay,
                 EntityType = GetArchetypeChunkEntityType(),
                 TranslationType = GetArchetypeChunkComponentType<Translation>(true),
-                AABBType = GetArchetypeChunkComponentType<AABB>(true),
+                PlayerSelectableType = GetArchetypeChunkComponentType<PlayerSelectable>(true),
                 NearestDistanceSq = nearestDistanceSq,
                 NearestEntity = nearestEntity
             }.Schedule(nchunks, 32, inputDeps);
@@ -129,7 +125,7 @@ namespace UnitAgent
                 if (groundplane.Raycast(ray, out enter))
                 {
                     playerPointer.WorldHitPosition = ray.GetPoint(enter);
-                    playerPointer.Click |=  (uint)EClick.Terrain;
+                    playerPointer.Click |= (uint)EClick.Terrain;
                 }
                 // else
                 // {
@@ -142,10 +138,10 @@ namespace UnitAgent
             }
             else
             {
-                playerPointer.Click |=  (uint)EClick.AABB;
+                playerPointer.Click |= (uint)EClick.PlayerSelectable;
                 playerPointer.CurrentEntity = nentity;
-                Debug.Log("PlayerPointerSystem Hit "+nentity);
-                if ( ! EntityManager.HasComponent<PlayerSelection>(nentity) )
+                Debug.Log("PlayerPointerSystem Hit " + nentity);
+                if (!EntityManager.HasComponent<PlayerSelection>(nentity))
                     EntityManager.AddComponentData(nentity, new PlayerSelection { });
             }
 
@@ -155,6 +151,38 @@ namespace UnitAgent
             SetSingleton(playerPointer);
 
             return outputDeps;
+        }
+    }
+
+    public struct RTSRay
+    {
+        public float3 origin;
+        public float3 direction;
+    }
+    public static class RTSPhysics
+    {
+
+        public static bool Intersect(PlayerSelectable box, RTSRay ray)
+        {
+            double tx1 = (box.min.x - ray.origin.x) * (1 / ray.direction.x);
+            double tx2 = (box.max.x - ray.origin.x) * (1 / ray.direction.x);
+
+            double tmin = math.min(tx1, tx2);
+            double tmax = math.max(tx1, tx2);
+
+            double ty1 = (box.min.y - ray.origin.y) * (1 / ray.direction.y);
+            double ty2 = (box.max.y - ray.origin.y) * (1 / ray.direction.y);
+
+            tmin = math.max(tmin, math.min(ty1, ty2));
+            tmax = math.min(tmax, math.max(ty1, ty2));
+
+            double tz1 = (box.min.z - ray.origin.z) * (1 / ray.direction.z);
+            double tz2 = (box.max.z - ray.origin.z) * (1 / ray.direction.z);
+
+            tmin = math.max(tmin, math.min(tz1, tz2));
+            tmax = math.min(tmax, math.max(tz1, tz2));
+
+            return tmax >= tmin;
         }
     }
 }

@@ -32,6 +32,7 @@ namespace UnitAgent
             var playerPointer = GetSingleton<PlayerPointer>();
 
             if (playerPointer.Click != (uint)EClick.FormationMoveTo) return inputDeps;
+            
             var clickTransform = float4x4.Translate(playerPointer.WorldHitPosition);
 
             Debug.Log("PlayerOrderFormationMoveToSystem DidClick:" + playerPointer.Click + " " +clickTransform);
