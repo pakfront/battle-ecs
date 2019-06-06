@@ -23,7 +23,8 @@ namespace UnitAgent
         
         public void ApplyFormation()
         {
-            float3 []  formationOffsets = FormationUtils.CalcUnitFormations();
+            FormationUtils.CalcUnitFormations(out float3[] formationOffsets, out int[] formationTypes);
+
             int formationIndex = (int)initialFormation;
             int startIndex = formationIndex * FormationUtils.UnitOffsetsPerFormation;
             Debug.Log(name+" Applying Formation "+initialFormation+" "+startIndex);
@@ -55,7 +56,8 @@ namespace UnitAgent
 
             UnityEditor.Handles.matrix  = transform.localToWorldMatrix;
 
-            float3[] formationOffsets = FormationUtils.CalcUnitFormations();
+            FormationUtils.CalcUnitFormations(out float3[] formationOffsets, out int[] formationTypes);
+
             int startIndex = formationIndex * FormationUtils.UnitOffsetsPerFormation; 
             for (int i = 0; i < FormationUtils.UnitOffsetsPerFormation; i++)
             {

@@ -15,41 +15,51 @@ namespace UnitAgent
     [UpdateInGroup(typeof(UnitSystemGroup))]
     public class UnitFormationSystem : JobComponentSystem
     {
-        public static readonly int FormationCount = 4;
-        public static readonly int OffsetsPerFormation = 12;
-        public static readonly int FormationOffsetsLength = FormationCount * OffsetsPerFormation;
+        // public static readonly int FormationCount = 4;
+        // public static readonly int OffsetsPerFormation = 12;
+        // public static readonly int FormationOffsetsLength = FormationCount * OffsetsPerFormation;
 
         public NativeArray<float3> FormationOffsets;
+        public NativeArray<int> FormationTypes;
         protected override void OnCreate()
         {
-            FormationOffsets = new NativeArray<float3>(FormationOffsetsLength, Allocator.Persistent);
+            
+            FormationUtils.CalcUnitFormations(out float3[] formationOffsets, out int[] formationTypes);
+            FormationOffsets = new NativeArray<float3>(formationOffsets, Allocator.Persistent);
+            FormationTypes = new NativeArray<int>(formationTypes, Allocator.Persistent);
+            // FormationTypes = new NativeArray<int>(FormationOffsetsLength, Allocator.Persistent);
 
-            // these could be read from disk and there could be a lot more than these few variations
-            int f = (int)EFormation.Mob;
-            for (int i = 0; i < OffsetsPerFormation; i++)
-            {
-                FormationOffsets[f * OffsetsPerFormation + i] = new float3(i * 20, 0, i * 20);
-            }
+            // // these could be read from disk and there could be a lot more than these few variations
+            // int f = (int)EFormation.Mob;
+            // for (int i = 0; i < OffsetsPerFormation; i++)
+            // {
+            //     FormationOffsets[f * OffsetsPerFormation + i] = new float3(i * 20, 0, i * 20);
+            //     FormationTypes[f * OffsetsPerFormation + i] = (int)EFormation.Line;
+            // }
 
-            f = (int)EFormation.Line;
-            for (int i = 0; i < OffsetsPerFormation; i++)
-            {
-                FormationUtils.DistributeAcrossColumns(5, i, out int row, out int col);
-                FormationOffsets[f * OffsetsPerFormation + i] = new float3(col * 80, 0, row * 20);
-            }
+            // f = (int)EFormation.Line;
+            // for (int i = 0; i < OffsetsPerFormation; i++)
+            // {
+            //     FormationUtils.DistributeAcrossColumns(5, i, out int row, out int col);
+            //     FormationOffsets[f * OffsetsPerFormation + i] = new float3(col * 80, 0, row * 20);
+            //     FormationTypes[f * OffsetsPerFormation + i] = (int)EFormation.Line;
+            // }
 
-            f = (int)EFormation.Column;
-            for (int i = 0; i < OffsetsPerFormation; i++)
-            {
-                FormationOffsets[f * OffsetsPerFormation + i] = new float3(0, 0, i * -20);
-            }
+            // f = (int)EFormation.Column;
+            // for (int i = 0; i < OffsetsPerFormation; i++)
+            // {
+            //     FormationOffsets[f * OffsetsPerFormation + i] = new float3(0, 0, i * -20);
+            //     FormationTypes[f * OffsetsPerFormation + i] = (int)EFormation.Column;
 
-            f = (int)EFormation.Reserve;
-            for (int i = 0; i < OffsetsPerFormation; i++)
-            {
-                FormationUtils.DistributeAcrossColumns(5, i, out int row, out int col);
-                FormationOffsets[f * OffsetsPerFormation + i] = new float3(col * 80, 0, row * 20);
-            }
+            // }
+
+            // f = (int)EFormation.Reserve;
+            // for (int i = 0; i < OffsetsPerFormation; i++)
+            // {
+            //     FormationUtils.DistributeAcrossColumns(5, i, out int row, out int col);
+            //     FormationOffsets[f * OffsetsPerFormation + i] = new float3(col * 80, 0, row * 20);
+            //     FormationTypes[f * OffsetsPerFormation + i] = (int)EFormation.Column;
+            // }
         }
 
 

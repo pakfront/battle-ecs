@@ -35,81 +35,85 @@ namespace UnitAgent
         /// </remarks>
         public static void DistributeAcrossColumns(int ncols, int i, out int row, out int col)
         {
-            row = -1 * i / ncols;
+            row = 1 * i / ncols;
             col = (i % ncols);
 
             col = (col + 1) / 2;
             col *= i % 2 == 0 ? 1 : -1;
         }
 
-        public static float3[] CalcUnitFormations()
+        public static void CalcUnitFormations(out float3[] formationOffsets, out int[] formationTypes )
         {
-            float3[] formationOffsets = new float3[UnitFormationOffsetsLength];
+            formationOffsets = new float3[UnitFormationOffsetsLength];
+            formationTypes = new int[UnitFormationOffsetsLength];
             float3 agentSpacing = new float3(AgentColumnWidth, 0, AgentRowHeight);
-            float3 originOffset = new float3(0, 0, AgentRowHeight);
+            float3 originOffset = new float3(0, 0, -AgentRowHeight);
 
             // these could be read from disk and there could be a lot more than these few variations
             int f = (int)EFormation.Mob;
             for (int i = 0; i < UnitOffsetsPerFormation; i++)
             {
-                formationOffsets[f * UnitOffsetsPerFormation + i] = originOffset + new float3(i , 0, i ) * agentSpacing;
+                formationOffsets[f * UnitOffsetsPerFormation + i] = new float3(i , 0, -i ) * agentSpacing + originOffset;
+                formationTypes[f * UnitOffsetsPerFormation + i] = (int)EFormation.Line;
             }
 
             f = (int)EFormation.Line;
             for (int i = 0; i < UnitOffsetsPerFormation; i++)
             {
                 FormationUtils.DistributeAcrossColumns(5, i, out int row, out int col);
-                formationOffsets[f * UnitOffsetsPerFormation + i] = originOffset + new float3(col * 40, 0, row*2) * agentSpacing;
+                formationOffsets[f * UnitOffsetsPerFormation + i] = new float3(col * 40, 0, -row*2) * agentSpacing + originOffset;
+                formationTypes[f * UnitOffsetsPerFormation + i] = (int)EFormation.Line;
             }
 
             f = (int)EFormation.Column;
             for (int i = 0; i < UnitOffsetsPerFormation; i++)
             {
                 FormationUtils.DistributeAcrossColumns(1, i, out int row, out int col);
-                formationOffsets[f * UnitOffsetsPerFormation + i] = originOffset + new float3(col * 5, 0, row*2) * agentSpacing;
+                formationOffsets[f * UnitOffsetsPerFormation + i] = new float3(col * 5, 0, -row*2) * agentSpacing + originOffset;
+                formationTypes[f * UnitOffsetsPerFormation + i] = (int)EFormation.Line;
             }
 
             f = (int)EFormation.Reserve;
             for (int i = 0; i < UnitOffsetsPerFormation; i++)
             {
-                FormationUtils.DistributeAcrossColumns(3, i, out int row, out int col);
-                formationOffsets[f * UnitOffsetsPerFormation + i] = originOffset + new float3(col, 0, row) * agentSpacing;
+                FormationUtils.DistributeAcrossColumns(12, i, out int row, out int col);
+                formationOffsets[f * UnitOffsetsPerFormation + i] = new float3(col*10, 0, -row) * agentSpacing + originOffset;
+                formationTypes[f * UnitOffsetsPerFormation + i] = (int)EFormation.Column;
             }
-
-            return formationOffsets;
         }
 
         public static float3[] CalcAgentFormations()
         {
             float3[] formationOffsets = new float3[AgentFormationOffsetsLength];
             float3 agentSpacing = new float3(AgentColumnWidth, 0, AgentRowHeight);
+            float3 originOffset = new float3(AgentColumnWidth, 0, 0)/2f;
 
             // these could be read from disk and there could be a lot more than these few variations
             int f = (int)EFormation.Mob;
             for (int i = 0; i < AgentOffsetsPerFormation; i++)
             {
-                formationOffsets[f * AgentOffsetsPerFormation + i] = new float3(i, 0, i) * agentSpacing;
+                formationOffsets[f * AgentOffsetsPerFormation + i] = new float3(i, 0, -i) * agentSpacing + originOffset;
             }
 
             f = (int)EFormation.Line;
             for (int i = 0; i < AgentOffsetsPerFormation; i++)
             {
                 FormationUtils.DistributeAcrossColumns(40, i, out int row, out int col);
-                formationOffsets[f * AgentOffsetsPerFormation + i] = new float3(col, 0, row) * agentSpacing;
+                formationOffsets[f * AgentOffsetsPerFormation + i] = new float3(col, 0, -row) * agentSpacing + originOffset;
             }
 
             f = (int)EFormation.Column;
             for (int i = 0; i < AgentOffsetsPerFormation; i++)
             {
-                FormationUtils.DistributeAcrossColumns(4, i, out int row, out int col);
-                formationOffsets[f * AgentOffsetsPerFormation + i] = new float3(col, 0, row) * agentSpacing;
+                FormationUtils.DistributeAcrossColumns(2, i, out int row, out int col);
+                formationOffsets[f * AgentOffsetsPerFormation + i] = new float3(col, 0, -row) * agentSpacing + originOffset;
             }
 
             f = (int)EFormation.Reserve;
             for (int i = 0; i < AgentOffsetsPerFormation; i++)
             {
                 FormationUtils.DistributeAcrossColumns(20, i, out int row, out int col);
-                formationOffsets[f * AgentOffsetsPerFormation + i] = new float3(col, 0, row) * agentSpacing;
+                formationOffsets[f * AgentOffsetsPerFormation + i] = new float3(col, 0, -row) * agentSpacing + originOffset;
             }
 
             return formationOffsets;

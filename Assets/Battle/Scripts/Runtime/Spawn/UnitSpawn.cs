@@ -120,7 +120,7 @@ namespace UnitAgent
             float3[] formationOffsets = FormationUtils.CalcAgentFormations();
             for (int i = 0; i < agentCount; i++)
             {
-                formationPositions[i] = formationOffsets[formationIndex * FormationUtils.UnitOffsetsPerFormation + i];
+                formationPositions[i] = formationOffsets[formationIndex * FormationUtils.AgentOffsetsPerFormation + i];
             }
             return formationPositions;
         }
