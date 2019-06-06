@@ -35,8 +35,14 @@ namespace UnitAgent
                 childXform.position = transform.TransformPoint(p);
                 childXform.rotation = Quaternion.LookRotation(transform.TransformDirection(Vector3.forward), Vector3.up);
             
-                var childSpawn = childXform.GetComponent<FormationSpawn>();
-                if (childSpawn != null) childSpawn.ApplyFormation();
+                var childFormationSpawn = childXform.GetComponent<FormationSpawn>();
+                if (childFormationSpawn != null) {
+                    childFormationSpawn.initialFormation = (EFormation)formationTypes[startIndex +i];
+                    childFormationSpawn.ApplyFormation();
+                }
+
+                var childUnitSpawn = childXform.GetComponent<UnitSpawn>();
+                if (childUnitSpawn != null) childUnitSpawn.agentFormation = (EFormation)formationTypes[startIndex +i];
             }
         }
 
