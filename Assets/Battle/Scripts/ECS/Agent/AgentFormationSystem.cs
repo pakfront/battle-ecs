@@ -11,8 +11,8 @@ namespace UnitAgent
 {
     // cribbed from 
     // https://forum.unity.com/threads/how-do-you-get-a-bufferfromentity-or-componentdatafromentity-without-inject.587857/#post-3924478
-    [UpdateAfter(typeof(UnitOrderSystem))]
-    [UpdateInGroup(typeof(GameSystemGroup))]
+    [UpdateAfter(typeof(UnitSystemGroup))]
+    [UpdateBefore(typeof(TransformSystemGroup))]
     public class AgentFormationSystem : JobComponentSystem
     {
 
