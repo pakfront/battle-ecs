@@ -35,10 +35,10 @@ public class RTSCameraController : MonoBehaviour {
 
     [Header("Movement Speeds")]
     [Space]
-    public float minPanSpeed;
-    public float maxPanSpeed;
-    public float secToMaxSpeed; //seconds taken to reach max speed;
-    public float zoomSpeed;
+    public float minPanSpeed = 1;
+    public float maxPanSpeed = 1;
+    public float secToMaxSpeed = 1; //seconds taken to reach max speed;
+    public float zoomSpeed = 1;
 
     [Header("Movement Limits")]
     [Space]
@@ -90,19 +90,23 @@ public class RTSCameraController : MonoBehaviour {
 
             panMovement = Vector3.zero;
 
-            if (Input.GetKey(KeyCode.W) || Input.mousePosition.y >= Screen.height - ScreenEdgeBorderThickness)
+            if (Input.GetKey(KeyCode.S) 
+                || (Input.mousePosition.y <= Screen.height && Input.mousePosition.y >= Screen.height - ScreenEdgeBorderThickness))
             {
                 panMovement += Vector3.forward * panSpeed * Time.deltaTime;
             }
-            if (Input.GetKey(KeyCode.S) || Input.mousePosition.y <= ScreenEdgeBorderThickness)
+            if (Input.GetKey(KeyCode.W) 
+                || (Input.mousePosition.y == 0 && Input.mousePosition.y <= ScreenEdgeBorderThickness))
             {
                 panMovement -= Vector3.forward * panSpeed * Time.deltaTime;
             }
-            if (Input.GetKey(KeyCode.A) || Input.mousePosition.x <= ScreenEdgeBorderThickness)
+            if (Input.GetKey(KeyCode.D) 
+                || (Input.mousePosition.x >= ScreenEdgeBorderThickness && Input.mousePosition.x <= ScreenEdgeBorderThickness))
             {
                 panMovement += Vector3.left * panSpeed * Time.deltaTime;
             }
-            if (Input.GetKey(KeyCode.D) || Input.mousePosition.x >= Screen.width - ScreenEdgeBorderThickness)
+            if (Input.GetKey(KeyCode.A) 
+                || (Input.mousePosition.x <- Screen.width && Input.mousePosition.x >= Screen.width - ScreenEdgeBorderThickness))
             {
                 panMovement += Vector3.right * panSpeed * Time.deltaTime;
                 //pos.x += panSpeed * Time.deltaTime;

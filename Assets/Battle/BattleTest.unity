@@ -145,7 +145,7 @@ PrefabInstance:
     - target: {fileID: 540806339611244110, guid: b8a322530d9e74005a8ce44f11e22736,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 540806339611244110, guid: b8a322530d9e74005a8ce44f11e22736,
         type: 3}
@@ -464,10 +464,10 @@ MonoBehaviour:
   ScreenEdgeBorderThickness: 5
   RTSMode: 1
   FlyCameraMode: 0
-  minPanSpeed: 0
-  maxPanSpeed: 0
-  secToMaxSpeed: 0
-  zoomSpeed: 0
+  minPanSpeed: 10
+  maxPanSpeed: 10
+  secToMaxSpeed: 10
+  zoomSpeed: 10
   enableMovementLimits: 0
   heightLimit: {x: 0, y: 0}
   lenghtLimit: {x: 0, y: 0}
@@ -584,7 +584,7 @@ PrefabInstance:
     - target: {fileID: 540806339611244110, guid: b8a322530d9e74005a8ce44f11e22736,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -8
+      value: -6
       objectReference: {fileID: 0}
     - target: {fileID: 540806339611244110, guid: b8a322530d9e74005a8ce44f11e22736,
         type: 3}
@@ -750,7 +750,7 @@ PrefabInstance:
     - target: {fileID: 540806339611244110, guid: b8a322530d9e74005a8ce44f11e22736,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -3.9999998
+      value: -1.9999998
       objectReference: {fileID: 0}
     - target: {fileID: 540806339611244110, guid: b8a322530d9e74005a8ce44f11e22736,
         type: 3}
@@ -989,7 +989,7 @@ PrefabInstance:
     - target: {fileID: 540806339611244110, guid: b8a322530d9e74005a8ce44f11e22736,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -12
+      value: -10
       objectReference: {fileID: 0}
     - target: {fileID: 540806339611244110, guid: b8a322530d9e74005a8ce44f11e22736,
         type: 3}
