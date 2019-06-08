@@ -35,25 +35,7 @@ namespace UnitAgent
                 var spawn = outer.Key;
                 var entity = outer.Value;
                 TryAssignSuperior(manager, formationSpawnMap, spawn, entity);
-                // var superior = null;
-                // if (spawn.transform.Parent != null) superior = spawn.transform.Parent.GetComponent<FormationSpawn>();
 
-                // if (superior == null) continue;
-
-                // Debug.Log("Setting Superior entity reference to " + superior, spawn);
-
-                // var superiorEntity = formationSpawnMap[spawn.superior];
-                // manager.AddComponentData(entity, new FormationMember
-                // {
-                //     IndexOffset = i++,
-                //     PositionOffset = new float3(0, 0, i),
-                //     Parent = superiorEntity
-                // });
-
-                // manager.AddSharedComponentData(entity, new FormationGroup
-                // {
-                //     Parent = superiorEntity
-                // });
             }
 
             return formationSpawnMap;   
@@ -71,24 +53,7 @@ namespace UnitAgent
             {
                 var unitSpawn = outer.Key;
                 var unitEntity = outer.Value;
-                TryAssignSuperior(manager, formationSpawnMap, unitSpawn, unitEntity);
-
-                // if (unitSpawn.superior == null) continue;
-
-                // Debug.Log("Setting Superior entity reference to " + unitSpawn.superior, unitSpawn);
-
-                // var superiorEntity = formationSpawnMap[unitSpawn.superior];
-                // manager.AddComponentData(unitEntity, new FormationMember
-                // {
-                //     IndexOffset = i++,
-                //     PositionOffset = new float3(0, 0, i),
-                //     Parent = superiorEntity
-                // });
-
-                // manager.AddSharedComponentData(unitEntity, new FormationGroup
-                // {
-                //     Parent = superiorEntity
-                // });
+                TryAssignSuperior(manager, formationSpawnMap, unitSpawn, unitEntity);     
             }
         }
 

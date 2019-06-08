@@ -33,6 +33,11 @@ namespace UnitAgent
 
         private Bounds localBounds;
 
+        void OnValidate()
+        {
+            if (agentCount > FormationUtils.MaxAgentsPerFormation) agentCount = FormationUtils.MaxAgentsPerFormation;
+            else if (agentCount < 0) agentCount = 0;
+        }
         public Entity SpawnUnit(EntityManager entityManager)
         {
 
@@ -120,7 +125,7 @@ namespace UnitAgent
             float3[] formationOffsets = FormationUtils.CalcAgentFormations();
             for (int i = 0; i < agentCount; i++)
             {
-                formationPositions[i] = formationOffsets[formationIndex * FormationUtils.AgentOffsetsPerFormation + i];
+                formationPositions[i] = formationOffsets[formationIndex * FormationUtils.MaxAgentsPerFormation + i];
             }
             return formationPositions;
         }
@@ -165,9 +170,9 @@ namespace UnitAgent
             }
 
             if (UnityEditor.Selection.activeGameObject == this.gameObject)
-                Gizmos.DrawWireCube( bounds.center, bounds.size );
+                Gizmos.DrawWireCube(bounds.center, bounds.size);
             else
-                Gizmos.DrawCube( bounds.center, bounds.size);
+                Gizmos.DrawCube(bounds.center, bounds.size);
 
             // float agentRadius = agentSpacing / 2f;
             // Gizmos.DrawCube(
@@ -178,11 +183,10 @@ namespace UnitAgent
 
         void OnDrawGizmosSelected()
         {
-            if (UnityEditor.Selection.activeGameObject != this.gameObject) return;
+            // if (UnityEditor.Selection.activeGameObject != this.gameObject) return;
 
             Gizmos.color = Color.gray;
             Gizmos.matrix = transform.localToWorldMatrix;
-            Bounds bounds = new Bounds(Vector3.zero, Vector3.one);
             switch (team)
             {
                 case ETeam.Red:
@@ -197,11 +201,24 @@ namespace UnitAgent
 
             }
             float3[] pos = GetAgentFormationPositions();
-            for (int i = 0; i < pos.Length; i++)
+            if (UnityEditor.Selection.activeGameObject == this.gameObject)
             {
-                Gizmos.DrawSphere(
-                        pos[i], 1.6f / 2f
-                );
+                for (int i = 0; i < pos.Length; i++)
+                {
+                    Gizmos.DrawSphere(
+                            pos[i], 1.6f / 2f
+                    );
+                }
+            }
+            else
+            {
+                Bounds bounds = new Bounds(Vector3.zero, Vector3.one);
+                for (int i = 0; i < pos.Length; i++)
+                {
+                    bounds.Encapsulate(pos[i]);
+                }
+                Gizmos.color = Color.yellow;
+                Gizmos.DrawWireCube(bounds.center, bounds.size);
             }
 
         }

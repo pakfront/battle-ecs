@@ -26,7 +26,7 @@ namespace UnitAgent
             FormationUtils.CalcUnitFormations(out float3[] formationOffsets, out int[] formationTypes);
 
             int formationIndex = (int)initialFormation;
-            int startIndex = formationIndex * FormationUtils.UnitOffsetsPerFormation;
+            int startIndex = formationIndex * FormationUtils.MaxUnitsPerFormation;
             Debug.Log(name+" Applying Formation "+initialFormation+" "+startIndex);
             for (int i = 0; i < transform.childCount; i++)
             {
@@ -64,8 +64,8 @@ namespace UnitAgent
 
             FormationUtils.CalcUnitFormations(out float3[] formationOffsets, out int[] formationTypes);
 
-            int startIndex = formationIndex * FormationUtils.UnitOffsetsPerFormation; 
-            for (int i = 0; i < FormationUtils.UnitOffsetsPerFormation; i++)
+            int startIndex = formationIndex * FormationUtils.MaxUnitsPerFormation; 
+            for (int i = 0; i < FormationUtils.MaxUnitsPerFormation; i++)
             {
                 Vector3 p = formationOffsets[startIndex + i];
 #if UNITY_EDITOR
