@@ -13,46 +13,50 @@ namespace UnitAgent
     [UpdateAfter(typeof(UnitOrderPreSystem))]
     public class UnitOrderSystem : JobComponentSystem
     {
-        private EntityQuery m_Group;
-        protected override void OnCreate()
-        {
-            m_Group = GetEntityQuery(typeof(MoveToGoal), ComponentType.ReadOnly<OrderMoveTo>());
-        }
-        [BurstCompile]
-        struct OrderMoveToJob : IJobChunk
-        {
-            [DeallocateOnJobCompletion] public NativeArray<ArchetypeChunk> Chunks;
-            [ReadOnly] public ArchetypeChunkComponentType<OrderMoveTo> OrderMoveToType;
-            public ArchetypeChunkComponentType<MoveToGoal> MoveToGoalType;
-
-            public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
-            {
-                var moveToGoal = chunk.GetNativeArray(MoveToGoalType);
-                var orderMoveTo = chunk.GetNativeArray(OrderMoveToType);
-
-                for (int i = 0; i < chunk.Count; i++)
-                {
-                    moveToGoal[i] = new MoveToGoal
-                    {
-                        Position = orderMoveTo[i].Position,
-                        Heading = orderMoveTo[i].Heading
-                    };
-                }
-            }
-        }
-
-
-        // [BurstCompile]
-        // struct OrderMoveToJob : IJobForEach<MoveToGoal, OrderMoveTo>
+        // private EntityQuery m_Group;
+        // protected override void OnCreate()
         // {
-        //     public void Execute(ref MoveToGoal goalMoveTo, [ReadOnly] ref OrderMoveTo orderMoveTo)
-        //     {
-        //         goalMoveTo.Position = orderMoveTo.Position;
-        //         goalMoveTo.Heading = new float3(0,0,1);
-        //         UnityEngine.Debug.Log("OrderMoveToJob "+goalMoveTo.Position +" ?= "+ orderMoveTo.Position);
+        //     m_Group = GetEntityQuery(typeof(MoveToGoal), ComponentType.ReadOnly<OrderMoveTo>());
+        // }
+        // [BurstCompile]
+        // struct OrderMoveToJob : IJobChunk
+        // {
+        //     [DeallocateOnJobCompletion] public NativeArray<ArchetypeChunk> Chunks;
+        //     [ReadOnly] public ArchetypeChunkComponentType<OrderMoveTo> OrderMoveToType;
+        //     public ArchetypeChunkComponentType<MoveToGoal> MoveToGoalType;
 
+        //     public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
+        //     {
+        //         var moveToGoal = chunk.GetNativeArray(MoveToGoalType);
+        //         var orderMoveTo = chunk.GetNativeArray(OrderMoveToType);
+
+        //         for (int i = 0; i < chunk.Count; i++)
+        //         {
+        //             moveToGoal[i] = new MoveToGoal
+        //             {
+        //                 Position = orderMoveTo[i].Position,
+        //                 Heading = orderMoveTo[i].Heading
+        //             };
+        //         }
         //     }
         // }
+
+
+        [BurstCompile]
+        struct OrderMoveToJob : IJobForEach<MoveToGoal, OrderMoveTo>
+        {
+            public void Execute(ref MoveToGoal goalMoveTo, [ReadOnly] ref OrderMoveTo orderMoveTo)
+            {
+                // goalMoveTo.Position = new float3(0,0,-100);
+                goalMoveTo  = new MoveToGoal
+                {
+                    Position = orderMoveTo.Position,
+                    Heading = new float3(0,0,1)
+                };
+                UnityEngine.Debug.Log("OrderMoveToJob "+goalMoveTo.Position +" ?= "+ orderMoveTo.Position);
+
+            }
+        }
 
         // // [BurstCompile]
         // struct OrderFormationMoveToJob : IJobForEach<MoveToGoal, OrderFormationMoveTo>
@@ -96,16 +100,16 @@ namespace UnitAgent
         {
 
 
-            var job = new OrderMoveToJob
-            {
-                MoveToGoalType = GetArchetypeChunkComponentType<MoveToGoal>(false),
-                OrderMoveToType = GetArchetypeChunkComponentType<OrderMoveTo>(true)
-            };
+            // var job = new OrderMoveToJob
+            // {
+            //     MoveToGoalType = GetArchetypeChunkComponentType<MoveToGoal>(false),
+            //     OrderMoveToType = GetArchetypeChunkComponentType<OrderMoveTo>(true)
+            // };
 
-            var outputDeps = job.Schedule(m_Group, inputDependencies);
+            // var outputDeps = job.Schedule(m_Group, inputDependencies);
 
-            // var outputDeps = new OrderMoveToJob {
-            // }.Schedule(this, inputDependencies);
+            var outputDeps = new OrderMoveToJob {
+            }.Schedule(this, inputDependencies);
 
             // outputDeps = new OrderFormationMoveToJob
             // {

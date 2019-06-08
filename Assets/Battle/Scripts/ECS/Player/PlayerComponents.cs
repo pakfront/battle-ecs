@@ -35,7 +35,7 @@ namespace UnitAgent
     }
 
     [Serializable]
-    public struct PlayerPointer : IComponentData
+    public struct PlayerInput : IComponentData
     {
         public float3 WorldHitPosition, MousePosition;
         public uint Click;

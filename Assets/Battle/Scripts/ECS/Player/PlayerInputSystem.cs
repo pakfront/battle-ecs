@@ -17,14 +17,14 @@ namespace UnitAgent
 
         protected override void OnCreate()
         {
-            EntityManager.CreateEntity(typeof(PlayerPointer));
-            SetSingleton(new PlayerPointer{ Click = (uint) EClick.None });
+            EntityManager.CreateEntity(typeof(PlayerInput));
+            SetSingleton(new PlayerInput{ Click = (uint) EClick.None });
         }
 
         protected override void OnUpdate()
         {
-            var playerPointer = GetSingleton<PlayerPointer>();
-            playerPointer = new PlayerPointer
+            var playerPointer = GetSingleton<PlayerInput>();
+            playerPointer = new PlayerInput
             {
                 MousePosition = Input.mousePosition,
                 Click = (uint)EClick.None,

@@ -26,7 +26,7 @@ namespace UnitAgent
 
         protected override void OnUpdate()
         {
-            var playerPointer = GetSingleton<PlayerPointer>();
+            var playerPointer = GetSingleton<PlayerInput>();
 
             // selection modifier pressed, early exit;
             if ( (playerPointer.Click &  (uint)(EClick.AnyModifier)) != 0) 

@@ -75,7 +75,7 @@ namespace UnitAgent
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
-            var playerPointer = GetSingleton<PlayerPointer>();
+            var playerPointer = GetSingleton<PlayerInput>();
 
             // early out if no mouse button clicked
             if ((playerPointer.Click & (uint)EClick.AnyPointerButton) == 0)

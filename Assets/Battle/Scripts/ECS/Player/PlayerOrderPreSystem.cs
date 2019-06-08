@@ -51,7 +51,7 @@ namespace UnitAgent
 
         protected override void OnUpdate()
         {
-            var playerPointer = GetSingleton<PlayerPointer>();
+            var playerPointer = GetSingleton<PlayerInput>();
 
             // // MultiSelection add to all with PlayerSelection
             // if (playerPointer.Click == (uint)EClick.MoveTo)
