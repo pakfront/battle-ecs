@@ -121,5 +121,16 @@ namespace UnitAgent
 
             return formationOffsets;
         }
+
+        public static int CalcFormationStartIndex(int formation, int formationTable)
+        {
+            return formationTable * FormationUtils.FormationCount * FormationUtils.MaxAgentsPerFormation + formation * FormationUtils.MaxUnitsPerFormation;
+        }
+        // public static void CalcFormationStartIndex(int formation, int formationTable)
+        // {
+        //     int formationIndex = (int)formation;
+        //     // TODO add offset for custom formations
+        //     int startIndex = formationIndex * FormationUtils.MaxUnitsPerFormation;
+        // }
     }
 }

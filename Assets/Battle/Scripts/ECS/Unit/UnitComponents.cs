@@ -13,7 +13,9 @@ namespace UnitAgent
     [Serializable] public struct FormationGroup : ISharedComponentData { public Entity Parent; }
 
     [Serializable] public struct FormationLeader : IComponentData {
-        public int FormationIndex;
+        public int FormationTable;
+        public int CurrentFormation;
+        public int FormationStartIndex;
      }
     [Serializable]
     public struct FormationMember : IComponentData

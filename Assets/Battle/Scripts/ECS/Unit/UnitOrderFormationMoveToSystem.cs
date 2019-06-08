@@ -19,11 +19,9 @@ namespace UnitAgent
         public NativeArray<int> FormationTypes;
         protected override void OnCreate()
         {
-            
             FormationUtils.CalcUnitFormations(out float3[] formationOffsets, out int[] formationTypes);
             FormationOffsets = new NativeArray<float3>(formationOffsets, Allocator.Persistent);
             FormationTypes = new NativeArray<int>(formationTypes, Allocator.Persistent);
-
         }
 
         protected override void OnDestroy()
@@ -41,15 +39,16 @@ namespace UnitAgent
             public void Execute(ref FormationMember formationElement)
             {
                 Entity parent = formationElement.Parent;
-                int formationIndex = Leaders[parent].FormationIndex;
+                int formationStartIndex = Leaders[parent].FormationStartIndex;
                 
-                formationElement.PositionOffset = Offsets[formationIndex + formationElement.IndexOffset];
+                formationElement.PositionOffset = Offsets[formationStartIndex + formationElement.IndexOffset];
             }
         }
 
         // TODO run only when parent has moved
         [BurstCompile]
         [RequireComponentTag(typeof(OrderFormationMoveTo))]
+        [ExcludeComponent(typeof(Detached))]
         struct SetGoalJob : IJobForEach<MoveToGoal, FormationMember>
         {
             [ReadOnly] public ComponentDataFromEntity<LocalToWorld> Others;

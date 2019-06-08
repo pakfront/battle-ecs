@@ -13,36 +13,45 @@ namespace UnitAgent
     {
         public FormationProxy formationPrefab;
         public EFormation initialFormation;
+        public int formationTable = 0;
 
         public Entity SpawnFormation(EntityManager entityManager)
         {
             var entity = CreateSelectableEntity(entityManager, formationPrefab.gameObject);
+            entityManager.SetComponentData(entity,
+            new FormationLeader
+            {
+                CurrentFormation = (int)initialFormation,
+                FormationStartIndex = FormationUtils.CalcFormationStartIndex((int)initialFormation, formationTable)
+            });
+
             return entity;
         }
 
-        
+
         public void ApplyFormation()
         {
             FormationUtils.CalcUnitFormations(out float3[] formationOffsets, out int[] formationTypes);
 
             int formationIndex = (int)initialFormation;
-            int startIndex = formationIndex * FormationUtils.MaxUnitsPerFormation;
-            Debug.Log(name+" Applying Formation "+initialFormation+" "+startIndex);
+            int startIndex = FormationUtils.CalcFormationStartIndex(formationIndex, formationTable); //formationIndex * FormationUtils.MaxUnitsPerFormation;
+            Debug.Log(name + " Applying Formation " + initialFormation + " " + startIndex);
             for (int i = 0; i < transform.childCount; i++)
             {
-                var childXform =  transform.GetChild(i);
-                Vector3 p = formationOffsets[startIndex +i];
+                var childXform = transform.GetChild(i);
+                Vector3 p = formationOffsets[startIndex + i];
                 childXform.position = transform.TransformPoint(p);
                 childXform.rotation = Quaternion.LookRotation(transform.TransformDirection(Vector3.forward), Vector3.up);
-            
+
                 var childFormationSpawn = childXform.GetComponent<FormationSpawn>();
-                if (childFormationSpawn != null) {
-                    childFormationSpawn.initialFormation = (EFormation)formationTypes[startIndex +i];
+                if (childFormationSpawn != null)
+                {
+                    childFormationSpawn.initialFormation = (EFormation)formationTypes[startIndex + i];
                     childFormationSpawn.ApplyFormation();
                 }
 
                 var childUnitSpawn = childXform.GetComponent<UnitSpawn>();
-                if (childUnitSpawn != null) childUnitSpawn.agentFormation = (EFormation)formationTypes[startIndex +i];
+                if (childUnitSpawn != null) childUnitSpawn.agentFormation = (EFormation)formationTypes[startIndex + i];
             }
         }
 
@@ -60,11 +69,11 @@ namespace UnitAgent
             int formationIndex = (int)initialFormation;
             if (formationIndex < 0 || formationIndex >= FormationUtils.FormationCount) return;
 
-            UnityEditor.Handles.matrix  = transform.localToWorldMatrix;
+            UnityEditor.Handles.matrix = transform.localToWorldMatrix;
 
             FormationUtils.CalcUnitFormations(out float3[] formationOffsets, out int[] formationTypes);
 
-            int startIndex = formationIndex * FormationUtils.MaxUnitsPerFormation; 
+            int startIndex = FormationUtils.CalcFormationStartIndex(formationIndex, formationTable); //formationIndex * FormationUtils.MaxUnitsPerFormation;
             for (int i = 0; i < FormationUtils.MaxUnitsPerFormation; i++)
             {
                 Vector3 p = formationOffsets[startIndex + i];
@@ -93,10 +102,10 @@ namespace UnitAgent
 
             }
             Gizmos.matrix = transform.localToWorldMatrix;
-                Gizmos.DrawCube(
-                  Vector3.zero,
-                  Vector3.one
-              );
+            Gizmos.DrawCube(
+              Vector3.zero,
+              Vector3.one
+          );
 
         }
     }

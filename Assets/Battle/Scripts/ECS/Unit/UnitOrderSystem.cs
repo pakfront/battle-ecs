@@ -53,8 +53,7 @@ namespace UnitAgent
                     Position = orderMoveTo.Position,
                     Heading = new float3(0,0,1)
                 };
-                UnityEngine.Debug.Log("OrderMoveToJob "+goalMoveTo.Position +" ?= "+ orderMoveTo.Position);
-
+                // UnityEngine.Debug.Log("OrderMoveToJob "+goalMoveTo.Position +" ?= "+ orderMoveTo.Position);
             }
         }
 

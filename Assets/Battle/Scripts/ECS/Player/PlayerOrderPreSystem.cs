@@ -85,7 +85,11 @@ namespace UnitAgent
                 if (playerPointer.FormationIndex != (int)EFormation.None)
                 {
                     Debug.Log("Setting Unit Formation "+playerPointer.CurrentEntity+" to "+playerPointer.FormationIndex+" "+(EFormation)playerPointer.FormationIndex);
-                    EntityManager.SetComponentData(playerPointer.CurrentEntity, new FormationLeader { FormationIndex = playerPointer.FormationIndex} );
+                    var old = EntityManager.GetComponentData<FormationLeader>(playerPointer.CurrentEntity);
+                    EntityManager.SetComponentData( playerPointer.CurrentEntity, new FormationLeader {
+                         CurrentFormation = playerPointer.FormationIndex,
+                         FormationStartIndex = FormationUtils.CalcFormationStartIndex(playerPointer.FormationIndex, old.FormationTable)
+                    });
                     m_FormationGroup.SetFilter( new FormationGroup { Parent = playerPointer.CurrentEntity} );
                     EntityManager.AddComponent(m_FormationGroup, typeof(OrderFormationMoveTo));
                     return;
