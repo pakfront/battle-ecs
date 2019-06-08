@@ -39,6 +39,7 @@ namespace UnitAgent
             {
                 Debug.Log("Clearing PlayerSelection");
                 EntityManager.RemoveComponent(m_PlayerSelection, ComponentType.ReadOnly<PlayerSelection>());
+                playerPointer.CurrentEntity = Entity.Null;
             }
 
             if ( (playerPointer.Click &  (uint)(EClick.SecondaryPointerButton)) != 0) 

@@ -10,7 +10,7 @@ using UnityEngine;
 namespace UnitAgent
 {
     [DisableAutoCreation]
-    [UpdateAfter(typeof(MoveToGoal))]
+    //[UpdateAfter(typeof(MoveToGoal))]
     public class FindOpponentSystem : JobComponentSystem
     {
         EntityQuery m_group;

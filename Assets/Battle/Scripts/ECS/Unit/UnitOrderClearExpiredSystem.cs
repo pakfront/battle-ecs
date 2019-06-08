@@ -10,7 +10,7 @@ namespace UnitAgent
 {
     [UpdateInGroup(typeof(UnitSystemGroup))]
     [UpdateAfter(typeof(UnitOrderSystem))]
-    public class UnitOrderPostSystem : ComponentSystem
+    public class UnitOrderClearExpiredSystem : ComponentSystem
     {
 
         private EntityQuery m_OrderAttack, m_OrderMoveTo, m_OrderFormationMoveTo;

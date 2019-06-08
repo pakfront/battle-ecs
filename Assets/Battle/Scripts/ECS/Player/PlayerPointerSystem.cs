@@ -127,14 +127,11 @@ namespace UnitAgent
                     playerPointer.WorldHitPosition = ray.GetPoint(enter);
                     playerPointer.Click |= (uint)EClick.Terrain;
                 }
-                // else
-                // {
-                //     // Debug.Log("PlayerPointerSystem clickLocation MISS ");
-                //     SetSingleton(new PlayerPointer
-                //     {
-                //         Click = click
-                //     });
-                // }
+                else
+                {
+                    // Debug.Log("PlayerPointerSystem clickLocation MISS ");
+ 
+                }
             }
             else
             {

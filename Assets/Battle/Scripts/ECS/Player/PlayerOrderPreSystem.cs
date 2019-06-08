@@ -98,7 +98,7 @@ namespace UnitAgent
             {
                 if (playerPointer.Click == (uint)EClick.MoveTo)
                 {
-                    Debug.Log("Adding MoveTo "+playerPointer.CurrentEntity);
+                    Debug.Log("Adding MoveTo "+playerPointer.CurrentEntity+ " to "+playerPointer.WorldHitPosition);
                     EntityManager.AddComponentData(playerPointer.CurrentEntity, 
                         new OrderMoveTo { 
                             Position = playerPointer.WorldHitPosition,

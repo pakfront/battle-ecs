@@ -29,6 +29,8 @@ namespace UnitAgent
                 MousePosition = Input.mousePosition,
                 Click = (uint)EClick.None,
                 FormationIndex = (int)EFormation.None,
+                // copy from previous
+                WorldHitPosition = playerPointer.WorldHitPosition,
                 CurrentEntity = playerPointer.CurrentEntity,
             };
             // mouse
