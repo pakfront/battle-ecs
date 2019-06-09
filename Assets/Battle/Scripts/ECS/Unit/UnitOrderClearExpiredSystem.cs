@@ -11,7 +11,6 @@ namespace UnitAgent
     // [UpdateInGroup(typeof(UnitSystemGroup))]
     // [UpdateAfter(typeof(UnitOrderSystem))]
     [UpdateInGroup(typeof(ClearPreviousFrameGroupSystem))]
-    [UpdateBefore(typeof(PlayerPointerPreSystem))]
     public class UnitOrderClearExpiredSystem : ComponentSystem
     {
 
