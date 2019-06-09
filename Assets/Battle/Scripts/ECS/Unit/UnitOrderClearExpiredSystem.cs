@@ -8,8 +8,10 @@ using Unity.Collections;
 
 namespace UnitAgent
 {
-    [UpdateInGroup(typeof(UnitSystemGroup))]
-    [UpdateAfter(typeof(UnitOrderSystem))]
+    // [UpdateInGroup(typeof(UnitSystemGroup))]
+    // [UpdateAfter(typeof(UnitOrderSystem))]
+    [UpdateInGroup(typeof(ClearPreviousFrameGroupSystem))]
+    [UpdateBefore(typeof(PlayerPointerPreSystem))]
     public class UnitOrderClearExpiredSystem : ComponentSystem
     {
 
@@ -37,7 +39,6 @@ namespace UnitAgent
             EntityManager.RemoveComponent(m_OrderAttack, typeof(OrderAttack));
             EntityManager.RemoveComponent(m_OrderMoveTo, typeof(OrderMoveTo));
             EntityManager.RemoveComponent(m_OrderFormationMoveTo, typeof(OrderFormationMoveTo));
-
         }
         
     }

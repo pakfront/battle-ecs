@@ -12,6 +12,8 @@ namespace UnitAgent
 {
 
     [UpdateInGroup(typeof(UnitSystemGroup))]
+    // [UpdateAfter(typeof(UnitOrderClearExpiredSystem))]
+    [UpdateAfter(typeof(UnitOrderSystem))]
     public class UnitGoalMarkerSystem : JobComponentSystem
     {
         [BurstCompile]

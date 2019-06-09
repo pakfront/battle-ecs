@@ -9,7 +9,6 @@ using Unity.Collections;
 namespace UnitAgent
 {
     [UpdateInGroup(typeof(PlayerSystemGroup))]
-    [UpdateAfter(typeof(PlayerPointerSystem))]
     public class PlayerOrderPreSystem : ComponentSystem
     {
         // private EntityQuery m_NeedsSnapTo, m_NeedsOrderAttack, m_NeedsOrderMoveTo,
