@@ -64,7 +64,7 @@ namespace UnitAgent
             for (int i = 0; i < MaxUnitsPerFormation; i++)
             {
                 FormationUtils.DistributeAcrossColumns(5, i, out int row, out int col);
-                formationOffsets[f * MaxUnitsPerFormation + i] = new float3(col * MaxUnitWidth/2, 0, -row*2) * agentSpacing + originOffset + lineOffset;
+                formationOffsets[f * MaxUnitsPerFormation + i] = new float3(col * (MaxAgentsPerFormation+4)/2f, 0, -row*2) * agentSpacing + originOffset + lineOffset;
                 formationTypes[f * MaxUnitsPerFormation + i] = (int)EFormation.Line;
             }
 
