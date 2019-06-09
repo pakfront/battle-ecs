@@ -61,25 +61,28 @@ namespace UnitAgent
             }
 
             f = (int)EFormation.Line;
-            for (int i = 0; i < MaxUnitsPerFormation; i++)
+            formationOffsets[f * MaxUnitsPerFormation] = new float3(0 , 0, -8 ) * agentSpacing + originOffset;
+            for (int i = 1; i < MaxUnitsPerFormation; i++)
             {
-                FormationUtils.DistributeAcrossColumns(5, i, out int row, out int col);
+                FormationUtils.DistributeAcrossColumns(5, i-1, out int row, out int col);
                 formationOffsets[f * MaxUnitsPerFormation + i] = new float3(col * (MaxAgentsPerFormation+4)/2f, 0, -row*2) * agentSpacing + originOffset + lineOffset;
                 formationTypes[f * MaxUnitsPerFormation + i] = (int)EFormation.Line;
             }
 
             f = (int)EFormation.Column;
-            for (int i = 0; i < MaxUnitsPerFormation; i++)
+            formationOffsets[f * MaxUnitsPerFormation] = new float3(0 , 0, +2 ) * agentSpacing + originOffset;
+            for (int i = 1; i < MaxUnitsPerFormation; i++)
             {
-                FormationUtils.DistributeAcrossColumns(1, i, out int row, out int col);
+                FormationUtils.DistributeAcrossColumns(1, i-1, out int row, out int col);
                 formationOffsets[f * MaxUnitsPerFormation + i] = new float3(col * 5, 0, -row*2) * agentSpacing + originOffset;
                 formationTypes[f * MaxUnitsPerFormation + i] = (int)EFormation.Line;
             }
 
             f = (int)EFormation.Reserve;
-            for (int i = 0; i < MaxUnitsPerFormation; i++)
+            formationOffsets[f * MaxUnitsPerFormation] = new float3(0 , 0, +2 ) * agentSpacing + originOffset;
+            for (int i = 1; i < MaxUnitsPerFormation; i++)
             {
-                FormationUtils.DistributeAcrossColumns(12, i, out int row, out int col);
+                FormationUtils.DistributeAcrossColumns(12, i-1, out int row, out int col);
                 formationOffsets[f * MaxUnitsPerFormation + i] = new float3(col*10, 0, -row) * agentSpacing + originOffset + lineOffset;
                 formationTypes[f * MaxUnitsPerFormation + i] = (int)EFormation.Column;
             }
