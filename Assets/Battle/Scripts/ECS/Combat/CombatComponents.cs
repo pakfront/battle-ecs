@@ -9,5 +9,7 @@ namespace UnitAgent
     {
         public float3 Position;
         public float DistanceSq;
+
+        Entity Entity;
     }
 }
