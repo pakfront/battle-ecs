@@ -92,7 +92,7 @@
 //     }
 
 
-//     // [UpdateInGroup(typeof(GameSystemGroup))]
+//     // [UpdateInGroup(typeof(MovementSystemGroup))]
 //     // [UpdateAfter(typeof(PlayerMouseOverSystem))]
 //     // [UpdateBefore(typeof(PlayerOrderAttackSystem))]
 //     // public class PrePlayerOrderAttackSystem : ComponentSystem

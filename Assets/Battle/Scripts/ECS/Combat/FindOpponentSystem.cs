@@ -9,8 +9,9 @@ using UnityEngine;
 
 namespace UnitAgent
 {
-    [DisableAutoCreation]
+    // [DisableAutoCreation]
     //[UpdateAfter(typeof(MoveToGoal))]
+    [UpdateInGroup(typeof(CombatSystemGroup))]
     public class FindOpponentSystem : JobComponentSystem
     {
         EntityQuery m_group;

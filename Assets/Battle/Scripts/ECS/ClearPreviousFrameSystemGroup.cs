@@ -14,7 +14,7 @@ namespace UnitAgent
     [UpdateInGroup(typeof(SimulationSystemGroup ))]
     [UpdateBefore(typeof(TransformSystemGroup))]
     
-    public class GameSystemGroup : ComponentSystemGroup
+    public class ClearPreviousFrameSystemGroup : ComponentSystemGroup
     {
  
     }

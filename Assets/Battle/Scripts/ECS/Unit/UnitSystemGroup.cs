@@ -13,7 +13,7 @@ namespace UnitAgent
     // https://forum.unity.com/threads/how-do-you-get-a-bufferfromentity-or-componentdatafromentity-without-inject.587857/#post-3924478
     [UpdateInGroup(typeof(SimulationSystemGroup ))]
     [UpdateAfter(typeof(PlayerSystemGroup))]
-    [UpdateBefore(typeof(GameSystemGroup))]
+    [UpdateBefore(typeof(MovementSystemGroup))]
     
     public class UnitSystemGroup : ComponentSystemGroup
     {

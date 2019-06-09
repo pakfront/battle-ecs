@@ -11,14 +11,18 @@ namespace UnitAgent
 {
     public class UnitSpawn : Spawn
     {
-        public enum EOrder { None, InFormation, HoldPosition, MoveToPosition, FollowUnit, PursueUnit }
-        public enum EMobility { None, Foot, Horse, Wheeled }
+        // public enum EOrder { None, InFormation, HoldPosition, MoveToPosition, FollowUnit, PursueUnit }
+        // public enum EMobility { None, Foot, Horse, Wheeled }
 
         [Header("Unit")]
         public UnitProxy unitPrefab;
         public UnitGoalMarkerProxy unitGoalMarkerPrefab;
-        public EMobility mobility = EMobility.Foot;
-        public EOrder initialOrders;
+
+        public EUnitType unitType;
+        public bool hasRanged;
+        public bool hasMelee;
+        // public EMobility mobility = EMobility.Foot;
+        // public EOrder initialOrders;
 
         [Header("Agent")]
         public EFormation agentFormation = EFormation.Line;
@@ -49,7 +53,34 @@ namespace UnitAgent
                 RotateSpeed = rotationsPerSecond
             });
 
+            switch (unitType)
+            {
+                case EUnitType.Foot:
+                    entityManager.AddComponentData(unitEntity, new Foot());
+                    break;
+                case EUnitType.Horse:
+                    entityManager.AddComponentData(unitEntity, new Horse());
+                    break;
+                case EUnitType.Artillery:
+                    entityManager.AddComponentData(unitEntity, new Artillery());
+                    break;
+                case EUnitType.Train:
+                    entityManager.AddComponentData(unitEntity, new Train());
+                    break;
+                case EUnitType.HQ:
+                    entityManager.AddComponentData(unitEntity, new HQ());
+                    break;
+            }
+
+            if (hasMelee) 
+                entityManager.AddComponentData(unitEntity, new Melee());
+            
+            if (hasMelee) 
+                entityManager.AddComponentData(unitEntity, new Ranged{
+                    Range = 80
+                });
             // entityManager.AddComponentData(entity, new Opponent { });
+
 
             // switch (initialOrders)
             // {

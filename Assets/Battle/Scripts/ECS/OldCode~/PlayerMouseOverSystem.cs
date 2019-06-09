@@ -9,7 +9,7 @@
 // namespace UnitAgent
 // {
 //     // [DisableAutoCreation] 
-//     [UpdateInGroup(typeof(GameSystemGroup))]
+//     [UpdateInGroup(typeof(MovementSystemGroup))]
 //     [UpdateBefore(typeof(PlayerOrderMoveToSystem))]
 //     public class PlayerMouseOverSystem : JobComponentSystem
 //     {
@@ -122,7 +122,7 @@
 //         }
 //     }
 
-//     [UpdateInGroup(typeof(GameSystemGroup))]
+//     [UpdateInGroup(typeof(MovementSystemGroup))]
 //     [UpdateBefore(typeof(PlayerMouseOverSystem))]
 //     public class PrePlayerMouseOverSystem : ComponentSystem
 //     {

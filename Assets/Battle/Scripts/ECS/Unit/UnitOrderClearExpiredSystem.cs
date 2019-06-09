@@ -10,7 +10,7 @@ namespace UnitAgent
 {
     // [UpdateInGroup(typeof(UnitSystemGroup))]
     // [UpdateAfter(typeof(UnitOrderSystem))]
-    [UpdateInGroup(typeof(ClearPreviousFrameGroupSystem))]
+    [UpdateInGroup(typeof(ClearPreviousFrameSystemGroup))]
     public class UnitOrderClearExpiredSystem : ComponentSystem
     {
 
