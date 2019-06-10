@@ -55,7 +55,7 @@ namespace UnitAgent
                 min = spawnPosition - (float3)combinedBounds.extents,
             });
 
-            entityManager.AddSharedComponentData(entity, new Team { Value = (int)team });
+            entityManager.AddSharedComponentData(entity, new TeamGroup { Value = (int)team });
             if (team == LocalPlayer.Team)
             {
                 entityManager.AddSharedComponentData(entity, new PlayerOwned());

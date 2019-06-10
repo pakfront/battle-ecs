@@ -9,6 +9,7 @@ using Unity.Collections;
 namespace UnitAgent
 {
     [UpdateInGroup(typeof(PlayerSystemGroup))]
+    [UpdateAfter(typeof(PlayerPointerSystem))]
     public class PlayerOrderPreSystem : ComponentSystem
     {
         // private EntityQuery m_NeedsSnapTo, m_NeedsOrderAttack, m_NeedsOrderMoveTo,
@@ -83,12 +84,8 @@ namespace UnitAgent
 
                 if (playerPointer.FormationIndex != (int)EFormation.None)
                 {
-                    Debug.Log("Setting Unit Formation "+playerPointer.CurrentEntity+" to "+playerPointer.FormationIndex+" "+(EFormation)playerPointer.FormationIndex);
-                    var old = EntityManager.GetComponentData<FormationLeader>(playerPointer.CurrentEntity);
-                    EntityManager.SetComponentData( playerPointer.CurrentEntity, new FormationLeader {
-                         CurrentFormation = playerPointer.FormationIndex,
-                         FormationStartIndex = FormationUtils.CalcFormationStartIndex(playerPointer.FormationIndex, old.FormationTable)
-                    });
+                    Debug.Log("Setting FormationLeader Formation "+playerPointer.CurrentEntity+" to "+playerPointer.FormationIndex+" "+(EFormation)playerPointer.FormationIndex);
+                    EntityManager.SetComponentData(playerPointer.CurrentEntity, new FormationLeader { FormationStartIndex = playerPointer.FormationIndex} );
                     m_FormationGroup.SetFilter( new FormationGroup { Parent = playerPointer.CurrentEntity} );
                     EntityManager.AddComponent(m_FormationGroup, typeof(OrderFormationMoveTo));
                     return;

@@ -4,11 +4,14 @@ using Unity.Mathematics;
 
 namespace UnitAgent
 {
-    [Serializable] public struct Unit : IComponentData { }
+    [Serializable] public struct Unit : IComponentData {
+        public int Team;
+    }
 
     [Serializable] public struct UnitGoalMarker : IComponentData { public Entity Unit; }
 
-    [Serializable] public struct Team : ISharedComponentData { public int Value; }
+    // [Serializable] public struct TeamMember : IComponentData { public int Value; }
+    [Serializable] public struct TeamGroup : ISharedComponentData { public int Value; }
 
     // Formations
     [Serializable] public struct FormationGroup : ISharedComponentData { public Entity Parent; }

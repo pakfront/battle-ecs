@@ -204,7 +204,7 @@ PrefabInstance:
     - target: {fileID: 667885411772386989, guid: a434fb57c2b334f56977e51339be8334,
         type: 3}
       propertyPath: m_Name
-      value: RedUnitSpawn
+      value: Red4thRegt
       objectReference: {fileID: 0}
     - target: {fileID: 667885411772386991, guid: a434fb57c2b334f56977e51339be8334,
         type: 3}
@@ -558,7 +558,7 @@ PrefabInstance:
     - target: {fileID: 667885411772386989, guid: a434fb57c2b334f56977e51339be8334,
         type: 3}
       propertyPath: m_Name
-      value: RedUnitSpawn
+      value: Red1stRegt
       objectReference: {fileID: 0}
     - target: {fileID: 667885411772386991, guid: a434fb57c2b334f56977e51339be8334,
         type: 3}
@@ -627,7 +627,7 @@ PrefabInstance:
     - target: {fileID: 667885411772386989, guid: a434fb57c2b334f56977e51339be8334,
         type: 3}
       propertyPath: m_Name
-      value: RedUnitSpawn
+      value: Red3rdRegt
       objectReference: {fileID: 0}
     - target: {fileID: 667885411772386991, guid: a434fb57c2b334f56977e51339be8334,
         type: 3}
@@ -1089,7 +1089,7 @@ PrefabInstance:
     - target: {fileID: 667885411772386989, guid: a434fb57c2b334f56977e51339be8334,
         type: 3}
       propertyPath: m_Name
-      value: RedUnitSpawn
+      value: Red2ndRegt
       objectReference: {fileID: 0}
     - target: {fileID: 667885411772386991, guid: a434fb57c2b334f56977e51339be8334,
         type: 3}

@@ -12,15 +12,16 @@ namespace UnitAgent
     // [DisableAutoCreation]
     //[UpdateAfter(typeof(MoveToGoal))]
     [UpdateInGroup(typeof(CombatSystemGroup))]
-    public class FindOpponentSystem : JobComponentSystem
+    public class OldFindOpponentSystem : JobComponentSystem
     {
-        EntityQuery unitGroup;
+        EntityQuery m_group;
 
         [BurstCompile]
         struct FindOpponentJob : IJobParallelFor
         {
             [DeallocateOnJobCompletion] public NativeArray<ArchetypeChunk> Chunks;
             [ReadOnly, DeallocateOnJobCompletion] public NativeArray<Entity> Targets;
+
             public ArchetypeChunkComponentType<Opponent> OpponentType;
             [ReadOnly] public ArchetypeChunkComponentType<Translation> TranslationType;
             [ReadOnly] public ArchetypeChunkSharedComponentType<TeamGroup> TeamType;
@@ -38,14 +39,13 @@ namespace UnitAgent
                 {
                     chunkOpponent[i] = new Opponent
                     {
-                        DistanceSq = float.MaxValue // could be Range?
+                        DistanceSq = float.MaxValue
                     };
                 }
 
                 for (int c = 0; c < Chunks.Length; c++)
                 {
                     var otherChunk = Chunks[c];
-
                     // don't test against your own Team/chunk
                     int otherChunkTeamIndex = otherChunk.GetSharedComponentIndex(TeamType);
                     if (otherChunkTeamIndex == chunkTeamIndex) continue;
@@ -55,10 +55,11 @@ namespace UnitAgent
                     for (int i = 0; i < instanceCount; i++)
                     {
                         float3 position = chunkTranslation[i].Value;
-                        // Get from previous loop
+                        // Get from previous pass
                         float nearestDistanceSq = chunkOpponent[i].DistanceSq;
                         int nearestPositionIndex = -1;
-                        var target = Entity.Null;
+                        Entity entity = Entity.Null;
+
                         for (int j = 0; j < otherChunk.Count; j++)
                         {
                             var targetPosition = otherTranslations[j].Value;
@@ -66,8 +67,7 @@ namespace UnitAgent
                             bool nearest = distance < nearestDistanceSq;
                             nearestDistanceSq = math.select(nearestDistanceSq, distance, nearest);
                             nearestPositionIndex = math.select(nearestPositionIndex, j, nearest);
-                            //FIXME this offset is wrong
-                            target = nearest ? Targets[j] : target;
+                            entity = nearest ? : entity;
                         }
 
                         if (nearestPositionIndex > -1)
@@ -76,7 +76,8 @@ namespace UnitAgent
                             chunkOpponent[i] = new Opponent
                             {
                                 DistanceSq = nearestDistanceSq,
-                                Position = otherTranslations[nearestPositionIndex].Value
+                                Position = otherTranslations[nearestPositionIndex].Value,
+                                Entity = entity
                             };
                         }
                         //TODO possibly remove a tag if none found
@@ -96,14 +97,10 @@ namespace UnitAgent
 
         protected override void OnCreate()
         {
-            unitGroup = GetEntityQuery( new EntityQueryDesc
+            m_group = GetEntityQuery( new EntityQueryDesc
             {
-                All = new ComponentType[] { 
-                    typeof(Opponent), ComponentType.ReadOnly<TeamGroup>(),
-                    ComponentType.ReadOnly<Translation>(), ComponentType.ReadOnly<Unit>()
-                }
+                All = new ComponentType[] { typeof(Opponent), ComponentType.ReadOnly<TeamGroup>(), ComponentType.ReadOnly<Translation>(), ComponentType.ReadOnly<Unit>() }
             });
-
         }
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
@@ -111,23 +108,17 @@ namespace UnitAgent
             var opponentType = GetArchetypeChunkComponentType<Opponent>();
             var translationType = GetArchetypeChunkComponentType<Translation>(true);
             var teamType = GetArchetypeChunkSharedComponentType<TeamGroup>();
+            var chunks = m_group.CreateArchetypeChunkArray(Allocator.TempJob);
 
-            var targets = unitGroup.ToEntityArray(Allocator.TempJob);
-            if (targets.Length == 0)
-            {
-                Debug.Log("FindOpponentSystem No Targets");
-                targets.Dispose();
-                return inputDeps;
-            }
 
-            var chunks = unitGroup.CreateArchetypeChunkArray(Allocator.TempJob);
+            var targets = m_group.ToEntityArray(Allocator.TempJob);
+
             var findOpponentJob = new FindOpponentJob
             {
                 Chunks = chunks,
                 OpponentType = opponentType,
                 TranslationType = translationType,
                 TeamType = teamType,
-                Targets = targets,
             };
             var outputDeps = findOpponentJob.Schedule(chunks.Length, 32, inputDeps);
             
