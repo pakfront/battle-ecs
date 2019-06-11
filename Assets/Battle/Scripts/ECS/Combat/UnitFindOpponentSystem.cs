@@ -12,10 +12,22 @@ namespace UnitAgent
     // [DisableAutoCreation]
     //[UpdateAfter(typeof(MoveToGoal))]
     [UpdateInGroup(typeof(CombatSystemGroup))]
-    public class FindOpponentSystem : JobComponentSystem
+    public class UnitFindOpponentSystem : JobComponentSystem
     {
         EntityQuery unitGroup;
 
+        protected override void OnCreate()
+        {
+            unitGroup = GetEntityQuery( new EntityQueryDesc
+            {
+                All = new ComponentType[] { 
+                    typeof(Opponent), ComponentType.ReadOnly<TeamGroup>(),
+                    ComponentType.ReadOnly<Translation>(), ComponentType.ReadOnly<Unit>()
+                }
+            });
+
+        }
+        
         [BurstCompile]
         struct FindOpponentJob : IJobParallelFor
         {
@@ -89,25 +101,13 @@ namespace UnitAgent
             }
         }
 
-        // [BurstCompile]
-        // struct SetGoal : IJobForEach<Opponent, GoalMoveTo>
-        // {
-        //     public void Execute([ReadOnly] ref Opponent opponent, ref GoalMoveTo goal)
-        //     {
-        //         goal.Position = opponent.Position;
-        //     }
-        // }
-
-        protected override void OnCreate()
+        [BurstCompile]
+        struct SetGoal : IJobForEach<Opponent, MoveToGoal>
         {
-            unitGroup = GetEntityQuery( new EntityQueryDesc
+            public void Execute([ReadOnly] ref Opponent opponent, ref MoveToGoal goal)
             {
-                All = new ComponentType[] { 
-                    typeof(Opponent), ComponentType.ReadOnly<TeamGroup>(),
-                    ComponentType.ReadOnly<Translation>(), ComponentType.ReadOnly<Unit>()
-                }
-            });
-
+                goal.Position = opponent.Position;
+            }
         }
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
@@ -137,10 +137,13 @@ namespace UnitAgent
             };
             var outputDeps = findOpponentJob.Schedule(chunks.Length, 32, inputDeps);
             
+            // for testing
+            var setGoalJob = new SetGoal();
+            outputDeps = setGoalJob.Schedule(this, outputDeps);
+
             return outputDeps;
 
-            // var setGoalJob = new SetGoal();
-            // return setGoalJob.Schedule(this, outputDeps);
+
         }
     }
 }
