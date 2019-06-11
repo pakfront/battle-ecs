@@ -22,6 +22,7 @@ namespace UnitAgent
             [DeallocateOnJobCompletion] public NativeArray<ArchetypeChunk> Chunks;
             [ReadOnly, DeallocateOnJobCompletion] public NativeArray<Entity> Targets;
             public ArchetypeChunkComponentType<Opponent> OpponentType;
+            [ReadOnly] public ArchetypeChunkEntityType EntityType;
             [ReadOnly] public ArchetypeChunkComponentType<Translation> TranslationType;
             [ReadOnly] public ArchetypeChunkSharedComponentType<TeamGroup> TeamType;
 
@@ -31,6 +32,7 @@ namespace UnitAgent
                 var chunkOpponent = chunk.GetNativeArray(OpponentType);
                 var chunkTranslation = chunk.GetNativeArray(TranslationType);
                 int chunkTeamIndex = chunk.GetSharedComponentIndex(TeamType);
+
                 var instanceCount = chunk.Count;
 
                 // initialize
@@ -51,6 +53,7 @@ namespace UnitAgent
                     if (otherChunkTeamIndex == chunkTeamIndex) continue;
 
                     var otherTranslations = otherChunk.GetNativeArray(TranslationType);
+                    var otherEntities = otherChunk.GetNativeArray(EntityType);
 
                     for (int i = 0; i < instanceCount; i++)
                     {
@@ -76,7 +79,8 @@ namespace UnitAgent
                             chunkOpponent[i] = new Opponent
                             {
                                 DistanceSq = nearestDistanceSq,
-                                Position = otherTranslations[nearestPositionIndex].Value
+                                Position = otherTranslations[nearestPositionIndex].Value,
+                                Entity = otherEntities[nearestPositionIndex]
                             };
                         }
                         //TODO possibly remove a tag if none found
@@ -111,6 +115,7 @@ namespace UnitAgent
             var opponentType = GetArchetypeChunkComponentType<Opponent>();
             var translationType = GetArchetypeChunkComponentType<Translation>(true);
             var teamType = GetArchetypeChunkSharedComponentType<TeamGroup>();
+            var entityType = GetArchetypeChunkEntityType();
 
             var targets = unitGroup.ToEntityArray(Allocator.TempJob);
             if (targets.Length == 0)
@@ -126,6 +131,7 @@ namespace UnitAgent
                 Chunks = chunks,
                 OpponentType = opponentType,
                 TranslationType = translationType,
+                EntityType = entityType,
                 TeamType = teamType,
                 Targets = targets,
             };

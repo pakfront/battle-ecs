@@ -48,8 +48,6 @@ namespace UnitAgent
             // Create entity prefab from the game object hierarchy once
             var unitEntity = CreateSelectableEntity(entityManager, unitPrefab.gameObject);
 
-            entityManager.SetComponentData(unitEntity, new Unit { Team = (int)team });
-
             entityManager.AddComponentData(unitEntity, new MoveSettings
             {
                 TranslateSpeed = translationUnitsPerSecond,
