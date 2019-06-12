@@ -26,6 +26,7 @@ namespace UnitAgent
 
         [Header("Agent")]
         public EFormation agentFormation = EFormation.Line;
+        public int agentFormationTable = 0;
         public int agentCount = 60;
         public AgentProxy agentPrefab;
         // public float agentSpacing = 1.3F;
@@ -110,19 +111,20 @@ namespace UnitAgent
         {
             Entity prefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(
                 agentPrefab.gameObject, entityManager.World);
-            float3[] formationPositions = Formation.CalcAgentFormations();
+            float3[] formationPositions = Formation.CalcAgentFormationOffsetTable();
             float3[] spawnPositions = GetAgentSpawnPositions(formationPositions);
 
             NativeArray<Entity> agents = new NativeArray<Entity>(agentCount, Allocator.Temp);
             entityManager.Instantiate(prefab, agents);
 
             // SharedComponent placed on Agents o we can process by chunk
-
+            int startIndex = Formation.CalcAgentFormationStartIndex((int)agentFormation, agentFormationTable);
+            Debug.Log(name+" Spawning Agents "+agentFormation+" startIndex:"+startIndex);
             for (int i = 0; i < agentCount; i++)
             {
                 // float3 formationPosition = transform.TransformPoint(new float3(x * 1.3F, 0, y * 1.3F));
-                float3 formationPosition = formationPositions[i];
-                float3 spawnPosition = spawnPositions[i];
+                float3 formationPosition = formationPositions[startIndex+i];
+                float3 spawnPosition = spawnPositions[startIndex+i];
                 entityManager.SetName(agents[i], name + "_" + i);
 
                 // entityManager.SetComponentData(agents[i], new Agent { });
@@ -154,7 +156,7 @@ namespace UnitAgent
             int formationIndex = (int)agentFormation;
             if (formationIndex < 0 || formationIndex >= Formation.FormationCount) return formationPositions;
 
-            float3[] formationOffsets = Formation.CalcAgentFormations();
+            float3[] formationOffsets = Formation.CalcAgentFormationOffsetTable();
             for (int i = 0; i < agentCount; i++)
             {
                 formationPositions[i] = formationOffsets[formationIndex * Formation.MaxAgentsPerFormation + i];
@@ -167,9 +169,9 @@ namespace UnitAgent
         {
             Unity.Mathematics.Random random = new Unity.Mathematics.Random((uint)gameObject.GetInstanceID());
 
-            float3[] spawnPositions = new float3[agentCount];
+            float3[] spawnPositions = new float3[formationPositions.Length];
 
-            for (int i = 0; i < agentCount; i++)
+            for (int i = 0; i < spawnPositions.Length; i++)
             {
                 spawnPositions[i] = (float3)(transform.TransformPoint(formationPositions[i])) + new float3(random.NextFloat(-4, 4), 0, random.NextFloat(-4, 4));
             }

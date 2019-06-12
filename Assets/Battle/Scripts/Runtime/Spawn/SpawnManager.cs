@@ -69,15 +69,16 @@ namespace UnitAgent
                 var superiorEntity = formationSpawnMap[superior];
                 //TODO get in correct position
                 int memberIndex = spawn.transform.GetSiblingIndex();
-                manager.AddComponentData(entity, new FormationMember
+                manager.AddComponentData(entity, new UnitGroupMember
                 {
                     MemberIndex = memberIndex,
-                    FormationIndex = memberIndex,//TODO get bases on parent formation
+                    // FormationTableIndex = memberIndex,//TODO get bases on parent formation
+                    FormationId = 1, //TODO set correctly
                     PositionOffset = new float3(0, 0, memberIndex), //TODO get in correct position
                     Parent = superiorEntity
                 });
 
-                manager.AddSharedComponentData(entity, new FormationGroup
+                manager.AddSharedComponentData(entity, new UnitGroup
                 {
                     Parent = superiorEntity
                 });   

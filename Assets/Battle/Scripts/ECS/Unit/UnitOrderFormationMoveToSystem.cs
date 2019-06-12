@@ -15,43 +15,46 @@ namespace UnitAgent
     [UpdateInGroup(typeof(UnitSystemGroup))]
     public class UnitOrderFormationMoveToSystem : JobComponentSystem
     {
-        public NativeArray<float3> FormationOffsets;
-        public NativeArray<int> FormationTypes;
+        public NativeArray<float3> UnitFormationOffsetTable;
+        public NativeArray<int> UnitFormationSubIdTable;
         protected override void OnCreate()
         {
-            Formation.CalcUnitFormations(out float3[] formationOffsets, out int[] formationTypes);
-            FormationOffsets = new NativeArray<float3>(formationOffsets, Allocator.Persistent);
-            FormationTypes = new NativeArray<int>(formationTypes, Allocator.Persistent);
+            Formation.CalcUnitFormationTables(out float3[] formationOffsets, out int[] formationTypes);
+            UnitFormationOffsetTable = new NativeArray<float3>(formationOffsets, Allocator.Persistent);
+            UnitFormationSubIdTable = new NativeArray<int>(formationTypes, Allocator.Persistent);
+            Debug.Log("FormationOffsetsTable:"+UnitFormationOffsetTable.Length+" SubformationIdsTable:"+UnitFormationSubIdTable.Length);
         }
 
         protected override void OnDestroy()
         {
-            FormationOffsets.Dispose();
+            UnitFormationOffsetTable.Dispose();
         }
 
         [BurstCompile]
         // TODO run only when parent has changed formation
         [RequireComponentTag(typeof(OrderFormationMoveTo))]
-        struct SetFormationMemberDataJob : IJobForEach<FormationMember>
+        struct SetFormationMemberDataJob : IJobForEach<UnitGroupMember>
         {
-            [ReadOnly] public ComponentDataFromEntity<FormationLeader> Leaders;
-            [ReadOnly] public NativeArray<float3> Offsets;
-            public void Execute(ref FormationMember formationElement)
+            [ReadOnly] public ComponentDataFromEntity<UnitGroupLeader> Leaders;
+            [ReadOnly] public NativeArray<float3> FormationOffsetsTable;
+            [ReadOnly] public NativeArray<int> SubformationTable;
+            public void Execute(ref UnitGroupMember formationElement)
             {
                 Entity parent = formationElement.Parent;
-                int formationStartIndex = Leaders[parent].FormationStartIndex;
-                formationElement.FormationIndex = formationStartIndex + formationElement.MemberIndex;
-                formationElement.PositionOffset = Offsets[formationElement.FormationIndex];
+                // formationElement.FormationTableIndex = formationStartIndex + formationElement.MemberIndex;
+                int formationTableIndex = Leaders[parent].FormationStartIndex + formationElement.MemberIndex;
+                formationElement.PositionOffset = FormationOffsetsTable[formationTableIndex];
+                formationElement.FormationId = SubformationTable[formationTableIndex];
             }
         }
 
         [BurstCompile]
         [RequireComponentTag(typeof(OrderFormationMoveTo))]
         [ExcludeComponent(typeof(Detached))]
-        struct SetGoalJob : IJobForEach<MoveToGoal, FormationMember>
+        struct SetGoalJob : IJobForEach<MoveToGoal, UnitGroupMember>
         {
             [ReadOnly] public ComponentDataFromEntity<LocalToWorld> Others;
-            public void Execute(ref MoveToGoal goal, [ReadOnly] ref FormationMember formationMember)
+            public void Execute(ref MoveToGoal goal, [ReadOnly] ref UnitGroupMember formationMember)
             {
                 Entity parent = formationMember.Parent;
                 float4x4 xform = Others[parent].Value;
@@ -70,8 +73,9 @@ namespace UnitAgent
             
             outputDeps = new SetFormationMemberDataJob()
             {
-                Leaders = GetComponentDataFromEntity<FormationLeader>(true),
-                Offsets = FormationOffsets
+                Leaders = GetComponentDataFromEntity<UnitGroupLeader>(true),
+                FormationOffsetsTable = UnitFormationOffsetTable,
+                SubformationTable = UnitFormationSubIdTable
             }.Schedule(this, outputDeps);
 
             //if moved or formation changed

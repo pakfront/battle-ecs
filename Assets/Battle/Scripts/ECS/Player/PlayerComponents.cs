@@ -31,7 +31,7 @@ namespace UnitAgent
     {
         public float3 WorldHitPosition, MousePosition;
         public uint Click;
-        public int Formation;
+        public int FormationId;
 
         public Entity CurrentEntity;
     }

@@ -19,7 +19,7 @@ namespace UnitAgent
         {
             var entity = CreateSelectableEntity(entityManager, formationPrefab.gameObject);
             entityManager.SetComponentData(entity,
-            new FormationLeader
+            new UnitGroupLeader
             {
                 CurrentFormation = (int)initialFormation,
                 FormationStartIndex = Formation.CalcUnitFormationStartIndex((int)initialFormation, formationTable)
@@ -31,7 +31,7 @@ namespace UnitAgent
 
         public void ApplyFormation()
         {
-            Formation.CalcUnitFormations(out float3[] formationOffsets, out int[] formationTypes);
+            Formation.CalcUnitFormationTables(out float3[] formationOffsets, out int[] formationTypes);
 
             int formationIndex = (int)initialFormation;
             int startIndex = Formation.CalcUnitFormationStartIndex(formationIndex, formationTable); //formationIndex * FormationUtils.MaxUnitsPerFormation;
@@ -71,7 +71,7 @@ namespace UnitAgent
 
             UnityEditor.Handles.matrix = transform.localToWorldMatrix;
 
-            Formation.CalcUnitFormations(out float3[] formationOffsets, out int[] formationTypes);
+            Formation.CalcUnitFormationTables(out float3[] formationOffsets, out int[] formationTypes);
 
             int startIndex = Formation.CalcUnitFormationStartIndex(formationIndex, formationTable); //formationIndex * FormationUtils.MaxUnitsPerFormation;
             for (int i = 0; i < Formation.MaxUnitsPerFormation; i++)

@@ -40,12 +40,12 @@ namespace UnitAgent
             m_FormationGroup = GetEntityQuery(new EntityQueryDesc
             {
                 None = new ComponentType[] { typeof(OrderFormationMoveTo) },
-                All = new ComponentType[] { ComponentType.ReadOnly<FormationGroup>(), ComponentType.ReadOnly<PlayerOwned>() }
+                All = new ComponentType[] { ComponentType.ReadOnly<UnitGroup>(), ComponentType.ReadOnly<PlayerOwned>() }
             });
 
             m__NeedsSetFormation = GetEntityQuery(new EntityQueryDesc
             {
-                All = new ComponentType[] { ComponentType.ReadOnly<FormationLeader>(), ComponentType.ReadOnly<PlayerOwned>() }
+                All = new ComponentType[] { ComponentType.ReadOnly<UnitGroupLeader>(), ComponentType.ReadOnly<PlayerOwned>() }
             });
         }
 
@@ -71,28 +71,28 @@ namespace UnitAgent
                 return;
             }
 
-            if (EntityManager.HasComponent<FormationLeader>(playerPointer.CurrentEntity))
+            if (EntityManager.HasComponent<UnitGroupLeader>(playerPointer.CurrentEntity))
             {
                 // m_NeedsOrderFormationMoveTo.ClearFilter();
                 if (playerPointer.Click == (uint)EClick.MoveTo)
                 {
                     Debug.Log("Adding FormationMoveTo " + playerPointer.CurrentEntity);
                     EntityManager.SetComponentData(playerPointer.CurrentEntity, new Translation { Value = playerPointer.WorldHitPosition });
-                    m_FormationGroup.SetFilter(new FormationGroup { Parent = playerPointer.CurrentEntity });
+                    m_FormationGroup.SetFilter(new UnitGroup { Parent = playerPointer.CurrentEntity });
                     EntityManager.AddComponent(m_FormationGroup, typeof(OrderFormationMoveTo));
                     return;
                 }
 
-                if (playerPointer.Formation != (int)EFormation.None)
+                if (playerPointer.FormationId != (int)EFormation.None)
                 {
-                    Debug.Log("Setting FormationLeader Formation " + playerPointer.CurrentEntity + " to " + playerPointer.Formation + " " + (EFormation)playerPointer.Formation);
+                    Debug.Log("Setting FormationLeader Formation " + playerPointer.CurrentEntity + " to " + playerPointer.FormationId + " " + (EFormation)playerPointer.FormationId);
                     EntityManager.SetComponentData(playerPointer.CurrentEntity,
-                        new FormationLeader
+                        new UnitGroupLeader
                         {
-                            CurrentFormation = playerPointer.Formation,
-                            FormationStartIndex = Formation.CalcUnitFormationStartIndex(playerPointer.Formation, 0)
+                            CurrentFormation = playerPointer.FormationId,
+                            FormationStartIndex = Formation.CalcUnitFormationStartIndex(playerPointer.FormationId, 0)
                         });
-                    m_FormationGroup.SetFilter(new FormationGroup { Parent = playerPointer.CurrentEntity });
+                    m_FormationGroup.SetFilter(new UnitGroup { Parent = playerPointer.CurrentEntity });
                     EntityManager.AddComponent(m_FormationGroup, typeof(OrderFormationMoveTo));
                     return;
                 }

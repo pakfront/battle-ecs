@@ -266,6 +266,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 667885411772386990, guid: a434fb57c2b334f56977e51339be8334,
+        type: 3}
+      propertyPath: team
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a434fb57c2b334f56977e51339be8334, type: 3}
 --- !u!1 &170076733
@@ -620,6 +625,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 667885411772386990, guid: a434fb57c2b334f56977e51339be8334,
+        type: 3}
+      propertyPath: team
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a434fb57c2b334f56977e51339be8334, type: 3}
 --- !u!1001 &766238773
@@ -688,6 +698,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 667885411772386990, guid: a434fb57c2b334f56977e51339be8334,
+        type: 3}
+      propertyPath: team
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a434fb57c2b334f56977e51339be8334, type: 3}
@@ -762,6 +777,11 @@ PrefabInstance:
         type: 3}
       propertyPath: agentCount
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 667885411772386990, guid: a434fb57c2b334f56977e51339be8334,
+        type: 3}
+      propertyPath: team
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a434fb57c2b334f56977e51339be8334, type: 3}
@@ -1165,6 +1185,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 667885411772386990, guid: a434fb57c2b334f56977e51339be8334,
+        type: 3}
+      propertyPath: team
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a434fb57c2b334f56977e51339be8334, type: 3}

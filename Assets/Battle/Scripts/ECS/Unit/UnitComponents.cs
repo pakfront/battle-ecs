@@ -13,18 +13,19 @@ namespace UnitAgent
     [Serializable] public struct TeamGroup : ISharedComponentData { public int Value; }
 
     // Formations
-    [Serializable] public struct FormationGroup : ISharedComponentData { public Entity Parent; }
+    [Serializable] public struct UnitGroup : ISharedComponentData { public Entity Parent; }
 
-    [Serializable] public struct FormationLeader : IComponentData {
+    [Serializable] public struct UnitGroupLeader : IComponentData {
         public int FormationTable;
         public int CurrentFormation;
         public int FormationStartIndex;
      }
     [Serializable]
-    public struct FormationMember : IComponentData
+    public struct UnitGroupMember : IComponentData
     {
         public int MemberIndex;
-        public int FormationIndex;
+        // public int FormationTableIndex;//used for debug only
+        public int FormationId; //corresponds to EFormation
         public Entity Parent;
         public float3 PositionOffset;
     }
