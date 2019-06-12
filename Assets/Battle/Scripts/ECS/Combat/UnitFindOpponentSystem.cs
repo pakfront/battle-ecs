@@ -32,7 +32,7 @@ namespace UnitAgent
         struct FindOpponentJob : IJobParallelFor
         {
             [DeallocateOnJobCompletion] public NativeArray<ArchetypeChunk> Chunks;
-            [ReadOnly, DeallocateOnJobCompletion] public NativeArray<Entity> Targets;
+            // [ReadOnly, DeallocateOnJobCompletion] public NativeArray<Entity> Targets;
             public ArchetypeChunkComponentType<Opponent> OpponentType;
             [ReadOnly] public ArchetypeChunkEntityType EntityType;
             [ReadOnly] public ArchetypeChunkComponentType<Translation> TranslationType;
@@ -81,8 +81,6 @@ namespace UnitAgent
                             bool nearest = distance < nearestDistanceSq;
                             nearestDistanceSq = math.select(nearestDistanceSq, distance, nearest);
                             nearestPositionIndex = math.select(nearestPositionIndex, j, nearest);
-                            //FIXME this offset is wrong
-                            target = nearest ? Targets[j] : target;
                         }
 
                         if (nearestPositionIndex > -1)
@@ -117,14 +115,6 @@ namespace UnitAgent
             var teamType = GetArchetypeChunkSharedComponentType<TeamGroup>();
             var entityType = GetArchetypeChunkEntityType();
 
-            var targets = unitGroup.ToEntityArray(Allocator.TempJob);
-            if (targets.Length == 0)
-            {
-                Debug.Log("FindOpponentSystem No Targets");
-                targets.Dispose();
-                return inputDeps;
-            }
-
             var chunks = unitGroup.CreateArchetypeChunkArray(Allocator.TempJob);
             var findOpponentJob = new FindOpponentJob
             {
@@ -133,13 +123,12 @@ namespace UnitAgent
                 TranslationType = translationType,
                 EntityType = entityType,
                 TeamType = teamType,
-                Targets = targets,
             };
             var outputDeps = findOpponentJob.Schedule(chunks.Length, 32, inputDeps);
             
-            // for testing
-            var setGoalJob = new SetGoal();
-            outputDeps = setGoalJob.Schedule(this, outputDeps);
+            // // for testing
+            // var setGoalJob = new SetGoal();
+            // outputDeps = setGoalJob.Schedule(this, outputDeps);
 
             return outputDeps;
 
