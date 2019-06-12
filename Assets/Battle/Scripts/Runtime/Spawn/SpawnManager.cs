@@ -67,10 +67,13 @@ namespace UnitAgent
                 Debug.Log("Setting Superior entity reference to " + superior, spawn);
 
                 var superiorEntity = formationSpawnMap[superior];
+                //TODO get in correct position
+                int memberIndex = spawn.transform.GetSiblingIndex();
                 manager.AddComponentData(entity, new FormationMember
                 {
-                    IndexOffset = spawn.transform.GetSiblingIndex(),
-                    PositionOffset = new float3(0, 0, spawn.transform.GetSiblingIndex()),
+                    MemberIndex = memberIndex,
+                    FormationIndex = memberIndex,//TODO get bases on parent formation
+                    PositionOffset = new float3(0, 0, memberIndex), //TODO get in correct position
                     Parent = superiorEntity
                 });
 

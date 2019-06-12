@@ -23,7 +23,8 @@ namespace UnitAgent
     [Serializable]
     public struct FormationMember : IComponentData
     {
-        public int IndexOffset;
+        public int MemberIndex;
+        public int FormationIndex;
         public Entity Parent;
         public float3 PositionOffset;
     }

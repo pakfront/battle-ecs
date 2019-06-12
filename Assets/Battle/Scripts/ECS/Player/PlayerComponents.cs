@@ -24,22 +24,14 @@ namespace UnitAgent
         // FormationAttack = Attack | Ctrl
     }
 
-    public enum EFormation : int
-    {
-        None = -1,
 
-        Line = 0,
-        Column = 1,
-        Reserve = 2,
-        Mob = 3
-    }
 
     [Serializable]
     public struct PlayerInput : IComponentData
     {
         public float3 WorldHitPosition, MousePosition;
         public uint Click;
-        public int FormationIndex;
+        public int Formation;
 
         public Entity CurrentEntity;
     }

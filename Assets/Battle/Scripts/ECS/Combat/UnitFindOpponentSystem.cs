@@ -131,8 +131,6 @@ namespace UnitAgent
             // outputDeps = setGoalJob.Schedule(this, outputDeps);
 
             return outputDeps;
-
-
         }
     }
 }

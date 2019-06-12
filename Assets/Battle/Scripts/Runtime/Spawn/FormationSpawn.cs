@@ -22,7 +22,7 @@ namespace UnitAgent
             new FormationLeader
             {
                 CurrentFormation = (int)initialFormation,
-                FormationStartIndex = FormationUtils.CalcFormationStartIndex((int)initialFormation, formationTable)
+                FormationStartIndex = Formation.CalcUnitFormationStartIndex((int)initialFormation, formationTable)
             });
 
             return entity;
@@ -31,10 +31,10 @@ namespace UnitAgent
 
         public void ApplyFormation()
         {
-            FormationUtils.CalcUnitFormations(out float3[] formationOffsets, out int[] formationTypes);
+            Formation.CalcUnitFormations(out float3[] formationOffsets, out int[] formationTypes);
 
             int formationIndex = (int)initialFormation;
-            int startIndex = FormationUtils.CalcFormationStartIndex(formationIndex, formationTable); //formationIndex * FormationUtils.MaxUnitsPerFormation;
+            int startIndex = Formation.CalcUnitFormationStartIndex(formationIndex, formationTable); //formationIndex * FormationUtils.MaxUnitsPerFormation;
             Debug.Log(name + " Applying Formation " + initialFormation + " " + startIndex);
             for (int i = 0; i < transform.childCount; i++)
             {
@@ -67,14 +67,14 @@ namespace UnitAgent
         {
 
             int formationIndex = (int)initialFormation;
-            if (formationIndex < 0 || formationIndex >= FormationUtils.FormationCount) return;
+            if (formationIndex < 0 || formationIndex >= Formation.FormationCount) return;
 
             UnityEditor.Handles.matrix = transform.localToWorldMatrix;
 
-            FormationUtils.CalcUnitFormations(out float3[] formationOffsets, out int[] formationTypes);
+            Formation.CalcUnitFormations(out float3[] formationOffsets, out int[] formationTypes);
 
-            int startIndex = FormationUtils.CalcFormationStartIndex(formationIndex, formationTable); //formationIndex * FormationUtils.MaxUnitsPerFormation;
-            for (int i = 0; i < FormationUtils.MaxUnitsPerFormation; i++)
+            int startIndex = Formation.CalcUnitFormationStartIndex(formationIndex, formationTable); //formationIndex * FormationUtils.MaxUnitsPerFormation;
+            for (int i = 0; i < Formation.MaxUnitsPerFormation; i++)
             {
                 Vector3 p = formationOffsets[startIndex + i];
 #if UNITY_EDITOR

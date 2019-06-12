@@ -39,7 +39,7 @@ namespace UnitAgent
 
         void OnValidate()
         {
-            if (agentCount > FormationUtils.MaxAgentsPerFormation) agentCount = FormationUtils.MaxAgentsPerFormation;
+            if (agentCount > Formation.MaxAgentsPerFormation) agentCount = Formation.MaxAgentsPerFormation;
             else if (agentCount < 0) agentCount = 0;
         }
         public Entity SpawnUnit(EntityManager entityManager)
@@ -110,7 +110,7 @@ namespace UnitAgent
         {
             Entity prefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(
                 agentPrefab.gameObject, entityManager.World);
-            float3[] formationPositions = FormationUtils.CalcAgentFormations();
+            float3[] formationPositions = Formation.CalcAgentFormations();
             float3[] spawnPositions = GetAgentSpawnPositions(formationPositions);
 
             NativeArray<Entity> agents = new NativeArray<Entity>(agentCount, Allocator.Temp);
@@ -152,12 +152,12 @@ namespace UnitAgent
         {
             float3[] formationPositions = new float3[agentCount];
             int formationIndex = (int)agentFormation;
-            if (formationIndex < 0 || formationIndex >= FormationUtils.FormationCount) return formationPositions;
+            if (formationIndex < 0 || formationIndex >= Formation.FormationCount) return formationPositions;
 
-            float3[] formationOffsets = FormationUtils.CalcAgentFormations();
+            float3[] formationOffsets = Formation.CalcAgentFormations();
             for (int i = 0; i < agentCount; i++)
             {
-                formationPositions[i] = formationOffsets[formationIndex * FormationUtils.MaxAgentsPerFormation + i];
+                formationPositions[i] = formationOffsets[formationIndex * Formation.MaxAgentsPerFormation + i];
             }
             return formationPositions;
         }
