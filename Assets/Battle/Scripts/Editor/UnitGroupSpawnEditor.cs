@@ -3,12 +3,12 @@ using UnityEngine;
 using UnitAgent;
 using Unity.Mathematics;
 
-[CustomEditor(typeof(FormationSpawn)), CanEditMultipleObjects]
-public class FormationSpawnEditor : Editor
+[CustomEditor(typeof(UnitGroupSpawn)), CanEditMultipleObjects]
+public class UnitGroupSpawnnEditor : Editor
 {
         public override void OnInspectorGUI() {
             DrawDefaultInspector();
-            FormationSpawn obj = target as FormationSpawn;
+            UnitGroupSpawn obj = target as UnitGroupSpawn;
             if (GUILayout.Button("ApplyTeam"))
             {
                 obj.ApplyTeam();

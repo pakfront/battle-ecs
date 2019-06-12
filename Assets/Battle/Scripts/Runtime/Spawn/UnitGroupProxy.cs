@@ -6,7 +6,7 @@ using UnityEngine;
 namespace UnitAgent
 {
     [RequiresEntityConversion]
-    public class FormationProxy : MonoBehaviour, IConvertGameObjectToEntity
+    public class UnitGroupProxy : MonoBehaviour, IConvertGameObjectToEntity
     {
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {

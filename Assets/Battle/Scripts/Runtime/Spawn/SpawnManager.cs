@@ -11,37 +11,37 @@ namespace UnitAgent
     {
         void Start()
         {
-            FormationSpawn[] formationSpawns = GameObject.FindObjectsOfType<FormationSpawn>();
-            var formationSpawnMap = SpawnFormations(World.Active.EntityManager, formationSpawns);
+            UnitGroupSpawn[] unitGroupSpawns = GameObject.FindObjectsOfType<UnitGroupSpawn>();
+            var unitGroupSpawnMap = SpawnFormations(World.Active.EntityManager, unitGroupSpawns);
 
             UnitSpawn[] unitSpawns = GameObject.FindObjectsOfType<UnitSpawn>();
-            SpawnUnits(World.Active.EntityManager, formationSpawnMap, unitSpawns);
+            SpawnUnits(World.Active.EntityManager, unitGroupSpawnMap, unitSpawns);
             for (int i = 0; i < unitSpawns.Length; i++)
             {
                 GameObject.Destroy(unitSpawns[i]);
             }
         }
 
-        public Dictionary<FormationSpawn, Entity> SpawnFormations(EntityManager manager, FormationSpawn[] formationSpawns)
+        public Dictionary<UnitGroupSpawn, Entity> SpawnFormations(EntityManager manager, UnitGroupSpawn[] formationSpawns)
         {
-            Dictionary<FormationSpawn, Entity> formationSpawnMap = new Dictionary<FormationSpawn, Entity>();
+            Dictionary<UnitGroupSpawn, Entity> unitGroupSpawnMap = new Dictionary<UnitGroupSpawn, Entity>();
             foreach (var formationSpawn in formationSpawns)
             {
-                formationSpawnMap[formationSpawn] = formationSpawn.SpawnFormation(manager);
+                unitGroupSpawnMap[formationSpawn] = formationSpawn.SpawnFormation(manager);
             }
 
-            foreach (var outer in formationSpawnMap)
+            foreach (var outer in unitGroupSpawnMap)
             {
                 var spawn = outer.Key;
                 var entity = outer.Value;
-                TryAssignSuperior(manager, formationSpawnMap, spawn, entity);
+                TryAssignSuperior(manager, unitGroupSpawnMap, spawn, entity);
 
             }
 
-            return formationSpawnMap;   
+            return unitGroupSpawnMap;   
         }
 
-        public void SpawnUnits(EntityManager manager, Dictionary<FormationSpawn, Entity> formationSpawnMap, UnitSpawn[] unitSpawns)
+        public void SpawnUnits(EntityManager manager, Dictionary<UnitGroupSpawn, Entity> unitGroupSpawnMap, UnitSpawn[] unitSpawns)
         {
             Dictionary<UnitSpawn, Entity> unitSpawnMap = new Dictionary<UnitSpawn, Entity>();
             foreach (var unitSpawn in unitSpawns)
@@ -53,20 +53,20 @@ namespace UnitAgent
             {
                 var unitSpawn = outer.Key;
                 var unitEntity = outer.Value;
-                TryAssignSuperior(manager, formationSpawnMap, unitSpawn, unitEntity);     
+                TryAssignSuperior(manager, unitGroupSpawnMap, unitSpawn, unitEntity);     
             }
         }
 
-        public bool TryAssignSuperior(EntityManager manager, Dictionary<FormationSpawn, Entity> formationSpawnMap, Spawn spawn, Entity entity)
+        public bool TryAssignSuperior(EntityManager manager, Dictionary<UnitGroupSpawn, Entity> unitGroupSpawnMap, Spawn spawn, Entity entity)
         {
-                FormationSpawn superior = null;
-                if (spawn.transform.parent != null) superior = spawn.transform.parent.GetComponent<FormationSpawn>();
+                UnitGroupSpawn superior = null;
+                if (spawn.transform.parent != null) superior = spawn.transform.parent.GetComponent<UnitGroupSpawn>();
 
                 if (superior == null) return false;
 
                 Debug.Log("Setting Superior entity reference to " + superior, spawn);
 
-                var superiorEntity = formationSpawnMap[superior];
+                var superiorEntity = unitGroupSpawnMap[superior];
                 //TODO get in correct position
                 int memberIndex = spawn.transform.GetSiblingIndex();
                 manager.AddComponentData(entity, new UnitGroupMember

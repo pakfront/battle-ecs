@@ -9,9 +9,9 @@ using UnityEngine;
 namespace UnitAgent
 
 {
-    public class FormationSpawn : Spawn
+    public class UnitGroupSpawn : Spawn
     {
-        public FormationProxy formationPrefab;
+        public UnitGroupProxy formationPrefab;
         public EFormation initialFormation;
         public int formationTable = 0;
 
@@ -43,7 +43,7 @@ namespace UnitAgent
                 childXform.position = transform.TransformPoint(p);
                 childXform.rotation = Quaternion.LookRotation(transform.TransformDirection(Vector3.forward), Vector3.up);
 
-                var childFormationSpawn = childXform.GetComponent<FormationSpawn>();
+                var childFormationSpawn = childXform.GetComponent<UnitGroupSpawn>();
                 if (childFormationSpawn != null)
                 {
                     childFormationSpawn.initialFormation = (EFormation)formationTypes[startIndex + i];
