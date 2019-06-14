@@ -96,9 +96,9 @@ namespace UnitAgent
             }
         }
 
-        public static float3[] CalcAgentFormationOffsetTable()
+        public static void CalcAgentFormationOffsetTable(out float3[] formationOffsets)
         {
-            float3[] formationOffsets = new float3[AgentFormationOffsetsLength];
+            formationOffsets = new float3[AgentFormationOffsetsLength];
             float3 agentSpacing = new float3(AgentColumnWidth, 0, AgentRowHeight);
             float3 originOffset = new float3(AgentColumnWidth, 0, 0) / 2f;
 
@@ -129,8 +129,6 @@ namespace UnitAgent
                 Formation.DistributeAcrossColumns(20, i, out int row, out int col);
                 formationOffsets[f * MaxAgentsPerFormation + i] = new float3(col, 0, -row) * agentSpacing + originOffset;
             }
-
-            return formationOffsets;
         }
 
         public static int CalcUnitFormationStartIndex(int formationId, int formationTable)

@@ -15,27 +15,33 @@ namespace UnitAgent
     [UpdateBefore(typeof(TransformSystemGroup))]
     public class AgentFormationSystem : JobComponentSystem
     {
+        public NativeArray<float3> AgentFormationOffsetTable;
+        protected override void OnCreate()
+        {
+            Formation.CalcAgentFormationOffsetTable(out float3[] formationOffsets);
+            AgentFormationOffsetTable = new NativeArray<float3>(formationOffsets, Allocator.Persistent);
+            Debug.Log("AgentFormationOffsetTable:"+AgentFormationOffsetTable.Length);
+        }
 
         // TODO run only when unit has moved
         [BurstCompile]
-        [RequireComponentTag(typeof(Agent))]
-
         struct SetGoalJob : IJobForEach<MoveToGoal, AgentFormationMember>
         {
             [ReadOnly] public ComponentDataFromEntity<UnitGroupMember> UnitGroupMembers;
             [ReadOnly] public ComponentDataFromEntity<LocalToWorld> Transforms;
+            [ReadOnly] public NativeArray<float3> FormationOffsetsTable;
+
             public void Execute(ref MoveToGoal goal, [ReadOnly] ref AgentFormationMember formationMember)
             {
                 Entity parent = formationMember.Parent;
                 float4x4 xform = Transforms[parent].Value;
+
                 int startIndex = Formation.CalcAgentFormationStartIndex(
                     UnitGroupMembers[parent].FormationId, UnitGroupMembers[parent].FormationTableId
                     );
-                
-                Movement.SetGoalToFormationPosition(xform, startIndex + formationMember.Index, ref goal.Position, ref goal.Heading);
-
-
-                // Movement.SetGoalToFormationPosition(xform, formationMember.Offset, ref goal.Position, ref goal.Heading);
+                //TODO look into caching 
+                float3 offset = FormationOffsetsTable[startIndex + formationMember.Index]; 
+                Movement.SetGoalToFormationPosition(xform, offset, ref goal.Position, ref goal.Heading);
 
                 // goal.Position = math.transform(xform, formationElement.Position);
                 // // heterogenous as it's a direction vector;
@@ -48,7 +54,9 @@ namespace UnitAgent
             var setGoalJob = new SetGoalJob()
             {
                 Transforms = GetComponentDataFromEntity<LocalToWorld>(true),
-                UnitGroupMembers = GetComponentDataFromEntity<UnitGroupMember>(true)
+                UnitGroupMembers = GetComponentDataFromEntity<UnitGroupMember>(true),
+                FormationOffsetsTable = AgentFormationOffsetTable,
+
             };
 
             return setGoalJob.Schedule(this, inputDependencies);

@@ -123,7 +123,7 @@ namespace UnitAgent
         {
             Entity prefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(
                 agentPrefab.gameObject, entityManager.World);
-            float3[] formationPositions = Formation.CalcAgentFormationOffsetTable();
+            Formation.CalcAgentFormationOffsetTable(out float3[] formationPositions);
             float3[] spawnPositions = GetAgentSpawnPositions(formationPositions);
 
             NativeArray<Entity> agents = new NativeArray<Entity>(agentCount, Allocator.Temp);
@@ -168,7 +168,7 @@ namespace UnitAgent
             int formationIndex = (int)agentFormation;
             if (formationIndex < 0 || formationIndex >= Formation.FormationCount) return formationPositions;
 
-            float3[] formationOffsets = Formation.CalcAgentFormationOffsetTable();
+            Formation.CalcAgentFormationOffsetTable(out float3[] formationOffsets);
             for (int i = 0; i < agentCount; i++)
             {
                 formationPositions[i] = formationOffsets[formationIndex * Formation.MaxAgentsPerFormation + i];

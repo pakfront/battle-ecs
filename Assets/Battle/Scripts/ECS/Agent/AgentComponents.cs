@@ -11,7 +11,7 @@ namespace UnitAgent
     {
         public int Index;
         public Entity Parent;
-        // public float3 Offset;
+        // public float3 Offset; //debug
     }
 
     //using SCD triggers chunking per unit and chunk data lookup
