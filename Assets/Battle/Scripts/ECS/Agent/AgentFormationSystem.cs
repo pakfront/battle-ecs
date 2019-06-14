@@ -22,12 +22,20 @@ namespace UnitAgent
 
         struct SetGoalJob : IJobForEach<MoveToGoal, AgentFormationMember>
         {
-            [ReadOnly] public ComponentDataFromEntity<LocalToWorld> Others;
+            [ReadOnly] public ComponentDataFromEntity<UnitGroupMember> UnitGroupMembers;
+            [ReadOnly] public ComponentDataFromEntity<LocalToWorld> Transforms;
             public void Execute(ref MoveToGoal goal, [ReadOnly] ref AgentFormationMember formationMember)
             {
                 Entity parent = formationMember.Parent;
-                float4x4 xform = Others[parent].Value;
-                Movement.SetGoalToFormationPosition(xform, formationMember.Offset, ref goal.Position, ref goal.Heading);
+                float4x4 xform = Transforms[parent].Value;
+                int startIndex = Formation.CalcAgentFormationStartIndex(
+                    UnitGroupMembers[parent].FormationId, UnitGroupMembers[parent].FormationTableId
+                    );
+                
+                Movement.SetGoalToFormationPosition(xform, startIndex + formationMember.Index, ref goal.Position, ref goal.Heading);
+
+
+                // Movement.SetGoalToFormationPosition(xform, formationMember.Offset, ref goal.Position, ref goal.Heading);
 
                 // goal.Position = math.transform(xform, formationElement.Position);
                 // // heterogenous as it's a direction vector;
@@ -39,7 +47,8 @@ namespace UnitAgent
         {
             var setGoalJob = new SetGoalJob()
             {
-                Others = GetComponentDataFromEntity<LocalToWorld>(true)
+                Transforms = GetComponentDataFromEntity<LocalToWorld>(true),
+                UnitGroupMembers = GetComponentDataFromEntity<UnitGroupMember>(true)
             };
 
             return setGoalJob.Schedule(this, inputDependencies);

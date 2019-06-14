@@ -26,6 +26,8 @@ namespace UnitAgent
         public int MemberIndex;
         // public int FormationTableIndex;//used for debug only
         public int FormationId; //corresponds to EFormation
+        public int FormationTableId; //offset into compound table
+
         public Entity Parent;
         public float3 PositionOffset;
     }

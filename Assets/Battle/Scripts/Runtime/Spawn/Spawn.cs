@@ -10,11 +10,13 @@ namespace UnitAgent
 {
     public enum ETeam : byte {None=0, Red, Blue}
 
-    public class Spawn : MonoBehaviour
+    public abstract class Spawn : MonoBehaviour
     {
 
         [Header("Team")]
         public ETeam team;
+
+        public abstract void SetTeam(ETeam team);
 
         // public FormationSpawn superior;
 

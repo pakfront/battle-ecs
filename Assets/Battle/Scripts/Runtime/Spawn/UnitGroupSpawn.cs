@@ -11,13 +11,13 @@ namespace UnitAgent
 {
     public class UnitGroupSpawn : Spawn
     {
-        public UnitGroupProxy formationPrefab;
+        public UnitGroupProxy unitGroupPrefab;
         public EFormation initialFormation;
         public int formationTable = 0;
 
         public Entity SpawnFormation(EntityManager entityManager)
         {
-            var entity = CreateSelectableEntity(entityManager, formationPrefab.gameObject);
+            var entity = CreateSelectableEntity(entityManager, unitGroupPrefab.gameObject);
             entityManager.SetComponentData(entity,
             new UnitGroupLeader
             {
@@ -57,9 +57,23 @@ namespace UnitAgent
 
         public void ApplyTeam()
         {
+            SetTeam(this.team);
+        }
+
+        public override void SetTeam(ETeam value)
+        {
+            #if UNITY_EDITOR
+            // UnityEditor.Undo.RecordObject(this, "SetTeam");
+            UnityEditor.EditorUtility.SetDirty(this);
+            #endif
+
+            this.team = value;
+            unitGroupPrefab = SpawnManager.instance.teamUnitGroupProxy[(int)team];
+
             foreach (var child in GetComponentsInChildren<Spawn>())
             {
-                child.team = this.team;
+                if (child == this) continue;
+                child.SetTeam(this.team);
             }
         }
 

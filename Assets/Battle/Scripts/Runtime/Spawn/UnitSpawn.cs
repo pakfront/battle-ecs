@@ -38,6 +38,18 @@ namespace UnitAgent
 
         private Bounds localBounds;
 
+        public override void SetTeam(ETeam value)
+        {
+            #if UNITY_EDITOR
+            // UnityEditor.Undo.RecordObject(this, "SetTeam");
+            UnityEditor.EditorUtility.SetDirty(this);
+            #endif
+            this.team = value;
+            unitPrefab = SpawnManager.instance.teamUnitProxy[(int)team];
+            unitGoalMarkerPrefab = SpawnManager.instance.teamUnitGoalMarkerProxy[(int)team];
+            agentPrefab = SpawnManager.instance.teamAgentProxy[(int)team];
+        }
+
         void OnValidate()
         {
             if (agentCount > Formation.MaxAgentsPerFormation) agentCount = Formation.MaxAgentsPerFormation;
@@ -123,7 +135,7 @@ namespace UnitAgent
             for (int i = 0; i < agentCount; i++)
             {
                 // float3 formationPosition = transform.TransformPoint(new float3(x * 1.3F, 0, y * 1.3F));
-                float3 formationPosition = formationPositions[startIndex+i];
+                float3 formationOffset = formationPositions[startIndex+i];
                 float3 spawnPosition = spawnPositions[startIndex+i];
                 entityManager.SetName(agents[i], name + "_" + i);
 
@@ -140,7 +152,7 @@ namespace UnitAgent
                 {
                     Index = i,
                     Parent = unit,
-                    Offset = formationPosition
+                    // Offset = formationOffset
                 });
 
                 entityManager.SetComponentData(agents[i], new Translation { Value = spawnPosition });

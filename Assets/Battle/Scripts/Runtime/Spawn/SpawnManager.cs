@@ -9,6 +9,20 @@ namespace UnitAgent
 {
     public class SpawnManager : MonoBehaviour
     {
+
+        public UnitGroupProxy [] teamUnitGroupProxy = new UnitGroupProxy[3];
+        public UnitProxy [] teamUnitProxy = new UnitProxy[3];
+        public UnitGoalMarkerProxy [] teamUnitGoalMarkerProxy = new UnitGoalMarkerProxy[3];
+
+        public AgentProxy [] teamAgentProxy = new AgentProxy[3];
+
+        static SpawnManager _instance;
+        public static SpawnManager instance {
+            get {
+                if (_instance == null) _instance = FindObjectOfType<SpawnManager>();
+                return _instance;
+            }
+        }
         void Start()
         {
             UnitGroupSpawn[] unitGroupSpawns = GameObject.FindObjectsOfType<UnitGroupSpawn>();

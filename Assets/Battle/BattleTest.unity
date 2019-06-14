@@ -548,7 +548,7 @@ PrefabInstance:
     - target: {fileID: 2250170629076147226, guid: a2949ffb1d35f6b4eaf6743dc870d3cc,
         type: 3}
       propertyPath: initialFormation
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a2949ffb1d35f6b4eaf6743dc870d3cc, type: 3}
@@ -1440,6 +1440,12 @@ PrefabInstance:
       propertyPath: initialFormation
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2250170629076147226, guid: a2949ffb1d35f6b4eaf6743dc870d3cc,
+        type: 3}
+      propertyPath: unitGroupPrefab
+      value: 
+      objectReference: {fileID: 3219649808721618643, guid: eab0cff1b2aff4f8a9314b381aea4c0f,
+        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a2949ffb1d35f6b4eaf6743dc870d3cc, type: 3}
 --- !u!4 &1688496867 stripped
@@ -1520,5 +1526,77 @@ PrefabInstance:
       propertyPath: team
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 4983548926247251571, guid: c40eb91d1fdac439ca7b5c4f5eb38221,
+        type: 3}
+      propertyPath: teamAgentProxy.Array.data[0]
+      value: 
+      objectReference: {fileID: 8478563898956065711, guid: 8073a763f7b654e3cbeb52c2c078dfd4,
+        type: 3}
+    - target: {fileID: 4983548926247251571, guid: c40eb91d1fdac439ca7b5c4f5eb38221,
+        type: 3}
+      propertyPath: teamUnitGroupProxy.Array.data[0]
+      value: 
+      objectReference: {fileID: 3219649808721618643, guid: eab0cff1b2aff4f8a9314b381aea4c0f,
+        type: 3}
+    - target: {fileID: 4983548926247251571, guid: c40eb91d1fdac439ca7b5c4f5eb38221,
+        type: 3}
+      propertyPath: teamUnitProxy.Array.data[0]
+      value: 
+      objectReference: {fileID: 4950615352860273327, guid: d1ee9e243f3227748bc3c84dee76c97f,
+        type: 3}
+    - target: {fileID: 4983548926247251571, guid: c40eb91d1fdac439ca7b5c4f5eb38221,
+        type: 3}
+      propertyPath: teamAgentProxy.Array.data[1]
+      value: 
+      objectReference: {fileID: 1929294028445364284, guid: bb922b225f4a74a19a17fe906099773a,
+        type: 3}
+    - target: {fileID: 4983548926247251571, guid: c40eb91d1fdac439ca7b5c4f5eb38221,
+        type: 3}
+      propertyPath: teamUnitGroupProxy.Array.data[1]
+      value: 
+      objectReference: {fileID: 4513744444895424178, guid: 55fe232bd07fcc24a8afc47f5c02247e,
+        type: 3}
+    - target: {fileID: 4983548926247251571, guid: c40eb91d1fdac439ca7b5c4f5eb38221,
+        type: 3}
+      propertyPath: teamUnitProxy.Array.data[1]
+      value: 
+      objectReference: {fileID: 5217244842518333185, guid: c15220f74e66e49c1a2d3d9689633ea8,
+        type: 3}
+    - target: {fileID: 4983548926247251571, guid: c40eb91d1fdac439ca7b5c4f5eb38221,
+        type: 3}
+      propertyPath: teamUnitProxy.Array.data[2]
+      value: 
+      objectReference: {fileID: 4950615352860273327, guid: d1ee9e243f3227748bc3c84dee76c97f,
+        type: 3}
+    - target: {fileID: 4983548926247251571, guid: c40eb91d1fdac439ca7b5c4f5eb38221,
+        type: 3}
+      propertyPath: teamAgentProxy.Array.data[2]
+      value: 
+      objectReference: {fileID: 4508414093650897404, guid: b846685b4aeed409cb113fd9e946bb85,
+        type: 3}
+    - target: {fileID: 4983548926247251571, guid: c40eb91d1fdac439ca7b5c4f5eb38221,
+        type: 3}
+      propertyPath: teamUnitGroupProxy.Array.data[2]
+      value: 
+      objectReference: {fileID: 7635793609915348642, guid: 6d0e7ef5e8a4ab049b287cfe8aba13f2,
+        type: 3}
+    - target: {fileID: 4983548926247251571, guid: c40eb91d1fdac439ca7b5c4f5eb38221,
+        type: 3}
+      propertyPath: teamUnitGoalMarkerProxy.Array.data[0]
+      value: 
+      objectReference: {fileID: 1023583763944560554, guid: 05d50cab70152a64fb9d7f50e745612b,
+        type: 3}
+    - target: {fileID: 4983548926247251571, guid: c40eb91d1fdac439ca7b5c4f5eb38221,
+        type: 3}
+      propertyPath: teamUnitGoalMarkerProxy.Array.data[1]
+      value: 
+      objectReference: {fileID: 943447095595061671, guid: 74bd36d366893764e9586e8c65a1ae8a,
+        type: 3}
+    - target: {fileID: 4983548926247251571, guid: c40eb91d1fdac439ca7b5c4f5eb38221,
+        type: 3}
+      propertyPath: teamUnitGoalMarkerProxy.Array.data[2]
+      value: 
+      objectReference: {fileID: 1671604156086438254, guid: 8e2800185cf756b4e82a27f44f97a889,
+        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c40eb91d1fdac439ca7b5c4f5eb38221, type: 3}
