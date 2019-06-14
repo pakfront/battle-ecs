@@ -87,7 +87,7 @@ namespace UnitAgent
                 {
                     MemberIndex = memberIndex,
                     // FormationTableIndex = memberIndex,//TODO get bases on parent formation
-                    FormationId = 1, //TODO set correctly
+                    FormationId = (int)spawn.initialFormation, //TODO set correctly
                     PositionOffset = new float3(0, 0, memberIndex), //TODO get in correct position
                     Parent = superiorEntity
                 });

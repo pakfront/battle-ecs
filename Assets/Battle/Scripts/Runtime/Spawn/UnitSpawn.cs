@@ -25,8 +25,6 @@ namespace UnitAgent
         // public EOrder initialOrders;
 
         [Header("Agent")]
-        public EFormation agentFormation = EFormation.Line;
-        public int agentFormationTable = 0;
         public int agentCount = 60;
         public AgentProxy agentPrefab;
         // public float agentSpacing = 1.3F;
@@ -130,8 +128,8 @@ namespace UnitAgent
             entityManager.Instantiate(prefab, agents);
 
             // SharedComponent placed on Agents o we can process by chunk
-            int startIndex = Formation.CalcAgentFormationStartIndex((int)agentFormation, agentFormationTable);
-            Debug.Log(name+" Spawning Agents "+agentFormation+" startIndex:"+startIndex);
+            int startIndex = Formation.CalcAgentFormationStartIndex((int)initialFormation, formationTable);
+            Debug.Log(name+" Spawning Agents "+initialFormation+" startIndex:"+startIndex);
             for (int i = 0; i < agentCount; i++)
             {
                 // float3 formationPosition = transform.TransformPoint(new float3(x * 1.3F, 0, y * 1.3F));
@@ -165,7 +163,7 @@ namespace UnitAgent
         public float3[] GetAgentFormationPositions()
         {
             float3[] formationPositions = new float3[agentCount];
-            int formationIndex = (int)agentFormation;
+            int formationIndex = (int)initialFormation;
             if (formationIndex < 0 || formationIndex >= Formation.FormationCount) return formationPositions;
 
             Formation.CalcAgentFormationOffsetTable(out float3[] formationOffsets);

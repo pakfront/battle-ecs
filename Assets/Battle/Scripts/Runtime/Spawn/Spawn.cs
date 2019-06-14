@@ -16,6 +16,10 @@ namespace UnitAgent
         [Header("Team")]
         public ETeam team;
 
+        [Header("Formation")]
+        public EFormation initialFormation;
+        public int formationTable = 0;
+
         public abstract void SetTeam(ETeam team);
 
         // public FormationSpawn superior;

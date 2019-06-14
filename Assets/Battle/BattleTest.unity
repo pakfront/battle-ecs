@@ -197,6 +197,17 @@ PrefabInstance:
       propertyPath: agentFormation
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 540806339611244111, guid: b8a322530d9e74005a8ce44f11e22736,
+        type: 3}
+      propertyPath: unitPrefab
+      value: 
+      objectReference: {fileID: 4950615352860273327, guid: d1ee9e243f3227748bc3c84dee76c97f,
+        type: 3}
+    - target: {fileID: 540806339611244111, guid: b8a322530d9e74005a8ce44f11e22736,
+        type: 3}
+      propertyPath: initialFormation
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b8a322530d9e74005a8ce44f11e22736, type: 3}
 --- !u!1001 &96338624
@@ -548,8 +559,14 @@ PrefabInstance:
     - target: {fileID: 2250170629076147226, guid: a2949ffb1d35f6b4eaf6743dc870d3cc,
         type: 3}
       propertyPath: initialFormation
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 2250170629076147226, guid: a2949ffb1d35f6b4eaf6743dc870d3cc,
+        type: 3}
+      propertyPath: unitGroupPrefab
+      value: 
+      objectReference: {fileID: 7635793609915348642, guid: 6d0e7ef5e8a4ab049b287cfe8aba13f2,
+        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a2949ffb1d35f6b4eaf6743dc870d3cc, type: 3}
 --- !u!4 &641825701 stripped
@@ -703,6 +720,11 @@ PrefabInstance:
         type: 3}
       propertyPath: team
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 667885411772386990, guid: a434fb57c2b334f56977e51339be8334,
+        type: 3}
+      propertyPath: agentFormation
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a434fb57c2b334f56977e51339be8334, type: 3}
@@ -860,6 +882,17 @@ PrefabInstance:
     - target: {fileID: 540806339611244111, guid: b8a322530d9e74005a8ce44f11e22736,
         type: 3}
       propertyPath: agentFormation
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 540806339611244111, guid: b8a322530d9e74005a8ce44f11e22736,
+        type: 3}
+      propertyPath: unitPrefab
+      value: 
+      objectReference: {fileID: 4950615352860273327, guid: d1ee9e243f3227748bc3c84dee76c97f,
+        type: 3}
+    - target: {fileID: 540806339611244111, guid: b8a322530d9e74005a8ce44f11e22736,
+        type: 3}
+      propertyPath: initialFormation
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -1038,6 +1071,17 @@ PrefabInstance:
       propertyPath: agentFormation
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 540806339611244111, guid: b8a322530d9e74005a8ce44f11e22736,
+        type: 3}
+      propertyPath: unitPrefab
+      value: 
+      objectReference: {fileID: 4950615352860273327, guid: d1ee9e243f3227748bc3c84dee76c97f,
+        type: 3}
+    - target: {fileID: 540806339611244111, guid: b8a322530d9e74005a8ce44f11e22736,
+        type: 3}
+      propertyPath: initialFormation
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b8a322530d9e74005a8ce44f11e22736, type: 3}
 --- !u!1001 &1037814357
@@ -1115,6 +1159,17 @@ PrefabInstance:
     - target: {fileID: 540806339611244111, guid: b8a322530d9e74005a8ce44f11e22736,
         type: 3}
       propertyPath: agentFormation
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 540806339611244111, guid: b8a322530d9e74005a8ce44f11e22736,
+        type: 3}
+      propertyPath: unitPrefab
+      value: 
+      objectReference: {fileID: 4950615352860273327, guid: d1ee9e243f3227748bc3c84dee76c97f,
+        type: 3}
+    - target: {fileID: 540806339611244111, guid: b8a322530d9e74005a8ce44f11e22736,
+        type: 3}
+      propertyPath: initialFormation
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -1359,6 +1414,17 @@ PrefabInstance:
     - target: {fileID: 540806339611244111, guid: b8a322530d9e74005a8ce44f11e22736,
         type: 3}
       propertyPath: agentFormation
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 540806339611244111, guid: b8a322530d9e74005a8ce44f11e22736,
+        type: 3}
+      propertyPath: unitPrefab
+      value: 
+      objectReference: {fileID: 4950615352860273327, guid: d1ee9e243f3227748bc3c84dee76c97f,
+        type: 3}
+    - target: {fileID: 540806339611244111, guid: b8a322530d9e74005a8ce44f11e22736,
+        type: 3}
+      propertyPath: initialFormation
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []

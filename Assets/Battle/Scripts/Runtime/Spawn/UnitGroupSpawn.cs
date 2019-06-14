@@ -12,8 +12,6 @@ namespace UnitAgent
     public class UnitGroupSpawn : Spawn
     {
         public UnitGroupProxy unitGroupPrefab;
-        public EFormation initialFormation;
-        public int formationTable = 0;
 
         public Entity SpawnFormation(EntityManager entityManager)
         {
@@ -51,7 +49,7 @@ namespace UnitAgent
                 }
 
                 var childUnitSpawn = childXform.GetComponent<UnitSpawn>();
-                if (childUnitSpawn != null) childUnitSpawn.agentFormation = (EFormation)formationTypes[startIndex + i];
+                if (childUnitSpawn != null) childUnitSpawn.initialFormation = (EFormation)formationTypes[startIndex + i];
             }
         }
 
