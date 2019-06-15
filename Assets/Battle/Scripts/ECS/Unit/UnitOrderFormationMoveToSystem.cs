@@ -31,7 +31,6 @@ namespace UnitAgent
         }
 
         [BurstCompile]
-        // TODO run only when parent has changed formation
         [RequireComponentTag(typeof(OrderFormationMoveTo))]
         struct SetFormationMemberDataJob : IJobForEach<UnitGroupMember>
         {
@@ -41,7 +40,6 @@ namespace UnitAgent
             public void Execute(ref UnitGroupMember formationElement)
             {
                 Entity parent = formationElement.Parent;
-                // formationElement.FormationTableIndex = formationStartIndex + formationElement.MemberIndex;
                 int formationTableIndex = Leaders[parent].FormationStartIndex + formationElement.MemberIndex;
                 formationElement.PositionOffset = FormationOffsetsTable[formationTableIndex];
                 formationElement.FormationId = SubformationTable[formationTableIndex];
@@ -49,7 +47,7 @@ namespace UnitAgent
         }
 
         [BurstCompile]
-        [RequireComponentTag(typeof(OrderFormationMoveTo))]
+        [RequireComponentTag(typeof(OrderFormationMoveTo),typeof(LocalToWorld))]
         [ExcludeComponent(typeof(Detached))]
         struct SetGoalJob : IJobForEach<MoveToGoal, UnitGroupMember>
         {
@@ -58,11 +56,11 @@ namespace UnitAgent
             {
                 Entity parent = formationMember.Parent;
                 float4x4 xform = Others[parent].Value;
-                // goal.Position = math.transform(xform, new float3(0,0,0));
-                goal.Position = math.transform(xform, formationMember.PositionOffset);
-                // heterogenous as it's a direction vector;
-                goal.Heading = math.mul(xform, new float4(0, 0, 1, 0)).xyz;
-                // Movement.SetGoalToFormationPosition(xform, formationElement.PositionOffset, ref goal.Position, ref goal.Heading);
+                Movement.SetGoalToFormationPosition(xform, formationMember.PositionOffset, ref goal.Position, ref goal.Heading);
+                // // goal.Position = math.transform(xform, new float3(0,0,0));
+                // goal.Position = math.transform(xform, formationMember.PositionOffset);
+                // // heterogenous as it's a direction vector;
+                // goal.Heading = math.mul(xform, new float4(0, 0, 1, 0)).xyz;
             }
         }
 

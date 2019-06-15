@@ -53,17 +53,6 @@ namespace UnitAgent
         {
             var playerPointer = GetSingleton<PlayerInput>();
 
-            // // MultiSelection add to all with PlayerSelection
-            // if (playerPointer.Click == (uint)EClick.MoveTo)
-            // {
-            //     Debug.Log("PlayerOrderPreSystem EClick.MoveTo");
-            //     EntityManager.AddComponent(m_NeedsOrderMoveTo, typeof(OrderMoveTo));
-            //     // EntityManager.SetComponent(m_NeedsSnapTo, new Translation { Value = playerPointer.WorldHitPosition} );
-            //     return;
-            // }
-
-
-
             // Apply to single selection only
             if (playerPointer.CurrentEntity == Entity.Null)
             {
@@ -77,7 +66,16 @@ namespace UnitAgent
                 if (playerPointer.Click == (uint)EClick.MoveTo)
                 {
                     Debug.Log("Adding FormationMoveTo " + playerPointer.CurrentEntity);
-                    EntityManager.SetComponentData(playerPointer.CurrentEntity, new Translation { Value = playerPointer.WorldHitPosition });
+                    // HACK set both so that it moves an it's xform are correct for children
+                    EntityManager.SetComponentData(playerPointer.CurrentEntity,
+                        new LocalToWorld
+                        {
+                            Value = float4x4.Translate(playerPointer.WorldHitPosition)
+                        }
+                    );
+                    EntityManager.SetComponentData(playerPointer.CurrentEntity,
+                        new Translation { Value = playerPointer.WorldHitPosition }
+                    );
                     m_FormationGroup.SetFilter(new UnitGroup { Parent = playerPointer.CurrentEntity });
                     EntityManager.AddComponent(m_FormationGroup, typeof(OrderFormationMoveTo));
                     return;
@@ -85,7 +83,7 @@ namespace UnitAgent
 
                 if (playerPointer.FormationId != (int)EFormation.None)
                 {
-                    Debug.Log("Setting FormationLeader Formation " + playerPointer.CurrentEntity + " to " + playerPointer.FormationId + " " + (EFormation)playerPointer.FormationId);
+                    Debug.Log("Setting UnitGroupLeader Formation " + playerPointer.CurrentEntity + " to " + playerPointer.FormationId + " " + (EFormation)playerPointer.FormationId);
                     EntityManager.SetComponentData(playerPointer.CurrentEntity,
                         new UnitGroupLeader
                         {
