@@ -9,7 +9,7 @@ using Unity.Collections;
 namespace UnitAgent
 {
     [UpdateInGroup(typeof(PlayerSystemGroup))]
-    [UpdateAfter(typeof(PlayerOrderPreSystem))]
+    [UpdateAfter(typeof(PlayerOrderSystem))]
     public class PlayerOrderPostSystem : ComponentSystem
     {
         protected override void OnUpdate()

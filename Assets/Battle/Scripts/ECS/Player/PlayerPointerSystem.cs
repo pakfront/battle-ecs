@@ -11,7 +11,7 @@ namespace UnitAgent
 {
     // [DisableAutoCreation] 
     [UpdateInGroup(typeof(PlayerSystemGroup))]
-    [UpdateBefore(typeof(PlayerOrderPreSystem))]
+    [UpdateBefore(typeof(PlayerOrderSystem))]
     public class PlayerPointerSystem : JobComponentSystem
     {
 

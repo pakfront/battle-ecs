@@ -10,7 +10,7 @@ namespace UnitAgent
 {
     [UpdateInGroup(typeof(PlayerSystemGroup))]
     [UpdateAfter(typeof(PlayerPointerSystem))]
-    public class PlayerOrderPreSystem : ComponentSystem
+    public class PlayerOrderSystem : ComponentSystem
     {
         // private EntityQuery m_NeedsSnapTo, m_NeedsOrderAttack, m_NeedsOrderMoveTo,
         private EntityQuery m_FormationGroup, m__NeedsSetFormation;
