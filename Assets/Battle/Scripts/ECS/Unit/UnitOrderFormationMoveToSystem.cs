@@ -17,12 +17,23 @@ namespace UnitAgent
     {
         public NativeArray<float3> UnitFormationOffsetTable;
         public NativeArray<int> UnitFormationSubIdTable;
+
+        EntityQuery leaderGroup;
         protected override void OnCreate()
         {
             Formation.CalcUnitFormationTables(out float3[] formationOffsets, out int[] formationTypes);
             UnitFormationOffsetTable = new NativeArray<float3>(formationOffsets, Allocator.Persistent);
             UnitFormationSubIdTable = new NativeArray<int>(formationTypes, Allocator.Persistent);
             Debug.Log("FormationOffsetsTable:"+UnitFormationOffsetTable.Length+" SubformationIdsTable:"+UnitFormationSubIdTable.Length);
+        
+            leaderGroup = GetEntityQuery( new EntityQueryDesc
+            {
+                All = new ComponentType[] { 
+                    ComponentType.ReadOnly<UnitGroupLeader>(),
+                    ComponentType.ReadOnly<Goal>()
+                }
+            });
+
         }
 
         protected override void OnDestroy()
@@ -47,16 +58,19 @@ namespace UnitAgent
         }
 
         [BurstCompile]
-        [RequireComponentTag(typeof(OrderFormationMoveTo))]
-        [ExcludeComponent(typeof(Detached))]
-        struct SetGoalJob : IJobForEach<MoveToGoal, UnitGroupMember>
+        [RequireComponentTag(typeof(OrderFormationMoveTo),typeof(MoveToGoal))]
+        //TODO handle typeof(UnitGroupLeaders)) that are also UnitGroupMembers
+        [ExcludeComponent(typeof(Detached), typeof(UnitGroupLeader))]
+        struct SetGoalJob : IJobForEach<Goal, UnitGroupMember>
         {
-            [ReadOnly] public ComponentDataFromEntity<Goal> Others;
-            public void Execute(ref MoveToGoal goal, [ReadOnly] ref UnitGroupMember formationMember)
+            // parents are alway UnitGroupLeaders, so we never will write to their Goals
+            [ReadOnly] [NativeDisableParallelForRestrictionAttribute] public ComponentDataFromEntity<Goal> Others;
+           
+            public void Execute(ref Goal goal, [ReadOnly] ref UnitGroupMember formationMember)
             {
                 Entity parent = formationMember.Parent;
                 float4x4 xform = Others[parent].Value;
-                Movement.SetGoalToFormationPosition(xform, formationMember.PositionOffset, ref goal.Position, ref goal.Heading);
+                Movement.SetGoalToFormationPosition(xform, formationMember.PositionOffset, ref goal.Value);
                 // // goal.Position = math.transform(xform, new float3(0,0,0));
                 // goal.Position = math.transform(xform, formationMember.PositionOffset);
                 // // heterogenous as it's a direction vector;
@@ -71,14 +85,18 @@ namespace UnitAgent
             
             outputDeps = new SetFormationMemberDataJob()
             {
+                //Leaders = GetComponentDataFromEntity<UnitGroupLeader>(true),
                 Leaders = GetComponentDataFromEntity<UnitGroupLeader>(true),
                 FormationOffsetsTable = UnitFormationOffsetTable,
                 SubformationTable = UnitFormationSubIdTable
             }.Schedule(this, outputDeps);
 
-            //if moved or formation changed
+            // var LeaderGoals = new NativeHashMap<Entity,float4x4>(Allocator.TempJob);
+            // var l = leaderGroup.ToComponentDataArray<Goal>
+            // if moved or formation changed
             outputDeps = new SetGoalJob()
             {
+                //Others = GetComponentDataFromEntity<Goal>(true)
                 Others = GetComponentDataFromEntity<Goal>(true)
             }.Schedule(this, outputDeps);
 

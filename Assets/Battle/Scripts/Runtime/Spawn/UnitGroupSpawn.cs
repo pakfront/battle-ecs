@@ -27,7 +27,7 @@ namespace UnitAgent
             entityManager.SetComponentData(entity,
             new Goal
             {
-                Value = float4x4.TRS(this.transform.position, this.transform.rotation, new float3(1))
+                Value = float4x4.TRS(this.transform.position, this.transform.rotation, Movement.unitScale)
             });
 
             return entity;

@@ -78,6 +78,10 @@ namespace UnitAgent
 
                 if (superior == null) return false;
 
+                if (manager.HasComponent<UnitGroupLeader>(entity))
+                {
+                    Debug.LogError("proper formation heirarchy not supporte for UnitGroupMember UitGroups " + superior, spawn);
+                }
                 Debug.Log("Setting Superior entity reference to " + superior, spawn);
 
                 var superiorEntity = unitGroupSpawnMap[superior];

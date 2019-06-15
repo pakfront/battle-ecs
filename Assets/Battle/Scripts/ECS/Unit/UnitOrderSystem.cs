@@ -16,23 +16,23 @@ namespace UnitAgent
         // private EntityQuery m_Group;
         // protected override void OnCreate()
         // {
-        //     m_Group = GetEntityQuery(typeof(MoveToGoal), ComponentType.ReadOnly<OrderMoveTo>());
+        //     m_Group = GetEntityQuery(typeof(Goal), ComponentType.ReadOnly<OrderMoveTo>());
         // }
         // [BurstCompile]
         // struct OrderMoveToJob : IJobChunk
         // {
         //     [DeallocateOnJobCompletion] public NativeArray<ArchetypeChunk> Chunks;
         //     [ReadOnly] public ArchetypeChunkComponentType<OrderMoveTo> OrderMoveToType;
-        //     public ArchetypeChunkComponentType<MoveToGoal> MoveToGoalType;
+        //     public ArchetypeChunkComponentType<Goal> GoalType;
 
         //     public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
         //     {
-        //         var moveToGoal = chunk.GetNativeArray(MoveToGoalType);
+        //         var moveToGoal = chunk.GetNativeArray(GoalType);
         //         var orderMoveTo = chunk.GetNativeArray(OrderMoveToType);
 
         //         for (int i = 0; i < chunk.Count; i++)
         //         {
-        //             moveToGoal[i] = new MoveToGoal
+        //             moveToGoal[i] = new Goal
         //             {
         //                 Position = orderMoveTo[i].Position,
         //                 Heading = orderMoveTo[i].Heading
@@ -43,17 +43,17 @@ namespace UnitAgent
 
 
         [BurstCompile]
-        struct OrderMoveToJob : IJobForEach<MoveToGoal, OrderMoveTo>
+        struct OrderMoveToJob : IJobForEach<Goal, OrderMoveTo>
         {
-            public void Execute(ref MoveToGoal goalMoveTo, [ReadOnly] ref OrderMoveTo orderMoveTo)
+            public void Execute(ref Goal goal, [ReadOnly] ref OrderMoveTo orderMoveTo)
             {
-                // goalMoveTo.Position = new float3(0,0,-100);
-                goalMoveTo  = new MoveToGoal
-                {
-                    Position = orderMoveTo.Position,
-                    Heading = new float3(0,0,1)
-                };
-                // UnityEngine.Debug.Log("OrderMoveToJob "+goalMoveTo.Position +" ?= "+ orderMoveTo.Position);
+                goal.Value = Movement.CalcGoalPositionOnly(orderMoveTo.Position);
+                // goal  = new Goal
+                // {
+                //     Position = orderMoveTo.Position,
+                //     Heading = new float3(0,0,1)
+                // };
+                // UnityEngine.Debug.Log("OrderMoveToJob "+goal.Position +" ?= "+ orderMoveTo.Position);
             }
         }
 
@@ -67,23 +67,23 @@ namespace UnitAgent
         }
 
         // // [BurstCompile]
-        // struct OrderFormationMoveToJob : IJobForEach<MoveToGoal, OrderFormationMoveTo>
+        // struct OrderFormationMoveToJob : IJobForEach<Goal, OrderFormationMoveTo>
         // {
-        //     public void Execute(ref MoveToGoal goalMoveTo, [ReadOnly] ref OrderFormationMoveTo orderMoveTo)
+        //     public void Execute(ref Goal goal, [ReadOnly] ref OrderFormationMoveTo orderMoveTo)
         //     {
-        //         goalMoveTo.Position = orderMoveTo.Position;
-        //         // goalMoveTo.Heading = orderMoveTo.Heading;
-        //         UnityEngine.Debug.Log("OrderFormationMoveToJob "+goalMoveTo.Position +" ?= "+ orderMoveTo.Position);
+        //         goal.Position = orderMoveTo.Position;
+        //         // goal.Heading = orderMoveTo.Heading;
+        //         UnityEngine.Debug.Log("OrderFormationMoveToJob "+goal.Position +" ?= "+ orderMoveTo.Position);
         //     }
         // }
 
         // [BurstCompile]
         // [ExcludeComponent(typeof(OrderMoveTo))]
         // //TODO only update if target has moved?
-        // struct OrderAttackJob : IJobForEach<MoveToGoal, OrderAttack>
+        // struct OrderAttackJob : IJobForEach<Goal, OrderAttack>
         // {
         //     [ReadOnly] public ComponentDataFromEntity<LocalToWorld> Others;
-        //     public void Execute(ref MoveToGoal goal, [ReadOnly] ref OrderAttack OrderAttack)
+        //     public void Execute(ref Goal goal, [ReadOnly] ref OrderAttack OrderAttack)
         //     {
         //         Entity target = OrderAttack.Target;
         //         float4x4 xform = Others[target].Value;
@@ -110,7 +110,7 @@ namespace UnitAgent
 
             // var job = new OrderMoveToJob
             // {
-            //     MoveToGoalType = GetArchetypeChunkComponentType<MoveToGoal>(false),
+            //     GoalType = GetArchetypeChunkComponentType<Goal>(false),
             //     OrderMoveToType = GetArchetypeChunkComponentType<OrderMoveTo>(true)
             // };
 

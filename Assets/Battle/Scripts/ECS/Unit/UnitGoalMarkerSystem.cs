@@ -19,29 +19,29 @@ namespace UnitAgent
         [BurstCompile]
         struct UnitGoalMarkerJob : IJobForEach<Rotation, Translation, UnitGoalMarker>
         {
-            [ReadOnly] public ComponentDataFromEntity<MoveToGoal> MoveToGoals;
+            [ReadOnly] public ComponentDataFromEntity<Goal> Goals;
             [ReadOnly] public ComponentDataFromEntity<LocalToWorld> Xforms;
 
             public void Execute(ref Rotation rotation, ref Translation translation, [ReadOnly] ref UnitGoalMarker marker)
             {
                 Entity target = marker.Unit;
                 // is branching an issue here?
-                if (MoveToGoals.Exists(target))
+                if (Goals.Exists(target))
                 {
-                    translation.Value = MoveToGoals[target].Position;
-                    rotation.Value = quaternion.LookRotation(MoveToGoals[target].Heading, math.up());
+                    translation.Value = Goals[target].Position;
+                    rotation.Value = quaternion.LookRotation(Goals[target].Heading, math.up());
                 }
             }
         }
 
         protected override JobHandle OnUpdate(JobHandle inputDependencies)
         {
-            var moveToGoals = GetComponentDataFromEntity<MoveToGoal>(true);
+            var moveToGoals = GetComponentDataFromEntity<Goal>(true);
             var xforms = GetComponentDataFromEntity<LocalToWorld>(true);
 
             var outputDeps = new UnitGoalMarkerJob
             {
-                MoveToGoals = moveToGoals,
+                Goals = moveToGoals,
                 Xforms = xforms
             }.Schedule(this, inputDependencies);
 

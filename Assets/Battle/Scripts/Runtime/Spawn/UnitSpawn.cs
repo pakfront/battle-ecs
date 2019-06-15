@@ -65,6 +65,12 @@ namespace UnitAgent
                 RotateSpeed = rotationsPerSecond
             });
 
+            entityManager.SetComponentData(unitEntity,
+            new Goal
+            {
+                Value = float4x4.TRS(this.transform.position, this.transform.rotation, Movement.unitScale)
+            });
+
             switch (unitType)
             {
                 case EUnitType.Foot:

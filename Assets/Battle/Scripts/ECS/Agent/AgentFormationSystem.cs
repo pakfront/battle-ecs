@@ -25,13 +25,14 @@ namespace UnitAgent
 
         // TODO run only when unit has moved
         [BurstCompile]
-        struct SetGoalJob : IJobForEach<MoveToGoal, AgentFormationMember>
+        [RequireComponentTag(typeof(MoveToGoal))]
+        struct SetGoalJob : IJobForEach<Goal, AgentFormationMember>
         {
             [ReadOnly] public ComponentDataFromEntity<UnitGroupMember> UnitGroupMembers;
             [ReadOnly] public ComponentDataFromEntity<LocalToWorld> Transforms;
             [ReadOnly] public NativeArray<float3> FormationOffsetsTable;
 
-            public void Execute(ref MoveToGoal goal, [ReadOnly] ref AgentFormationMember formationMember)
+            public void Execute(ref Goal goal, [ReadOnly] ref AgentFormationMember formationMember)
             {
                 Entity parent = formationMember.Parent;
                 float4x4 xform = Transforms[parent].Value;
@@ -41,7 +42,7 @@ namespace UnitAgent
                     );
                 //TODO look into caching 
                 float3 offset = FormationOffsetsTable[startIndex + formationMember.Index]; 
-                Movement.SetGoalToFormationPosition(xform, offset, ref goal.Position, ref goal.Heading);
+                Movement.SetGoalToFormationPosition(xform, offset, ref goal.Value);
 
                 // goal.Position = math.transform(xform, formationElement.Position);
                 // // heterogenous as it's a direction vector;

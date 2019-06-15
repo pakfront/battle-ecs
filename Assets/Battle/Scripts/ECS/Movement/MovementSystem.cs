@@ -15,10 +15,11 @@ namespace UnitAgent
     public class MovementSystem : JobComponentSystem
     {
         [BurstCompile]
-        struct MoveToGoalJob : IJobForEach<Rotation, Translation, MoveSettings, MoveToGoal>
+        [RequireComponentTag(typeof(MoveToGoal))]
+        struct MoveToGoalJob : IJobForEach<Rotation, Translation, MoveSettings, Goal>
         {
             public float DeltaTime;
-            public void Execute(ref Rotation rotation, ref Translation translation, [ReadOnly] ref MoveSettings move, [ReadOnly] ref MoveToGoal goal)
+            public void Execute(ref Rotation rotation, ref Translation translation, [ReadOnly] ref MoveSettings move, [ReadOnly] ref Goal goal)
             {
 
                 float rotateSpeed = move.RotateSpeed;
@@ -63,11 +64,12 @@ namespace UnitAgent
         }
 
        [BurstCompile]
-        struct RotateToGoalJob : IJobForEach<Rotation, Translation, MoveSettings, RotateToGoal>
+        [RequireComponentTag(typeof(RotateLikeGoal))]
+        struct RotateLikeGoalJob : IJobForEach<Rotation, Translation, MoveSettings, Goal>
         {
             public float DeltaTime;
 
-            public void Execute(ref Rotation rotation, ref Translation translation, [ReadOnly] ref MoveSettings move, [ReadOnly] ref RotateToGoal goal)
+            public void Execute(ref Rotation rotation, ref Translation translation, [ReadOnly] ref MoveSettings move, [ReadOnly] ref Goal goal)
             {
                 float rotateSpeed = move.RotateSpeed;
 
@@ -84,7 +86,7 @@ namespace UnitAgent
                 DeltaTime = Time.deltaTime
             }.Schedule(this, inputDependencies);
 
-            outputDeps = new RotateToGoalJob()
+            outputDeps = new RotateLikeGoalJob()
             {
                 DeltaTime = Time.deltaTime
             }.Schedule(this, outputDeps);

@@ -99,14 +99,14 @@ namespace UnitAgent
             }
         }
 
-        [BurstCompile]
-        struct SetGoal : IJobForEach<Opponent, MoveToGoal>
-        {
-            public void Execute([ReadOnly] ref Opponent opponent, ref MoveToGoal goal)
-            {
-                goal.Position = opponent.Position;
-            }
-        }
+        // [BurstCompile]
+        // struct SetGoal : IJobForEach<Opponent, MoveToGoal>
+        // {
+        //     public void Execute([ReadOnly] ref Opponent opponent, ref MoveToGoal goal)
+        //     {
+        //         goal.Position = opponent.Position;
+        //     }
+        // }
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
