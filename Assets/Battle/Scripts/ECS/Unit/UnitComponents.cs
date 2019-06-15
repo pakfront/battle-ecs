@@ -19,6 +19,9 @@ namespace UnitAgent
         public int FormationTable;
         public int CurrentFormation;
         public int FormationStartIndex;
+
+// should be 3x3 but convience funs missing
+        public float4x4 Goal;
      }
     [Serializable]
     public struct UnitGroupMember : IComponentData

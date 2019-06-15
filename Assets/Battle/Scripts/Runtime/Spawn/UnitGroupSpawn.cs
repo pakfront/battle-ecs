@@ -20,7 +20,14 @@ namespace UnitAgent
             new UnitGroupLeader
             {
                 CurrentFormation = (int)initialFormation,
+                FormationTable = formationTable,
                 FormationStartIndex = Formation.CalcUnitFormationStartIndex((int)initialFormation, formationTable)
+            });
+
+            entityManager.SetComponentData(entity,
+            new Goal
+            {
+                Value = float4x4.TRS(this.transform.position, this.transform.rotation, new float3(1))
             });
 
             return entity;
@@ -60,10 +67,10 @@ namespace UnitAgent
 
         public override void SetTeam(ETeam value)
         {
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             // UnityEditor.Undo.RecordObject(this, "SetTeam");
             UnityEditor.EditorUtility.SetDirty(this);
-            #endif
+#endif
 
             this.team = value;
             unitGroupPrefab = SpawnManager.instance.teamUnitGroupProxy[(int)team];

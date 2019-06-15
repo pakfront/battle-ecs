@@ -5,11 +5,16 @@ using Unity.Mathematics;
 namespace UnitAgent
 {
 
+
+    
     [Serializable] public struct MoveSettings : IComponentData { 
         public float TranslateSpeed;
         public float RotateSpeed;
     }
 
+    [Serializable] public struct Goal : IComponentData { 
+        public float4x4 Value;
+    }
     [Serializable] public struct MoveToGoal : IComponentData { 
         public float3 Position;
         public float3 Heading;

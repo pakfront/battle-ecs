@@ -47,11 +47,11 @@ namespace UnitAgent
         }
 
         [BurstCompile]
-        [RequireComponentTag(typeof(OrderFormationMoveTo),typeof(LocalToWorld))]
+        [RequireComponentTag(typeof(OrderFormationMoveTo))]
         [ExcludeComponent(typeof(Detached))]
         struct SetGoalJob : IJobForEach<MoveToGoal, UnitGroupMember>
         {
-            [ReadOnly] public ComponentDataFromEntity<LocalToWorld> Others;
+            [ReadOnly] public ComponentDataFromEntity<Goal> Others;
             public void Execute(ref MoveToGoal goal, [ReadOnly] ref UnitGroupMember formationMember)
             {
                 Entity parent = formationMember.Parent;
@@ -79,7 +79,7 @@ namespace UnitAgent
             //if moved or formation changed
             outputDeps = new SetGoalJob()
             {
-                Others = GetComponentDataFromEntity<LocalToWorld>(true)
+                Others = GetComponentDataFromEntity<Goal>(true)
             }.Schedule(this, outputDeps);
 
             return outputDeps;
