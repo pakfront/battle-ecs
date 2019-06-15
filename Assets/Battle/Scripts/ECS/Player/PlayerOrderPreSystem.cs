@@ -104,12 +104,23 @@ namespace UnitAgent
             {
                 if (playerPointer.Click == (uint)EClick.MoveTo)
                 {
-                    Debug.Log("Adding MoveTo " + playerPointer.CurrentEntity + " to " + playerPointer.WorldHitPosition);
+                    Debug.Log("Adding OrderMoveTo " + playerPointer.CurrentEntity + " to " + playerPointer.WorldHitPosition);
                     EntityManager.AddComponentData(playerPointer.CurrentEntity,
                         new OrderMoveTo
                         {
                             Position = playerPointer.WorldHitPosition,
                             Heading = new float3(0, 0, 1) // TODO get current/best heading
+                        });
+                    return;
+                }
+
+                if (playerPointer.FormationId != (int)EFormation.None)
+                {
+                    Debug.Log("Adding OrderFormation " + playerPointer.CurrentEntity + " to " + playerPointer.WorldHitPosition);
+                    EntityManager.AddComponentData(playerPointer.CurrentEntity,
+                        new OrderFormation
+                        {
+                            FormationId = playerPointer.FormationId
                         });
                     return;
                 }

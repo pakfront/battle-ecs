@@ -14,9 +14,10 @@ namespace UnitAgent
     public class UnitOrderClearExpiredSystem : ComponentSystem
     {
 
-        private EntityQuery m_OrderAttack, m_OrderMoveTo, m_OrderFormationMoveTo;
+        private EntityQuery m_OrderAttack, m_OrderMoveTo, m_OrderFormationMoveTo, m_OrderFormation;
         protected override void OnCreate()
         {
+            //eventually there may be timers to simulate order delay
 
             m_OrderAttack = GetEntityQuery(new EntityQueryDesc
             {
@@ -30,6 +31,10 @@ namespace UnitAgent
             {
                 All = new ComponentType[] { ComponentType.ReadOnly<OrderFormationMoveTo>()}
             });
+            m_OrderFormation = GetEntityQuery(new EntityQueryDesc
+            {
+                All = new ComponentType[] { ComponentType.ReadOnly<OrderFormation>()}
+            });
 
         }
 
@@ -38,6 +43,7 @@ namespace UnitAgent
             EntityManager.RemoveComponent(m_OrderAttack, typeof(OrderAttack));
             EntityManager.RemoveComponent(m_OrderMoveTo, typeof(OrderMoveTo));
             EntityManager.RemoveComponent(m_OrderFormationMoveTo, typeof(OrderFormationMoveTo));
+            EntityManager.RemoveComponent(m_OrderFormation, typeof(OrderFormation));
         }
         
     }

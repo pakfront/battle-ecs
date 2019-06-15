@@ -57,6 +57,15 @@ namespace UnitAgent
             }
         }
 
+        [BurstCompile]
+        struct OrderFormationJob : IJobForEach<UnitGroupMember, OrderFormation>
+        {
+            public void Execute(ref UnitGroupMember unitFormationMember, [ReadOnly] ref OrderFormation orderFormation)
+            {
+                unitFormationMember.FormationId = orderFormation.FormationId;
+            }
+        }
+
         // // [BurstCompile]
         // struct OrderFormationMoveToJob : IJobForEach<MoveToGoal, OrderFormationMoveTo>
         // {
@@ -109,6 +118,9 @@ namespace UnitAgent
 
             var outputDeps = new OrderMoveToJob {
             }.Schedule(this, inputDependencies);
+
+            outputDeps = new OrderFormationJob {
+            }.Schedule(this, outputDeps);
 
             // outputDeps = new OrderFormationMoveToJob
             // {
