@@ -17,40 +17,116 @@ namespace UnitAgent
     [UpdateInGroup(typeof(UnitSystemGroup))]
     public class UnitHeirarchalGoalSystem : JobComponentSystem
     {
-        private EntityQuery[] m_Groups;
+        // private EntityQuery[] m_Groups;
+        private EntityQuery m_Group0, m_Group1; // m_Group2, m_Group3, m_Group4;
         protected override void OnCreate()
         {
-            m_Groups = new EntityQuery[Rank.MaxRank];
 
-            m_Groups[0] = GetEntityQuery(
-                    new EntityQueryDesc
-                    {
-                        All = new ComponentType[] {
-                            ComponentType.ReadOnly<Rank>(),
-                            },
-
-                    });
-            m_Groups[0].SetFilter(new Rank { Value = (byte)0 });
-
-
-            for (int i = 1; i < Rank.MaxRank; i++)
+            m_Group0 = GetEntityQuery(
+            new EntityQueryDesc
             {
-                m_Groups[i] = GetEntityQuery(
-                    //typeof(Goal), ComponentType.ReadOnly<Rank>());
-                    new EntityQueryDesc
-                    {
-                        All = new ComponentType[] {
+                All = new ComponentType[] {
+                    typeof(Goal),
+                    ComponentType.ReadOnly<Rank>(),
+                    }
+            }
+
+            );
+            m_Group0.SetFilter(new Rank { Value = (byte)0 });
+
+            m_Group1 = GetEntityQuery(
+           new EntityQueryDesc
+           {
+               All = new ComponentType[] {
+                            typeof(Goal),
                             ComponentType.ReadOnly<Rank>(),
                             ComponentType.ReadOnly<UnitGroupMember>()
-                            },
-                        None = new ComponentType[] {
+                   },
+               None = new ComponentType[] {
                             ComponentType.ReadOnly<Detached>(),
-                        }
+               }
+
+           });
+            m_Group1.SetFilter(new Rank { Value = (byte)1 });
+
+            //     m_Group2 = GetEntityQuery(
+            //    new EntityQueryDesc
+            //    {
+            //        All = new ComponentType[] {
+            //                     typeof(Goal),
+            //                     ComponentType.ReadOnly<Rank>(),
+            //                     ComponentType.ReadOnly<UnitGroupMember>()
+            //            },
+            //        None = new ComponentType[] {
+            //                     ComponentType.ReadOnly<Detached>(),
+            //        }
+
+            //    });
+            //     m_Group2.SetFilter(new Rank { Value = (byte)2 });
+
+            //     m_Group3 = GetEntityQuery(
+            //     new EntityQueryDesc
+            //     {
+            //         All = new ComponentType[] {
+            //                                 typeof(Goal),
+            //                                 ComponentType.ReadOnly<Rank>(),
+            //                                 ComponentType.ReadOnly<UnitGroupMember>()
+            //         },
+            //         None = new ComponentType[] {
+            //                                 ComponentType.ReadOnly<Detached>(),
+            //     }
+
+            //     });
+            //     m_Group3.SetFilter(new Rank { Value = (byte)3 });
 
 
-                    });
-                m_Groups[i].SetFilter(new Rank { Value = (byte)i });
-            }
+
+            //     m_Group4 = GetEntityQuery(
+            //     new EntityQueryDesc
+            //     {
+            //         All = new ComponentType[] {
+            //                                 typeof(Goal),
+            //                                 ComponentType.ReadOnly<Rank>(),
+            //                                 ComponentType.ReadOnly<UnitGroupMember>()
+            //         },
+            //         None = new ComponentType[] {
+            //                                 ComponentType.ReadOnly<Detached>(),
+            //     }
+
+            //     });
+            //     m_Group4.SetFilter(new Rank { Value = (byte)4 });
+
+            // m_Groups = new EntityQuery[Rank.MaxRank];
+
+            // m_Groups[0] = GetEntityQuery(
+            //         new EntityQueryDesc
+            //         {
+            //             All = new ComponentType[] {
+            //                 ComponentType.ReadOnly<Rank>(),
+            //                 },
+
+            //         });
+            // m_Groups[0].SetFilter(new Rank { Value = (byte)0 });
+
+
+            // for (int i = 1; i < Rank.MaxRank; i++)
+            // {
+            //     m_Groups[i] = GetEntityQuery(
+            //         //typeof(Goal), ComponentType.ReadOnly<Rank>());
+            //         new EntityQueryDesc
+            //         {
+            //             All = new ComponentType[] {
+            //                 ComponentType.ReadOnly<Rank>(),
+            //                 ComponentType.ReadOnly<UnitGroupMember>()
+            //                 },
+            //             None = new ComponentType[] {
+            //                 ComponentType.ReadOnly<Detached>(),
+            //             }
+
+
+            //         });
+            //     m_Groups[i].SetFilter(new Rank { Value = (byte)i });
+            // }
         }
 
         [BurstCompile]
@@ -97,15 +173,24 @@ namespace UnitAgent
         {
             var outputDeps = inputDependencies;
 
-            var rootJob = new SetRootGoalJob()
+            var job0 = new SetRootGoalJob()
             {
                 GoalType = GetArchetypeChunkComponentType<Goal>(false),
                 UnitGroupMemberType = GetArchetypeChunkComponentType<UnitGroupMember>(true),
             };
 
-            outputDeps = rootJob.Schedule(m_Groups[0], inputDependencies);
+            outputDeps = job0.Schedule(m_Group0, inputDependencies);
             outputDeps.Complete();
 
+            var job1 = new SetGoalJob()
+            {
+                GoalType = GetArchetypeChunkComponentType<Goal>(false),
+                UnitGroupMemberType = GetArchetypeChunkComponentType<UnitGroupMember>(true),
+                Superiors = GetComponentDataFromEntity<Goal>(true)
+            };
+
+            outputDeps = job1.Schedule(m_Group1, inputDependencies);
+            outputDeps.Complete();
 
             // for (int i = 1; i < m_Groups.Length; i++)
             // {
