@@ -5,53 +5,14 @@ using Unity.Mathematics;
 namespace UnitAgent
 {
 
-    
-    [Serializable] public struct Rank : ISharedComponentData {
-        public static readonly byte MaxRank = 8;
-        public byte Value;
-    }
-    [Serializable] public struct Unit : IComponentData {
-    }
+    [Serializable] public struct Unit : IComponentData { }
 
     [Serializable] public struct UnitGoalMarker : IComponentData { public Entity Unit; }
 
     // [Serializable] public struct TeamMember : IComponentData { public int Value; }
     [Serializable] public struct TeamGroup : ISharedComponentData { public int Value; }
 
-    // Formations
-    [Serializable] public struct UnitGroup : ISharedComponentData { public Entity Parent; }
-
-    [Serializable] public struct UnitGroupLeader : IComponentData {
-        public int FormationTable;
-        public int CurrentFormation;
-        public int FormationStartIndex;
-
-// should be 3x3 but convience funs missing
-        public float4x4 Goal;
-     }
-    [Serializable]
-    public struct UnitGroupMember : IComponentData
-    {
-        public int MemberIndex;
-        // public int FormationTableIndex;//used for debug only
-        public int FormationId; //corresponds to EFormation
-        public int FormationTableId; //offset into compound table
-
-        public Entity Parent;
-        public float3 PositionOffset;
-    }
-
-    [Serializable] public struct DetachedTag : IComponentData { }
-
-    // Orders
-    [Serializable] public struct OrderMoveTo : IComponentData { public float3 Position; public float3 Heading; }
-    [Serializable] public struct OrderAttack : IComponentData { public Entity Target; }
-    // [Serializable] public struct OrderHold : IComponentData { }
-    [Serializable] public struct OrderMarch : IComponentData { public Entity Next; }
-    [Serializable] public struct OrderFormation : IComponentData { public int FormationId; }
-
-    [Serializable] public struct OrderFormationMoveTo : IComponentData { public float3 Position; public float3 Heading; }
-
+    // Types
     public enum EUnitType { Foot, Horse, Artillery, Train, HQ }
     [Serializable] public struct Foot : IComponentData { }
     [Serializable] public struct Horse : IComponentData { }

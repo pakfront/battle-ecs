@@ -73,11 +73,11 @@ namespace UnitAgent
             }
         }
 
-        public bool TryAssignSuperior(EntityManager manager, Dictionary<UnitGroupSpawn, Entity> unitGroupSpawnMap, Spawn spawn, Entity entity)
+        public bool TryAssignSuperior(EntityManager manager, Dictionary<UnitGroupSpawn, Entity> unitGroupSpawnMap, Spawn spawn, Entity childEntity)
         {
 
             int rank = GetRank(spawn, out UnitGroupSpawn superior);
-            manager.AddSharedComponentData(entity, new Rank
+            manager.AddSharedComponentData(childEntity, new Rank
             {
                 Value = (byte)rank
             });
@@ -85,19 +85,31 @@ namespace UnitAgent
 
             if (superior == null) return false;
 
-            if (manager.HasComponent<UnitGroupLeader>(entity))
-            {
-                Debug.LogError("proper formation heirarchy not supporte for UnitGroupMember UitGroups " + superior, spawn);
-            }
-
+            // if (manager.HasComponent<UnitGroupLeader>(entity))
+            // {
+            //     Debug.LogError("proper formation heirarchy not supporte for UnitGroupMember UitGroups " + superior, spawn);
+            // }
 
 
             Debug.Log("Setting Superior entity reference to " + superior + " rank:" + rank, spawn);
 
             var superiorEntity = unitGroupSpawnMap[superior];
+
+            if (!manager.HasComponent(superiorEntity, typeof(UnitGroupChildren)))
+            {
+                var children = manager.AddBuffer<UnitGroupChildren>(superiorEntity);
+                children.Add(new UnitGroupChildren {Value = childEntity});
+            }
+            else
+            {
+                var children = manager.GetBuffer<UnitGroupChildren>(superiorEntity);
+                children.Add(new UnitGroupChildren {Value = childEntity});
+            }
+
+
             //TODO get in correct position
             int memberIndex = spawn.transform.GetSiblingIndex();
-            manager.AddComponentData(entity, new UnitGroupMember
+            manager.AddComponentData(childEntity, new UnitGroupMember
             {
                 MemberIndex = memberIndex,
                 // FormationTableIndex = memberIndex,//TODO get bases on parent formation
@@ -106,7 +118,7 @@ namespace UnitAgent
                 Parent = superiorEntity
             });
 
-            manager.AddSharedComponentData(entity, new UnitGroup
+            manager.AddSharedComponentData(childEntity, new UnitGroup
             {
                 Parent = superiorEntity
             });

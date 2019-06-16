@@ -29,11 +29,11 @@ namespace UnitAgent
             });
             m_OrderFormationMoveTo = GetEntityQuery(new EntityQueryDesc
             {
-                All = new ComponentType[] { ComponentType.ReadOnly<OrderFormationMoveTo>()}
+                All = new ComponentType[] { ComponentType.ReadOnly<OrderUnitGroupMoveTo>()}
             });
             m_OrderFormation = GetEntityQuery(new EntityQueryDesc
             {
-                All = new ComponentType[] { ComponentType.ReadOnly<OrderFormation>()}
+                All = new ComponentType[] { ComponentType.ReadOnly<OrderChangeFormation>()}
             });
 
         }
@@ -42,8 +42,8 @@ namespace UnitAgent
         {
             EntityManager.RemoveComponent(m_OrderAttack, typeof(OrderAttack));
             EntityManager.RemoveComponent(m_OrderMoveTo, typeof(OrderMoveTo));
-            EntityManager.RemoveComponent(m_OrderFormationMoveTo, typeof(OrderFormationMoveTo));
-            EntityManager.RemoveComponent(m_OrderFormation, typeof(OrderFormation));
+            EntityManager.RemoveComponent(m_OrderFormationMoveTo, typeof(OrderUnitGroupMoveTo));
+            EntityManager.RemoveComponent(m_OrderFormation, typeof(OrderChangeFormation));
         }
         
     }

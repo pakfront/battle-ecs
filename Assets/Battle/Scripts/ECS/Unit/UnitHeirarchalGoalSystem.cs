@@ -13,6 +13,7 @@ namespace UnitAgent
 {
     // cribbed from 
     // https://forum.unity.com/threads/how-do-you-get-a-bufferfromentity-or-componentdatafromentity-without-inject.587857/#post-3924478
+    [DisableAutoCreation]
     [UpdateAfter(typeof(UnitOrderSystem))]
     [UpdateInGroup(typeof(UnitSystemGroup))]
     public class UnitHeirarchalGoalSystem : JobComponentSystem
@@ -129,21 +130,21 @@ namespace UnitAgent
             // }
         }
 
-        [BurstCompile]
-        struct SetRootGoalJob : IJobChunk
-        {
-            public ArchetypeChunkComponentType<Goal> GoalType;
-            [ReadOnly] public ArchetypeChunkComponentType<UnitGroupMember> UnitGroupMemberType;
+        // [BurstCompile]
+        // struct SetRootGoalJob : IJobChunk
+        // {
+        //     public ArchetypeChunkComponentType<Goal> GoalType;
+        //     [ReadOnly] public ArchetypeChunkComponentType<UnitGroupMember> UnitGroupMemberType;
 
-            public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
-            {
-                var goals = chunk.GetNativeArray(GoalType);
-                var unitGroupMembers = chunk.GetNativeArray(UnitGroupMemberType);
-                for (var i = 0; i < chunk.Count; i++)
-                {
-                }
-            }
-        }
+        //     public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
+        //     {
+        //         var goals = chunk.GetNativeArray(GoalType);
+        //         var unitGroupMembers = chunk.GetNativeArray(UnitGroupMemberType);
+        //         for (var i = 0; i < chunk.Count; i++)
+        //         {
+        //         }
+        //     }
+        // }
 
         [BurstCompile]
         struct SetGoalJob : IJobChunk
@@ -173,14 +174,14 @@ namespace UnitAgent
         {
             var outputDeps = inputDependencies;
 
-            var job0 = new SetRootGoalJob()
-            {
-                GoalType = GetArchetypeChunkComponentType<Goal>(false),
-                UnitGroupMemberType = GetArchetypeChunkComponentType<UnitGroupMember>(true),
-            };
+            // var job0 = new SetRootGoalJob()
+            // {
+            //     GoalType = GetArchetypeChunkComponentType<Goal>(false),
+            //     UnitGroupMemberType = GetArchetypeChunkComponentType<UnitGroupMember>(true),
+            // };
 
-            outputDeps = job0.Schedule(m_Group0, inputDependencies);
-            outputDeps.Complete();
+            // outputDeps = job0.Schedule(m_Group0, inputDependencies);
+            // outputDeps.Complete();
 
             var job1 = new SetGoalJob()
             {
@@ -190,7 +191,7 @@ namespace UnitAgent
             };
 
             outputDeps = job1.Schedule(m_Group1, inputDependencies);
-            outputDeps.Complete();
+            // outputDeps.Complete();
 
             // for (int i = 1; i < m_Groups.Length; i++)
             // {

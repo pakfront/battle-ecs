@@ -11,6 +11,7 @@ namespace UnitAgent
 {
     // cribbed from 
     // https://forum.unity.com/threads/how-do-you-get-a-bufferfromentity-or-componentdatafromentity-without-inject.587857/#post-3924478
+    [DisableAutoCreation]    
     [UpdateAfter(typeof(UnitOrderPreSystem))]
     [UpdateInGroup(typeof(UnitSystemGroup))]
     public class UnitOrderFormationMoveToSystem : JobComponentSystem
@@ -42,7 +43,7 @@ namespace UnitAgent
         }
 
         [BurstCompile]
-        [RequireComponentTag(typeof(OrderFormationMoveTo))]
+        [RequireComponentTag(typeof(OrderUnitGroupMoveTo))]
         struct SetFormationMemberDataJob : IJobForEach<UnitGroupMember>
         {
             [ReadOnly] public ComponentDataFromEntity<UnitGroupLeader> Leaders;

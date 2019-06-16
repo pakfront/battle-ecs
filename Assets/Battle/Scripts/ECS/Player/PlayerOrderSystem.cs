@@ -39,7 +39,7 @@ namespace UnitAgent
 
             m_FormationGroup = GetEntityQuery(new EntityQueryDesc
             {
-                None = new ComponentType[] { typeof(OrderFormationMoveTo) },
+                None = new ComponentType[] { typeof(OrderUnitGroupMoveTo) },
                 All = new ComponentType[] { ComponentType.ReadOnly<UnitGroup>(), ComponentType.ReadOnly<PlayerOwnedTag>() }
             });
 
@@ -69,12 +69,17 @@ namespace UnitAgent
                     // HACK set both so that it moves an it's xform are correct for children
                     var goal = EntityManager.GetComponentData<Goal>(playerPointer.CurrentEntity);
                     Movement.SetTranslation(playerPointer.WorldHitPosition, ref goal.Value);
-                    EntityManager.SetComponentData(playerPointer.CurrentEntity, goal);
-                    EntityManager.SetComponentData(playerPointer.CurrentEntity,
-                        new Translation { Value = playerPointer.WorldHitPosition }
-                    );
-                    m_FormationGroup.SetFilter(new UnitGroup { Parent = playerPointer.CurrentEntity });
-                    EntityManager.AddComponent(m_FormationGroup, typeof(OrderFormationMoveTo));
+                    EntityManager.AddComponentData(playerPointer.CurrentEntity,
+                    new OrderUnitGroupMoveTo
+                    {
+                        Goal = goal.Value
+                    });
+
+                    // EntityManager.SetComponentData(playerPointer.CurrentEntity,
+                    //     new Translation { Value = playerPointer.WorldHitPosition }
+                    // );
+                    // m_FormationGroup.SetFilter(new UnitGroup { Parent = playerPointer.CurrentEntity });
+                    // EntityManager.AddComponent(m_FormationGroup, typeof(OrderFormationMoveTo));
                     return;
                 }
 
@@ -87,8 +92,8 @@ namespace UnitAgent
                             CurrentFormation = playerPointer.FormationId,
                             FormationStartIndex = Formation.CalcUnitFormationStartIndex(playerPointer.FormationId, 0)
                         });
-                    m_FormationGroup.SetFilter(new UnitGroup { Parent = playerPointer.CurrentEntity });
-                    EntityManager.AddComponent(m_FormationGroup, typeof(OrderFormationMoveTo));
+                    // m_FormationGroup.SetFilter(new UnitGroup { Parent = playerPointer.CurrentEntity });
+                    // EntityManager.AddComponent(m_FormationGroup, typeof(OrderFormationMoveTo));
                     return;
                 }
                 return;
@@ -100,13 +105,15 @@ namespace UnitAgent
                 if (playerPointer.Click == (uint)EClick.MoveTo)
                 {
                     Debug.Log("Adding OrderMoveTo " + playerPointer.CurrentEntity + " to " + playerPointer.WorldHitPosition);
+                    var goal = EntityManager.GetComponentData<Goal>(playerPointer.CurrentEntity);
+                    Movement.SetTranslation(playerPointer.WorldHitPosition, ref goal.Value);
+                    
                     EntityManager.AddComponentData(playerPointer.CurrentEntity,
                         new OrderMoveTo
                         {
-                            Position = playerPointer.WorldHitPosition,
-                            Heading = new float3(0, 0, 1) // TODO get current/best heading
+                            Goal = goal.Value
                         });
-                    EntityManager.AddComponentData(playerPointer.CurrentEntity, new DetachedTag());
+                    // EntityManager.AddComponentData(playerPointer.CurrentEntity, new DetachedTag());
                     return;
                 }
 
@@ -114,11 +121,11 @@ namespace UnitAgent
                 {
                     Debug.Log("Adding OrderFormation " + playerPointer.CurrentEntity + " to " + playerPointer.WorldHitPosition);
                     EntityManager.AddComponentData(playerPointer.CurrentEntity,
-                        new OrderFormation
+                        new OrderChangeFormation
                         {
                             FormationId = playerPointer.FormationId
                         });
-                    EntityManager.AddComponentData(playerPointer.CurrentEntity, new DetachedTag());
+                    // EntityManager.AddComponentData(playerPointer.CurrentEntity, new DetachedTag());
                     return;
                 }
                 return;
