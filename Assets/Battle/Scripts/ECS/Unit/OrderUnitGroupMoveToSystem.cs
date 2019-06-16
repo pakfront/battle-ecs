@@ -69,7 +69,7 @@ namespace UnitAgent
                     }
                     else
                     {
-                        ProcessUnit(child);//, leader, goal.Value, formation.FormationId);
+                        ProcessUnit(child, leader, goal.Value);//, leader, goal.Value, formation.FormationId);
                     }
                 }
             });
@@ -103,21 +103,27 @@ namespace UnitAgent
             // }
         }
 
-        void ProcessUnit(Entity entity) // UnitGroupLeader leader, float4x4 parentXform, int formationId)
+        void ProcessUnit(Entity entity, UnitGroupLeader leader, float4x4 leaderXform)
         {
             Debug.Log("ProcessUnit " + entity);
             var unitGroupMember = EntityManager.GetComponentData<UnitGroupMember>(entity);
 
-            // var orderedGoal = new OrderedGoal();
-            // Movement.SetGoalToFormationPosition(parentXform, unitGroupMember.PositionOffset, ref orderedGoal.Value);
-            // EntityManager.SetComponentData(entity, orderedGoal);
-            
+            int formationTableIndex = leader.FormationStartIndex + unitGroupMember.MemberIndex;
+            int formationId = UnitFormationSubIdTable[formationTableIndex];
+            float3 positionOffset = UnitFormationOffsetTable[formationTableIndex];
+  
+
+            var orderedGoal = new OrderedGoal();
+            Movement.SetGoalToFormationPosition(leaderXform, positionOffset, ref orderedGoal.Value);
+            EntityManager.SetComponentData(entity, orderedGoal);
+            // EntityManager.AddComponent(entity, typeof(OrderMoveTo));
+            PostUpdateCommands.AddComponent<OrderMoveToTag>(entity, new OrderMoveToTag { });
 
             // int formationTableIndex = leader.FormationStartIndex + unitGroupMember.MemberIndex;
             // unitGroupMember.PositionOffset = FormationOffsetsTable[formationTableIndex];
             // unitGroupMember.FormationId = SubformationTable[formationTableIndex];
   
-            // EntityManager.SetComponentData(entity, new OrderedFormation { FormationId = formationId});
+            EntityManager.SetComponentData(entity, new OrderedFormation { FormationId = formationId});
         //     // EntityManager.AddComponent(entity, typeof(OrderMoveTo));
             PostUpdateCommands.AddComponent<OrderChangeFormationTag>(entity, new OrderChangeFormationTag { });
 
