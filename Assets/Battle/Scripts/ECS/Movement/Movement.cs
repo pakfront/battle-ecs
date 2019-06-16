@@ -47,6 +47,13 @@ namespace UnitAgent
             return float4x4.TRS(position, quaternion.LookRotationSafe(heading, up), unitScale);
         } 
 
+         public static void SetTranslation(float3 translation, ref float4x4 current)
+        {
+             current.c3 = new float4(translation.x, translation.y, translation.z, 1);
+             
+            //return float4x4.TRS(position, quaternion.LookRotationSafe(heading, up), unitScale);
+        } 
+
         public static float4x4 CalcGoalPositionOnly(float3 position)
         {
             return float4x4.TRS(position, forwardRotation, unitScale);

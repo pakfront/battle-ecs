@@ -67,13 +67,9 @@ namespace UnitAgent
                 {
                     Debug.Log("Adding FormationMoveTo " + playerPointer.CurrentEntity);
                     // HACK set both so that it moves an it's xform are correct for children
-                    
-                    EntityManager.SetComponentData(playerPointer.CurrentEntity,
-                        new Goal
-                        {
-                            Value = float4x4.Translate(playerPointer.WorldHitPosition)
-                        }
-                    );
+                    var goal = EntityManager.GetComponentData<Goal>(playerPointer.CurrentEntity);
+                    Movement.SetTranslation(playerPointer.WorldHitPosition, ref goal.Value);
+                    EntityManager.SetComponentData(playerPointer.CurrentEntity, goal);
                     EntityManager.SetComponentData(playerPointer.CurrentEntity,
                         new Translation { Value = playerPointer.WorldHitPosition }
                     );
