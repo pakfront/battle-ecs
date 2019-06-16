@@ -43,7 +43,7 @@ namespace UnitAgent
                             ComponentType.ReadOnly<UnitGroupMember>()
                    },
                None = new ComponentType[] {
-                            ComponentType.ReadOnly<Detached>(),
+                            ComponentType.ReadOnly<DetachedTag>(),
                }
 
            });

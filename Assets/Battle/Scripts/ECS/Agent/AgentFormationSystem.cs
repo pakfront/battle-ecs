@@ -25,7 +25,7 @@ namespace UnitAgent
 
         // TODO run only when unit has moved
         [BurstCompile]
-        [RequireComponentTag(typeof(MoveToGoal))]
+        [RequireComponentTag(typeof(MoveToGoalTag))]
         struct SetGoalJob : IJobForEach<Goal, AgentFormationMember>
         {
             [ReadOnly] public ComponentDataFromEntity<UnitGroupMember> UnitGroupMembers;

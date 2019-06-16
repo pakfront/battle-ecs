@@ -19,9 +19,9 @@ namespace UnitAgent
         {
             base.OnCreate();
             // m_PlayerClicked = GetEntityQuery(ComponentType.ReadOnly<PlayerClicked>());
-            m_PlayerSelection = GetEntityQuery(ComponentType.ReadOnly<PlayerSelection>());
-            m_PlayerTarget = GetEntityQuery(ComponentType.ReadOnly<PlayerTarget>());
-            m_PlayerFollow = GetEntityQuery(ComponentType.ReadOnly<PlayerFollow>());
+            m_PlayerSelection = GetEntityQuery(ComponentType.ReadOnly<PlayerSelectionTag>());
+            m_PlayerTarget = GetEntityQuery(ComponentType.ReadOnly<PlayerTargetTag>());
+            m_PlayerFollow = GetEntityQuery(ComponentType.ReadOnly<PlayerFollowTag>());
         }
 
         protected override void OnUpdate()
@@ -38,15 +38,15 @@ namespace UnitAgent
             if ( (playerPointer.Click &  (uint)(EClick.PrimaryPointerButton)) != 0) 
             {
                 Debug.Log("Clearing PlayerSelection");
-                EntityManager.RemoveComponent(m_PlayerSelection, ComponentType.ReadOnly<PlayerSelection>());
+                EntityManager.RemoveComponent(m_PlayerSelection, ComponentType.ReadOnly<PlayerSelectionTag>());
                 playerPointer.CurrentEntity = Entity.Null;
             }
 
             if ( (playerPointer.Click &  (uint)(EClick.SecondaryPointerButton)) != 0) 
             {
                 Debug.Log("Clearing PlayerTarget & PlayerFollow");
-                EntityManager.RemoveComponent(m_PlayerTarget, ComponentType.ReadOnly<PlayerTarget>());
-                EntityManager.RemoveComponent(m_PlayerFollow, ComponentType.ReadOnly<PlayerFollow>());
+                EntityManager.RemoveComponent(m_PlayerTarget, ComponentType.ReadOnly<PlayerTargetTag>());
+                EntityManager.RemoveComponent(m_PlayerFollow, ComponentType.ReadOnly<PlayerFollowTag>());
             }
         }
     }

@@ -41,7 +41,7 @@ namespace UnitAgent
         public float3 PositionOffset;
     }
 
-    [Serializable] public struct Detached : IComponentData { }
+    [Serializable] public struct DetachedTag : IComponentData { }
 
     // Orders
     [Serializable] public struct OrderMoveTo : IComponentData { public float3 Position; public float3 Heading; }

@@ -48,7 +48,7 @@ namespace UnitAgent
             public void Execute(ref Goal goal, [ReadOnly] ref OrderMoveTo orderMoveTo)
             {
                 goal.Value = Movement.CalcGoalPositionOnly(orderMoveTo.Position);
-                // goal  = new Goal
+                // goal  = new GoalTag
                 // {
                 //     Position = orderMoveTo.Position,
                 //     Heading = new float3(0,0,1)

@@ -40,12 +40,12 @@ namespace UnitAgent
             m_FormationGroup = GetEntityQuery(new EntityQueryDesc
             {
                 None = new ComponentType[] { typeof(OrderFormationMoveTo) },
-                All = new ComponentType[] { ComponentType.ReadOnly<UnitGroup>(), ComponentType.ReadOnly<PlayerOwned>() }
+                All = new ComponentType[] { ComponentType.ReadOnly<UnitGroup>(), ComponentType.ReadOnly<PlayerOwnedTag>() }
             });
 
             m__NeedsSetFormation = GetEntityQuery(new EntityQueryDesc
             {
-                All = new ComponentType[] { ComponentType.ReadOnly<UnitGroupLeader>(), ComponentType.ReadOnly<PlayerOwned>() }
+                All = new ComponentType[] { ComponentType.ReadOnly<UnitGroupLeader>(), ComponentType.ReadOnly<PlayerOwnedTag>() }
             });
         }
 
@@ -106,6 +106,7 @@ namespace UnitAgent
                             Position = playerPointer.WorldHitPosition,
                             Heading = new float3(0, 0, 1) // TODO get current/best heading
                         });
+                    EntityManager.AddComponentData(playerPointer.CurrentEntity, new DetachedTag());
                     return;
                 }
 
@@ -117,6 +118,7 @@ namespace UnitAgent
                         {
                             FormationId = playerPointer.FormationId
                         });
+                    EntityManager.AddComponentData(playerPointer.CurrentEntity, new DetachedTag());
                     return;
                 }
                 return;

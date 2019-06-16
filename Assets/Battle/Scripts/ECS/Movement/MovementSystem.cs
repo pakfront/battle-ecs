@@ -15,7 +15,7 @@ namespace UnitAgent
     public class MovementSystem : JobComponentSystem
     {
         [BurstCompile]
-        [RequireComponentTag(typeof(MoveToGoal))]
+        [RequireComponentTag(typeof(MoveToGoalTag))]
         struct MoveToGoalJob : IJobForEach<Rotation, Translation, MoveSettings, Goal>
         {
             public float DeltaTime;
@@ -64,7 +64,7 @@ namespace UnitAgent
         }
 
        [BurstCompile]
-        [RequireComponentTag(typeof(RotateLikeGoal))]
+        [RequireComponentTag(typeof(RotateLikeGoalTag))]
         struct RotateLikeGoalJob : IJobForEach<Rotation, Translation, MoveSettings, Goal>
         {
             public float DeltaTime;

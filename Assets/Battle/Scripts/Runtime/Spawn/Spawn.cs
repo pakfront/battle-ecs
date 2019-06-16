@@ -64,11 +64,11 @@ namespace UnitAgent
             entityManager.AddSharedComponentData(entity, new TeamGroup { Value = (int)team });
             if (team == LocalPlayer.Team)
             {
-                entityManager.AddSharedComponentData(entity, new PlayerOwned());
+                entityManager.AddSharedComponentData(entity, new PlayerOwnedTag());
             }
             else
             {
-                entityManager.AddSharedComponentData(entity, new PlayerEnemy());
+                entityManager.AddSharedComponentData(entity, new PlayerEnemyTag());
             }
 
             return entity;

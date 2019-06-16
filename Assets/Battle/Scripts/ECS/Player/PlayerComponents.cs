@@ -49,11 +49,11 @@ namespace UnitAgent
     }
 
 
-    [Serializable] public struct PlayerSelection : IComponentData { }
-    [Serializable] public struct PlayerTarget : IComponentData { }
-    [Serializable] public struct PlayerFollow : IComponentData { }
+    [Serializable] public struct PlayerSelectionTag : IComponentData { }
+    [Serializable] public struct PlayerTargetTag : IComponentData { }
+    [Serializable] public struct PlayerFollowTag : IComponentData { }
 
-    [Serializable] public struct PlayerOwned : ISharedComponentData { }
-    [Serializable] public struct PlayerAlly : ISharedComponentData { }
-    [Serializable] public struct PlayerEnemy : ISharedComponentData { }
+    [Serializable] public struct PlayerOwnedTag : ISharedComponentData { }
+    [Serializable] public struct PlayerAllyTag : ISharedComponentData { }
+    [Serializable] public struct PlayerEnemyTag : ISharedComponentData { }
 }

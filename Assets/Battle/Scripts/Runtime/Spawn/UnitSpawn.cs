@@ -145,7 +145,7 @@ namespace UnitAgent
 
                 // entityManager.SetComponentData(agents[i], new Agent { });
                 //TODO only add when move needed
-                entityManager.AddComponentData(agents[i], new MoveToGoal());
+                entityManager.AddComponentData(agents[i], new MoveToGoalTag());
 
                 entityManager.AddComponentData(agents[i], new MoveSettings
                 {

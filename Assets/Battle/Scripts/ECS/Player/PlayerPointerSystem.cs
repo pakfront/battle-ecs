@@ -138,8 +138,8 @@ namespace UnitAgent
                 playerPointer.Click |= (uint)EClick.PlayerSelectable;
                 playerPointer.CurrentEntity = nentity;
                 Debug.Log("PlayerPointerSystem Hit " + nentity);
-                if (!EntityManager.HasComponent<PlayerSelection>(nentity))
-                    EntityManager.AddComponentData(nentity, new PlayerSelection { });
+                if (!EntityManager.HasComponent<PlayerSelectionTag>(nentity))
+                    EntityManager.AddComponentData(nentity, new PlayerSelectionTag { });
             }
 
             nearestDistanceSq.Dispose();

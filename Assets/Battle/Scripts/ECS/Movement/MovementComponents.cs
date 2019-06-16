@@ -25,12 +25,12 @@ namespace UnitAgent
             }
         }
     }
-    [Serializable] public struct MoveToGoal : IComponentData { 
+    [Serializable] public struct MoveToGoalTag : IComponentData { 
         // public float3 Position;
         // public float3 Heading;
     }
     
-   [Serializable] public struct RotateLikeGoal : IComponentData { 
+   [Serializable] public struct RotateLikeGoalTag : IComponentData { 
         // public float3 Heading;
     }
 

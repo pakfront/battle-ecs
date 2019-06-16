@@ -33,7 +33,7 @@ namespace UnitAgent
 
             m_NeedsMoveToGoal = GetEntityQuery(new EntityQueryDesc
             {
-                None = new ComponentType[] { typeof(MoveToGoal) },
+                None = new ComponentType[] { typeof(MoveToGoalTag) },
                 Any = new ComponentType[] {
                     ComponentType.ReadOnly<OrderMoveTo>(),
                     ComponentType.ReadOnly<OrderAttack>(),
@@ -46,7 +46,7 @@ namespace UnitAgent
         protected override void OnUpdate()
         {
             // EntityManager.RemoveComponent(m_RemoveMoveToGoal, typeof(MoveToGoal));
-            EntityManager.AddComponent(m_NeedsMoveToGoal, typeof(MoveToGoal));
+            EntityManager.AddComponent(m_NeedsMoveToGoal, typeof(MoveToGoalTag));
         }
     }
 }
