@@ -57,26 +57,27 @@ namespace UnitAgent
             }
         }
 
-        [BurstCompile]
-        [RequireComponentTag(typeof(OrderFormationMoveTo),typeof(MoveToGoal))]
-        //TODO handle typeof(UnitGroupLeaders)) that are also UnitGroupMembers
-        [ExcludeComponent(typeof(Detached), typeof(UnitGroupLeader))]
-        struct SetGoalJob : IJobForEach<Goal, UnitGroupMember>
-        {
-            // parents are alway UnitGroupLeaders, so we never will write to their Goals
-            [ReadOnly] [NativeDisableParallelForRestrictionAttribute] public ComponentDataFromEntity<Goal> Others;
+        // [BurstCompile]
+        // [RequireComponentTag(typeof(OrderFormationMoveTo),typeof(MoveToGoal))]
+        // //TODO handle typeof(UnitGroupLeaders)) that are also UnitGroupMembers
+        // [ExcludeComponent(typeof(Detached), typeof(UnitGroupLeader))]
+        // struct SetGoalJob : IJobForEach<Goal, UnitGroupMember>
+        // {
+        //     // parents are alway UnitGroupLeaders, so we never will write to their Goals
+        //     [ReadOnly] public ComponentDataFromEntity<Goal> Others;
+        //     // [ReadOnly] [DeallocateOnJobCompletion] public NativeArray<Goal> Others;
            
-            public void Execute(ref Goal goal, [ReadOnly] ref UnitGroupMember formationMember)
-            {
-                Entity parent = formationMember.Parent;
-                float4x4 xform = Others[parent].Value;
-                Movement.SetGoalToFormationPosition(xform, formationMember.PositionOffset, ref goal.Value);
-                // // goal.Position = math.transform(xform, new float3(0,0,0));
-                // goal.Position = math.transform(xform, formationMember.PositionOffset);
-                // // heterogenous as it's a direction vector;
-                // goal.Heading = math.mul(xform, new float4(0, 0, 1, 0)).xyz;
-            }
-        }
+        //     public void Execute(ref Goal goal, [ReadOnly] ref UnitGroupMember formationMember)
+        //     {
+        //         Entity parent = formationMember.Parent;
+        //         float4x4 xform = Others[parent].Value;
+        //         Movement.SetGoalToFormationPosition(xform, formationMember.PositionOffset, ref goal.Value);
+        //         // // goal.Position = math.transform(xform, new float3(0,0,0));
+        //         // goal.Position = math.transform(xform, formationMember.PositionOffset);
+        //         // // heterogenous as it's a direction vector;
+        //         // goal.Heading = math.mul(xform, new float4(0, 0, 1, 0)).xyz;
+        //     }
+        // }
 
         protected override JobHandle OnUpdate(JobHandle inputDependencies)
         {
@@ -94,11 +95,14 @@ namespace UnitAgent
             // var LeaderGoals = new NativeHashMap<Entity,float4x4>(Allocator.TempJob);
             // var l = leaderGroup.ToComponentDataArray<Goal>
             // if moved or formation changed
-            outputDeps = new SetGoalJob()
-            {
-                //Others = GetComponentDataFromEntity<Goal>(true)
-                Others = GetComponentDataFromEntity<Goal>(true)
-            }.Schedule(this, outputDeps);
+
+            
+            // outputDeps = new SetGoalJob()
+            // {
+            //     Others = GetComponentDataFromEntity<Goal>(true)
+            //     // Others = leaderGroup.ToEntityArray<Goal>(Allocator.TempJob);
+            //     // Others = leaderGroup.ToComponentDataArray<Goal>(Allocator.TempJob);
+            // }.Schedule(this, outputDeps);
 
             return outputDeps;
         }

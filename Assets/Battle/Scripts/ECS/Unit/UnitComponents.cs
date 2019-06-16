@@ -4,6 +4,12 @@ using Unity.Mathematics;
 
 namespace UnitAgent
 {
+
+    
+    [Serializable] public struct Rank : ISharedComponentData {
+        public static readonly byte MaxRank = 8;
+        public byte Value;
+    }
     [Serializable] public struct Unit : IComponentData {
     }
 

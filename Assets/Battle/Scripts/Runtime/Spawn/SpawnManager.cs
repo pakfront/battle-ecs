@@ -82,7 +82,10 @@ namespace UnitAgent
                 {
                     Debug.LogError("proper formation heirarchy not supporte for UnitGroupMember UitGroups " + superior, spawn);
                 }
-                Debug.Log("Setting Superior entity reference to " + superior, spawn);
+
+                int rank = GetRank(spawn);
+
+                Debug.Log("Setting Superior entity reference to " + superior +" rank:"+rank, spawn);
 
                 var superiorEntity = unitGroupSpawnMap[superior];
                 //TODO get in correct position
@@ -99,9 +102,24 @@ namespace UnitAgent
                 manager.AddSharedComponentData(entity, new UnitGroup
                 {
                     Parent = superiorEntity
-                });   
+                }); 
+
+                manager.AddSharedComponentData(entity, new Rank
+                {
+                    Value = (byte)rank
+                });     
 
                 return true;
+        }
+
+        static int GetRank(Spawn spawn)
+        {
+            UnitGroupSpawn superior = null;
+            if (spawn.transform.parent != null) superior = spawn.transform.parent.GetComponent<UnitGroupSpawn>();
+
+            if (superior == null) return 0;
+
+            return 1 + GetRank(superior);
         }
     }
 }
