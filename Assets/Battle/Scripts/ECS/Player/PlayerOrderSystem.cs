@@ -39,7 +39,7 @@ namespace UnitAgent
 
             m_FormationGroup = GetEntityQuery(new EntityQueryDesc
             {
-                None = new ComponentType[] { typeof(OrderUnitGroupMoveTo) },
+                None = new ComponentType[] { typeof(OrderUnitGroupMoveToTag) },
                 All = new ComponentType[] { ComponentType.ReadOnly<UnitGroup>(), ComponentType.ReadOnly<PlayerOwnedTag>() }
             });
 
@@ -67,12 +67,14 @@ namespace UnitAgent
                 {
                     Debug.Log("Adding FormationMoveTo " + playerPointer.CurrentEntity);
                     // HACK set both so that it moves an it's xform are correct for children
-                    var goal = EntityManager.GetComponentData<Goal>(playerPointer.CurrentEntity);
+                    var goal = EntityManager.GetComponentData<OrderedGoal>(playerPointer.CurrentEntity);
                     Movement.SetTranslation(playerPointer.WorldHitPosition, ref goal.Value);
-                    EntityManager.AddComponentData(playerPointer.CurrentEntity,
-                    new OrderUnitGroupMoveTo
+
+                    EntityManager.AddComponent(playerPointer.CurrentEntity, typeof(OrderUnitGroupMoveToTag));
+                    EntityManager.SetComponentData(playerPointer.CurrentEntity,
+                    new OrderedGoal
                     {
-                        Goal = goal.Value
+                        Value = goal.Value
                     });
 
                     // EntityManager.SetComponentData(playerPointer.CurrentEntity,
@@ -107,12 +109,13 @@ namespace UnitAgent
                     Debug.Log("Adding OrderMoveTo " + playerPointer.CurrentEntity + " to " + playerPointer.WorldHitPosition);
                     var goal = EntityManager.GetComponentData<Goal>(playerPointer.CurrentEntity);
                     Movement.SetTranslation(playerPointer.WorldHitPosition, ref goal.Value);
-                    
-                    EntityManager.AddComponentData(playerPointer.CurrentEntity,
-                        new OrderMoveTo
-                        {
-                            Goal = goal.Value
-                        });
+
+                    EntityManager.AddComponent(playerPointer.CurrentEntity, typeof(OrderMoveToTag));
+                    EntityManager.SetComponentData(playerPointer.CurrentEntity,
+                    new OrderedGoal
+                    {
+                        Value = goal.Value
+                    });
                     // EntityManager.AddComponentData(playerPointer.CurrentEntity, new DetachedTag());
                     return;
                 }
@@ -120,11 +123,13 @@ namespace UnitAgent
                 if (playerPointer.FormationId != (int)EFormation.None)
                 {
                     Debug.Log("Adding OrderFormation " + playerPointer.CurrentEntity + " to " + playerPointer.WorldHitPosition);
-                    EntityManager.AddComponentData(playerPointer.CurrentEntity,
-                        new OrderChangeFormation
-                        {
-                            FormationId = playerPointer.FormationId
-                        });
+                    EntityManager.AddComponent(playerPointer.CurrentEntity, typeof(OrderChangeFormationTag));
+
+                    EntityManager.SetComponentData(playerPointer.CurrentEntity,
+                    new OrderedFormation
+                    {
+                        FormationId = playerPointer.FormationId
+                    });
                     // EntityManager.AddComponentData(playerPointer.CurrentEntity, new DetachedTag());
                     return;
                 }

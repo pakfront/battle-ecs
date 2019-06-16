@@ -21,29 +21,29 @@ namespace UnitAgent
 
             m_OrderAttack = GetEntityQuery(new EntityQueryDesc
             {
-                All = new ComponentType[] { ComponentType.ReadOnly<OrderAttack>()}
+                All = new ComponentType[] { ComponentType.ReadOnly<OrderAttackTag>()}
             });
             m_OrderMoveTo = GetEntityQuery(new EntityQueryDesc
             {
-                All = new ComponentType[] { ComponentType.ReadOnly<OrderMoveTo>()}
+                All = new ComponentType[] { ComponentType.ReadOnly<OrderMoveToTag>()}
             });
             m_OrderFormationMoveTo = GetEntityQuery(new EntityQueryDesc
             {
-                All = new ComponentType[] { ComponentType.ReadOnly<OrderUnitGroupMoveTo>()}
+                All = new ComponentType[] { ComponentType.ReadOnly<OrderUnitGroupMoveToTag>()}
             });
             m_OrderFormation = GetEntityQuery(new EntityQueryDesc
             {
-                All = new ComponentType[] { ComponentType.ReadOnly<OrderChangeFormation>()}
+                All = new ComponentType[] { ComponentType.ReadOnly<OrderChangeFormationTag>()}
             });
 
         }
 
         protected override void OnUpdate()
         {
-            EntityManager.RemoveComponent(m_OrderAttack, typeof(OrderAttack));
-            EntityManager.RemoveComponent(m_OrderMoveTo, typeof(OrderMoveTo));
-            EntityManager.RemoveComponent(m_OrderFormationMoveTo, typeof(OrderUnitGroupMoveTo));
-            EntityManager.RemoveComponent(m_OrderFormation, typeof(OrderChangeFormation));
+            EntityManager.RemoveComponent(m_OrderAttack, typeof(OrderAttackTag));
+            EntityManager.RemoveComponent(m_OrderMoveTo, typeof(OrderMoveToTag));
+            EntityManager.RemoveComponent(m_OrderFormationMoveTo, typeof(OrderUnitGroupMoveToTag));
+            EntityManager.RemoveComponent(m_OrderFormation, typeof(OrderChangeFormationTag));
         }
         
     }

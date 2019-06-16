@@ -40,7 +40,7 @@ namespace UnitAgent
             allRootsGroup =  GetEntityQuery(rootsQueryDesc);
 
             var fmtDesc = rootsQueryDesc;
-            fmtDesc.All = fmtDesc.All.Concat(new ComponentType[] { ComponentType.ReadOnly<OrderUnitGroupMoveTo>() }).ToArray();
+            fmtDesc.All = fmtDesc.All.Concat(new ComponentType[] { ComponentType.ReadOnly<OrderUnitGroupMoveToTag>() }).ToArray();
             fmtRootsGroup = GetEntityQuery(fmtDesc);
 
         }

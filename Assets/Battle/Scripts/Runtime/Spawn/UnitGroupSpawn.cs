@@ -16,6 +16,7 @@ namespace UnitAgent
         public Entity SpawnFormation(EntityManager entityManager)
         {
             var entity = CreateSelectableEntity(entityManager, unitGroupPrefab.gameObject);
+            AddOrderableComponents(entityManager, entity);
             entityManager.SetComponentData(entity,
             new UnitGroupLeader
             {
@@ -25,7 +26,7 @@ namespace UnitAgent
             });
 
             entityManager.SetComponentData(entity,
-            new Goal
+            new OrderedGoal
             {
                 Value = float4x4.TRS(this.transform.position, this.transform.rotation, Movement.unitScale)
             });

@@ -43,7 +43,7 @@ namespace UnitAgent
         }
 
         [BurstCompile]
-        [RequireComponentTag(typeof(OrderUnitGroupMoveTo))]
+        [RequireComponentTag(typeof(OrderUnitGroupMoveToTag))]
         struct SetFormationMemberDataJob : IJobForEach<UnitGroupMember>
         {
             [ReadOnly] public ComponentDataFromEntity<UnitGroupLeader> Leaders;

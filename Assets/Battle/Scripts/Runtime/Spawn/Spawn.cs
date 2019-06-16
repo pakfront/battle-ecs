@@ -73,5 +73,14 @@ namespace UnitAgent
 
             return entity;
         }
+
+        protected void AddOrderableComponents(EntityManager dstManager, Entity entity)
+        {
+            //TODO check for Goal
+            dstManager.AddComponentData(entity, new OrderedFormation {} );
+            dstManager.AddComponentData(entity, new OrderedGoal {} );
+            dstManager.AddComponentData(entity, new OrderedTarget {} );
+
+        }
     }
 }

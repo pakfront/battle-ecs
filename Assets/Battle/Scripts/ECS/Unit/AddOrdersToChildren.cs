@@ -27,7 +27,7 @@ namespace UnitAgent
                 {
                     // ComponentType.ReadOnly<UnitGroupLeader>(),
                     ComponentType.ReadOnly<UnitGroupChildren>(),
-                    ComponentType.ReadOnly<Goal>()
+                    ComponentType.ReadOnly<OrderedGoal>()
                 },
                 None = new ComponentType[]
                 {
@@ -39,19 +39,20 @@ namespace UnitAgent
             allRootsGroup = GetEntityQuery(rootsQueryDesc);
 
             var fmtDesc = rootsQueryDesc;
-            fmtDesc.All = fmtDesc.All.Concat(new ComponentType[] { ComponentType.ReadOnly<OrderUnitGroupMoveTo>() }).ToArray();
+            fmtDesc.All = fmtDesc.All.Concat(new ComponentType[] { ComponentType.ReadOnly<OrderUnitGroupMoveToTag>() }).ToArray();
             fmtRootsGroup = GetEntityQuery(fmtDesc);
 
         }
         protected override void OnUpdate()
         {
-            Entities.With(allRootsGroup).ForEach((Entity entity, DynamicBuffer<UnitGroupChildren> children, ref Goal goal) =>
+            Entities.With(allRootsGroup).ForEach((Entity entity, DynamicBuffer<UnitGroupChildren> children, ref OrderedGoal goal) =>
             {
                 // var children = EntityManager.GetBuffer<UnitGroupChildren>(entity);
-                if (EntityManager.HasComponent<OrderUnitGroupMoveTo>(entity))
+                //FIXME this is broken if oders not on root!
+                if (EntityManager.HasComponent<OrderUnitGroupMoveToTag>(entity))
                 {
-                    var order = EntityManager.GetComponentData<OrderUnitGroupMoveTo>(entity);
-                    goal.Value = order.Goal;
+                    // var orderedGoal = EntityManager.GetComponentData<OrderedGoal>(entity);
+                    // goal.Value = orderedGoal.Goal;
 
                     for (int i = 0; i < children.Length; i++)
                     {
@@ -67,11 +68,11 @@ namespace UnitAgent
 
             var unitGroupMember = EntityManager.GetComponentData<UnitGroupMember>(entity);
 
-            var goal = new Goal();
-            Movement.SetGoalToFormationPosition(parentXform, unitGroupMember.PositionOffset, ref goal.Value);
-            EntityManager.SetComponentData(entity, goal);
-
-
+            var orderedGoal = new OrderedGoal();
+            Movement.SetGoalToFormationPosition(parentXform, unitGroupMember.PositionOffset, ref orderedGoal.Value);
+            EntityManager.SetComponentData(entity, orderedGoal);
+            // EntityManager.AddComponent(entity, typeof(OrderMoveTo));
+            PostUpdateCommands.AddComponent<OrderMoveToTag>(entity, new OrderMoveToTag {});
 
             // var order = new NextGoal();
             // Movement.SetGoalToFormationPosition(parentXform, unitGroupMember.PositionOffset, ref order.Goal);
@@ -84,7 +85,7 @@ namespace UnitAgent
                 var children = EntityManager.GetBuffer<UnitGroupChildren>(entity);
                 for (int i = 0; i < children.Length; i++)
                 {
-                    AddOrderMoveToToChild(goal.Value, children[i].Value);
+                    AddOrderMoveToToChild(orderedGoal.Value, children[i].Value);
                     // AddOrderMoveToToChild(order.Goal, children[i].Value);
                 }
             }

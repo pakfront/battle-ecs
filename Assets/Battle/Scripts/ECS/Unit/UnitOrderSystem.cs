@@ -43,20 +43,22 @@ namespace UnitAgent
 
 
         [BurstCompile]
-        struct OrderMoveToJob : IJobForEach<Goal, OrderMoveTo>
+        [RequireComponentTag(typeof(OrderMoveToTag))]
+        struct OrderMoveToJob : IJobForEach<Goal, OrderedGoal>
         {
-            public void Execute(ref Goal goal, [ReadOnly] ref OrderMoveTo orderMoveTo)
+            public void Execute(ref Goal goal, [ReadOnly] ref OrderedGoal orderedGoal)
             {
-                goal.Value = orderMoveTo.Goal;
+                goal.Value = orderedGoal.Value;
             }
         }
 
         [BurstCompile]
-        struct OrderChangeFormationJob : IJobForEach<UnitGroupMember, OrderChangeFormation>
+        [RequireComponentTag(typeof(OrderChangeFormationTag))]
+        struct OrderChangeFormationJob : IJobForEach<UnitGroupMember, OrderedFormation>
         {
-            public void Execute(ref UnitGroupMember unitFormationMember, [ReadOnly] ref OrderChangeFormation orderFormation)
+            public void Execute(ref UnitGroupMember unitFormationMember, [ReadOnly] ref OrderedFormation orderedFormation)
             {
-                unitFormationMember.FormationId = orderFormation.FormationId;
+                unitFormationMember.FormationId = orderedFormation.FormationId;
             }
         }
 
