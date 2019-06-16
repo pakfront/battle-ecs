@@ -44,7 +44,7 @@ namespace UnitAgent
 
         [BurstCompile]
         [RequireComponentTag(typeof(OrderUnitGroupMoveToTag))]
-        struct SetFormationMemberDataJob : IJobForEach<UnitGroupMember>
+        struct SetUnitGroupMemberDataJob : IJobForEach<UnitGroupMember>
         {
             [ReadOnly] public ComponentDataFromEntity<UnitGroupLeader> Leaders;
             [ReadOnly] public NativeArray<float3> FormationOffsetsTable;
@@ -85,7 +85,7 @@ namespace UnitAgent
 
             var outputDeps = inputDependencies;
             
-            outputDeps = new SetFormationMemberDataJob()
+            outputDeps = new SetUnitGroupMemberDataJob()
             {
                 //Leaders = GetComponentDataFromEntity<UnitGroupLeader>(true),
                 Leaders = GetComponentDataFromEntity<UnitGroupLeader>(true),
