@@ -6,6 +6,8 @@ using Unity.Burst;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using Unity.Collections.LowLevel.Unsafe;
+
 
 namespace UnitAgent
 {
@@ -19,10 +21,51 @@ namespace UnitAgent
         protected override void OnCreate()
         {
             m_Groups = new EntityQuery[Rank.MaxRank];
-            for (int i = 0; i < Rank.MaxRank; i++)
+
+            m_Groups[0] = GetEntityQuery(
+                    new EntityQueryDesc
+                    {
+                        All = new ComponentType[] {
+                            ComponentType.ReadOnly<Rank>(),
+                            },
+
+                    });
+            m_Groups[0].SetFilter(new Rank { Value = (byte)0 });
+
+
+            for (int i = 1; i < Rank.MaxRank; i++)
             {
-                m_Groups[i] = GetEntityQuery(typeof(Goal), ComponentType.ReadOnly<Rank>());
+                m_Groups[i] = GetEntityQuery(
+                    //typeof(Goal), ComponentType.ReadOnly<Rank>());
+                    new EntityQueryDesc
+                    {
+                        All = new ComponentType[] {
+                            ComponentType.ReadOnly<Rank>(),
+                            ComponentType.ReadOnly<UnitGroupMember>()
+                            },
+                        None = new ComponentType[] {
+                            ComponentType.ReadOnly<Detached>(),
+                        }
+
+
+                    });
                 m_Groups[i].SetFilter(new Rank { Value = (byte)i });
+            }
+        }
+
+        [BurstCompile]
+        struct SetRootGoalJob : IJobChunk
+        {
+            public ArchetypeChunkComponentType<Goal> GoalType;
+            [ReadOnly] public ArchetypeChunkComponentType<UnitGroupMember> UnitGroupMemberType;
+
+            public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
+            {
+                var goals = chunk.GetNativeArray(GoalType);
+                var unitGroupMembers = chunk.GetNativeArray(UnitGroupMemberType);
+                for (var i = 0; i < chunk.Count; i++)
+                {
+                }
             }
         }
 
@@ -31,7 +74,9 @@ namespace UnitAgent
         {
             public ArchetypeChunkComponentType<Goal> GoalType;
             [ReadOnly] public ArchetypeChunkComponentType<UnitGroupMember> UnitGroupMemberType;
-            [ReadOnly] public ComponentDataFromEntity<Goal> Superiors;
+
+            // we know that all parents have been processed already
+            [NativeDisableContainerSafetyRestriction] [ReadOnly] public ComponentDataFromEntity<Goal> Superiors;
 
             public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
             {
@@ -51,18 +96,30 @@ namespace UnitAgent
         protected override JobHandle OnUpdate(JobHandle inputDependencies)
         {
             var outputDeps = inputDependencies;
-            for (int i = 1; i < m_Groups.Length; i++)
+
+            var rootJob = new SetRootGoalJob()
             {
-                var job = new SetGoalJob()
-                {
-                    GoalType = GetArchetypeChunkComponentType<Goal>(false),
-                    UnitGroupMemberType = GetArchetypeChunkComponentType<UnitGroupMember>(true),
-                    Superiors = GetComponentDataFromEntity<Goal>(true)
-                };
+                GoalType = GetArchetypeChunkComponentType<Goal>(false),
+                UnitGroupMemberType = GetArchetypeChunkComponentType<UnitGroupMember>(true),
+            };
 
-                outputDeps = job.Schedule(m_Groups[i], inputDependencies);
+            outputDeps = rootJob.Schedule(m_Groups[0], inputDependencies);
+            outputDeps.Complete();
 
-            }
+
+            // for (int i = 1; i < m_Groups.Length; i++)
+            // {
+            //     var job = new SetGoalJob()
+            //     {
+            //         GoalType = GetArchetypeChunkComponentType<Goal>(false),
+            //         UnitGroupMemberType = GetArchetypeChunkComponentType<UnitGroupMember>(true),
+            //         Superiors = GetComponentDataFromEntity<Goal>(true)
+            //     };
+
+            //     outputDeps = job.Schedule(m_Groups[i], inputDependencies);
+            //     outputDeps.Complete();
+
+            // }
             return outputDeps;
 
         }

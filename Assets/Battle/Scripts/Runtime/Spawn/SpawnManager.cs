@@ -10,15 +10,17 @@ namespace UnitAgent
     public class SpawnManager : MonoBehaviour
     {
 
-        public UnitGroupProxy [] teamUnitGroupProxy = new UnitGroupProxy[3];
-        public UnitProxy [] teamUnitProxy = new UnitProxy[3];
-        public UnitGoalMarkerProxy [] teamUnitGoalMarkerProxy = new UnitGoalMarkerProxy[3];
+        public UnitGroupProxy[] teamUnitGroupProxy = new UnitGroupProxy[3];
+        public UnitProxy[] teamUnitProxy = new UnitProxy[3];
+        public UnitGoalMarkerProxy[] teamUnitGoalMarkerProxy = new UnitGoalMarkerProxy[3];
 
-        public AgentProxy [] teamAgentProxy = new AgentProxy[3];
+        public AgentProxy[] teamAgentProxy = new AgentProxy[3];
 
         static SpawnManager _instance;
-        public static SpawnManager instance {
-            get {
+        public static SpawnManager instance
+        {
+            get
+            {
                 if (_instance == null) _instance = FindObjectOfType<SpawnManager>();
                 return _instance;
             }
@@ -52,7 +54,7 @@ namespace UnitAgent
 
             }
 
-            return unitGroupSpawnMap;   
+            return unitGroupSpawnMap;
         }
 
         public void SpawnUnits(EntityManager manager, Dictionary<UnitGroupSpawn, Entity> unitGroupSpawnMap, UnitSpawn[] unitSpawns)
@@ -67,59 +69,59 @@ namespace UnitAgent
             {
                 var unitSpawn = outer.Key;
                 var unitEntity = outer.Value;
-                TryAssignSuperior(manager, unitGroupSpawnMap, unitSpawn, unitEntity);     
+                TryAssignSuperior(manager, unitGroupSpawnMap, unitSpawn, unitEntity);
             }
         }
 
         public bool TryAssignSuperior(EntityManager manager, Dictionary<UnitGroupSpawn, Entity> unitGroupSpawnMap, Spawn spawn, Entity entity)
         {
-                UnitGroupSpawn superior = null;
-                if (spawn.transform.parent != null) superior = spawn.transform.parent.GetComponent<UnitGroupSpawn>();
 
-                if (superior == null) return false;
+            int rank = GetRank(spawn, out UnitGroupSpawn superior);
+            manager.AddSharedComponentData(entity, new Rank
+            {
+                Value = (byte)rank
+            });
 
-                if (manager.HasComponent<UnitGroupLeader>(entity))
-                {
-                    Debug.LogError("proper formation heirarchy not supporte for UnitGroupMember UitGroups " + superior, spawn);
-                }
 
-                int rank = GetRank(spawn);
+            if (superior == null) return false;
 
-                Debug.Log("Setting Superior entity reference to " + superior +" rank:"+rank, spawn);
+            if (manager.HasComponent<UnitGroupLeader>(entity))
+            {
+                Debug.LogError("proper formation heirarchy not supporte for UnitGroupMember UitGroups " + superior, spawn);
+            }
 
-                var superiorEntity = unitGroupSpawnMap[superior];
-                //TODO get in correct position
-                int memberIndex = spawn.transform.GetSiblingIndex();
-                manager.AddComponentData(entity, new UnitGroupMember
-                {
-                    MemberIndex = memberIndex,
-                    // FormationTableIndex = memberIndex,//TODO get bases on parent formation
-                    FormationId = (int)spawn.initialFormation, //TODO set correctly
-                    PositionOffset = new float3(0, 0, memberIndex), //TODO get in correct position
-                    Parent = superiorEntity
-                });
 
-                manager.AddSharedComponentData(entity, new UnitGroup
-                {
-                    Parent = superiorEntity
-                }); 
 
-                manager.AddSharedComponentData(entity, new Rank
-                {
-                    Value = (byte)rank
-                });     
+            Debug.Log("Setting Superior entity reference to " + superior + " rank:" + rank, spawn);
 
-                return true;
+            var superiorEntity = unitGroupSpawnMap[superior];
+            //TODO get in correct position
+            int memberIndex = spawn.transform.GetSiblingIndex();
+            manager.AddComponentData(entity, new UnitGroupMember
+            {
+                MemberIndex = memberIndex,
+                // FormationTableIndex = memberIndex,//TODO get bases on parent formation
+                FormationId = (int)spawn.initialFormation, //TODO set correctly
+                PositionOffset = new float3(0, 0, memberIndex), //TODO get in correct position
+                Parent = superiorEntity
+            });
+
+            manager.AddSharedComponentData(entity, new UnitGroup
+            {
+                Parent = superiorEntity
+            });
+
+            return true;
         }
 
-        static int GetRank(Spawn spawn)
+        static int GetRank(Spawn spawn, out UnitGroupSpawn superior)
         {
-            UnitGroupSpawn superior = null;
+            superior = null;
             if (spawn.transform.parent != null) superior = spawn.transform.parent.GetComponent<UnitGroupSpawn>();
-
             if (superior == null) return 0;
 
-            return 1 + GetRank(superior);
+
+            return 1 + GetRank(superior, out UnitGroupSpawn nil);
         }
     }
 }
