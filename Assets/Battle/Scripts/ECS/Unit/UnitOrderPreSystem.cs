@@ -35,7 +35,7 @@ namespace UnitAgent
             {
                 None = new ComponentType[] { typeof(MoveToGoalTag) },
                 Any = new ComponentType[] {
-                    ComponentType.ReadOnly<OrderMoveToTag>(),
+                    ComponentType.ReadOnly<OrderUnitMoveToTag>(),
                     ComponentType.ReadOnly<OrderAttackTag>(),
                     ComponentType.ReadOnly<OrderMarchTag>(),
                     ComponentType.ReadOnly<OrderUnitGroupMoveToTag>()

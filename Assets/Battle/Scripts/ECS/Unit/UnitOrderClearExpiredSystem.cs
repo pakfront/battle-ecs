@@ -25,7 +25,7 @@ namespace UnitAgent
             });
             m_OrderMoveTo = GetEntityQuery(new EntityQueryDesc
             {
-                All = new ComponentType[] { ComponentType.ReadOnly<OrderMoveToTag>()}
+                All = new ComponentType[] { ComponentType.ReadOnly<OrderUnitMoveToTag>()}
             });
             m_OrderFormationMoveTo = GetEntityQuery(new EntityQueryDesc
             {
@@ -41,7 +41,7 @@ namespace UnitAgent
         protected override void OnUpdate()
         {
             EntityManager.RemoveComponent(m_OrderAttack, typeof(OrderAttackTag));
-            EntityManager.RemoveComponent(m_OrderMoveTo, typeof(OrderMoveToTag));
+            EntityManager.RemoveComponent(m_OrderMoveTo, typeof(OrderUnitMoveToTag));
             EntityManager.RemoveComponent(m_OrderFormationMoveTo, typeof(OrderUnitGroupMoveToTag));
             EntityManager.RemoveComponent(m_OrderFormation, typeof(OrderChangeFormationTag));
         }

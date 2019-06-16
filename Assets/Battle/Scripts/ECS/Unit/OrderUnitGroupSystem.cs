@@ -15,7 +15,7 @@ namespace UnitAgent
     // [DisableAutoCreation]
     [UpdateBefore(typeof(UnitOrderPreSystem))]
     [UpdateInGroup(typeof(UnitSystemGroup))]
-    public class OrderUnitGroupMoveToSystem : ComponentSystem
+    public class OrderUnitGroupSystem : ComponentSystem
     {
         private EntityQuery allUnitGroups, fmtUnitGroups;
 
@@ -26,8 +26,8 @@ namespace UnitAgent
             Formation.CalcUnitFormationTables(out float3[] formationOffsets, out int[] formationTypes);
             UnitFormationOffsetTable = new NativeArray<float3>(formationOffsets, Allocator.Persistent);
             UnitFormationSubIdTable = new NativeArray<int>(formationTypes, Allocator.Persistent);
-            Debug.Log(this+" FormationOffsetsTable:"+UnitFormationOffsetTable.Length+" SubformationIdsTable:"+UnitFormationSubIdTable.Length);
-        
+            Debug.Log(this + " FormationOffsetsTable:" + UnitFormationOffsetTable.Length + " SubformationIdsTable:" + UnitFormationSubIdTable.Length);
+
 
             var rootsQueryDesc = new EntityQueryDesc
             {
@@ -56,7 +56,7 @@ namespace UnitAgent
         {
             Entities.With(fmtUnitGroups).ForEach((Entity entity, DynamicBuffer<UnitGroupChildren> children, ref UnitGroupLeader leader, ref OrderedGoal orderedGoal, ref Goal goal, ref OrderedFormation formation) =>
             {
-            Debug.Log("OnUpdate " + entity);
+                Debug.Log("OnUpdate " + entity);
 
                 goal.Value = orderedGoal.Value;
                 for (int i = 0; i < children.Length; i++)
@@ -65,7 +65,7 @@ namespace UnitAgent
 
                     if (EntityManager.HasComponent<UnitGroupChildren>(child))
                     {
-                        ProcessUnitGroup(child, leader, goal.Value, formation.FormationId);
+                        ProcessUnitGroup(child, leader, goal.Value);
                     }
                     else
                     {
@@ -75,32 +75,42 @@ namespace UnitAgent
             });
         }
 
-        void ProcessUnitGroup(Entity entity, UnitGroupLeader leader, float4x4 parentXform, int FormationId)
+        void ProcessUnitGroup(Entity entity, UnitGroupLeader leader, float4x4 leaderXform)
         {
             Debug.Log("ProcessUnitGroup " + entity);
-            // var children = EntityManager.GetBuffer<UnitGroupChildren>(entity);
+            var unitGroupMember = EntityManager.GetComponentData<UnitGroupMember>(entity);
 
-            // //if it has an order already, skip
-            // if (EntityManager.HasComponent<OrderUnitGroupMoveToTag>(entity)) return;
+            int formationTableIndex = leader.FormationStartIndex + unitGroupMember.MemberIndex;
+            int formationId = UnitFormationSubIdTable[formationTableIndex];
+            float3 positionOffset = UnitFormationOffsetTable[formationTableIndex];
 
-            // var unitGroupMember = EntityManager.GetComponentData<UnitGroupMember>(entity);
+            var orderedGoal = new OrderedGoal();
+            Movement.SetGoalToFormationPosition(leaderXform, positionOffset, ref orderedGoal.Value);
+            EntityManager.SetComponentData(entity, orderedGoal);
+            EntityManager.SetComponentData(entity, new Goal
+            {
+                Value = orderedGoal.Value
+            });
 
-            // var orderedGoal = new OrderedGoal();
-            // Movement.SetGoalToFormationPosition(parentXform, unitGroupMember.PositionOffset, ref orderedGoal.Value);
-            // EntityManager.SetComponentData(entity, orderedGoal);
+            EntityManager.SetComponentData(entity, new OrderedFormation { FormationId = formationId });
+            unitGroupMember.FormationId = formationId;
+            EntityManager.SetComponentData(entity, unitGroupMember);
 
-            // for (int i = 0; i < children.Length; i++)
-            // {
-            //     var child = children[i].Value;
-            //     if (EntityManager.HasComponent<UnitGroupChildren>(child))
-            //     {
-            //         ProcessUnitGroup(child);
-            //     }
-            //     else
-            //     {
-            //         ProcessUnit(child);
-            //     }
-            // }
+            var children = EntityManager.GetBuffer<UnitGroupChildren>(entity);
+
+            for (int i = 0; i < children.Length; i++)
+            {
+                var child = children[i].Value;
+
+                if (EntityManager.HasComponent<UnitGroupChildren>(child))
+                {
+                    ProcessUnitGroup(child, leader, orderedGoal.Value);
+                }
+                else
+                {
+                    ProcessUnit(child, leader, orderedGoal.Value);//, leader, goal.Value, formation.FormationId);
+                }
+            }
         }
 
         void ProcessUnit(Entity entity, UnitGroupLeader leader, float4x4 leaderXform)
@@ -111,22 +121,16 @@ namespace UnitAgent
             int formationTableIndex = leader.FormationStartIndex + unitGroupMember.MemberIndex;
             int formationId = UnitFormationSubIdTable[formationTableIndex];
             float3 positionOffset = UnitFormationOffsetTable[formationTableIndex];
-  
 
             var orderedGoal = new OrderedGoal();
             Movement.SetGoalToFormationPosition(leaderXform, positionOffset, ref orderedGoal.Value);
             EntityManager.SetComponentData(entity, orderedGoal);
             // EntityManager.AddComponent(entity, typeof(OrderMoveTo));
-            PostUpdateCommands.AddComponent<OrderMoveToTag>(entity, new OrderMoveToTag { });
+            PostUpdateCommands.AddComponent<OrderUnitMoveToTag>(entity, new OrderUnitMoveToTag { });
 
-            // int formationTableIndex = leader.FormationStartIndex + unitGroupMember.MemberIndex;
-            // unitGroupMember.PositionOffset = FormationOffsetsTable[formationTableIndex];
-            // unitGroupMember.FormationId = SubformationTable[formationTableIndex];
-  
-            EntityManager.SetComponentData(entity, new OrderedFormation { FormationId = formationId});
-        //     // EntityManager.AddComponent(entity, typeof(OrderMoveTo));
+            EntityManager.SetComponentData(entity, new OrderedFormation { FormationId = formationId });
+            // EntityManager.AddComponent(entity, typeof(OrderMoveTo));
             PostUpdateCommands.AddComponent<OrderChangeFormationTag>(entity, new OrderChangeFormationTag { });
-
         }
 
         // void ChildAddOrderMoveTo(float4x4 parentXform, Entity entity)

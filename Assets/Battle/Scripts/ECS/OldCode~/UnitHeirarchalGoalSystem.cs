@@ -13,9 +13,10 @@ namespace UnitAgent
 {
     // cribbed from 
     // https://forum.unity.com/threads/how-do-you-get-a-bufferfromentity-or-componentdatafromentity-without-inject.587857/#post-3924478
+    [DisableAutoCreation]
     [UpdateAfter(typeof(UnitOrderSystem))]
     [UpdateInGroup(typeof(UnitSystemGroup))]
-    public class UnitHeirarchalGoalSystemChild : JobComponentSystem
+    public class UnitHeirarchalGoalSystem : JobComponentSystem
     {
         // private EntityQuery[] m_Groups;
         private EntityQuery m_Group0, m_Group1; // m_Group2, m_Group3, m_Group4;

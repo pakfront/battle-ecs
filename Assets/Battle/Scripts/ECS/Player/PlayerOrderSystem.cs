@@ -110,7 +110,7 @@ namespace UnitAgent
                     var goal = EntityManager.GetComponentData<Goal>(playerPointer.CurrentEntity);
                     Movement.SetTranslation(playerPointer.WorldHitPosition, ref goal.Value);
 
-                    EntityManager.AddComponent(playerPointer.CurrentEntity, typeof(OrderMoveToTag));
+                    EntityManager.AddComponent(playerPointer.CurrentEntity, typeof(OrderUnitMoveToTag));
                     EntityManager.SetComponentData(playerPointer.CurrentEntity,
                     new OrderedGoal
                     {

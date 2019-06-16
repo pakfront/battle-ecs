@@ -43,7 +43,7 @@ namespace UnitAgent
 
 
         [BurstCompile]
-        [RequireComponentTag(typeof(OrderMoveToTag))]
+        [RequireComponentTag(typeof(OrderUnitMoveToTag))]
         struct OrderMoveToJob : IJobForEach<Goal, OrderedGoal>
         {
             public void Execute(ref Goal goal, [ReadOnly] ref OrderedGoal orderedGoal)

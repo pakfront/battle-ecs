@@ -10,7 +10,7 @@ namespace UnitAgent
      [Serializable] public struct OrderedTarget : IComponentData {  public Entity Value; }
 
   // Order Tags
-    [Serializable] public struct OrderMoveToTag : IComponentData { }
+    [Serializable] public struct OrderUnitMoveToTag : IComponentData { }
     [Serializable] public struct OrderAttackTag : IComponentData { }
     // [Serializable] public struct OrderHold : IComponentData { }
     [Serializable] public struct OrderMarchTag : IComponentData { }
