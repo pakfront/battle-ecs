@@ -15,7 +15,7 @@ namespace UnitAgent
         public static readonly float3 forward = new float3(0,0,1);
         public static readonly float3 up = new float3(0,1,0);
         public static readonly float3 unitScale = new float3(1,1,1);
-        public static quaternion forwardRotation = quaternion.LookRotationSafe(forward, up);
+        public static readonly quaternion forwardRotation = quaternion.LookRotationSafe(forward, up);
         /// @return true if snapped
         public static bool RotateTowards(quaternion desired, float delta, ref quaternion current)
         {
