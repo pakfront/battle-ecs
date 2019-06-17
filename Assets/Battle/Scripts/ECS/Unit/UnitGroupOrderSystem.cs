@@ -13,9 +13,9 @@ using System.Linq;
 namespace UnitAgent
 {
     // [DisableAutoCreation]
-    [UpdateBefore(typeof(UnitOrderPreSystem))]
+    [UpdateBefore(typeof(UnitOrderSystem))]
     [UpdateInGroup(typeof(UnitSystemGroup))]
-    public class OrderUnitGroupSystem : ComponentSystem
+    public class UnitGroupOrderSystem : ComponentSystem
     {
         private EntityQuery allUnitGroups, fmtUnitGroups;
 

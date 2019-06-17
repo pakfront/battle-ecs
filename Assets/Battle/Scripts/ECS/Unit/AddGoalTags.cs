@@ -9,8 +9,7 @@ using Unity.Collections;
 namespace UnitAgent
 {
     [UpdateInGroup(typeof(UnitSystemGroup))]
-    [UpdateBefore(typeof(UnitOrderSystem))]
-    public class UnitOrderPreSystem : ComponentSystem
+    public class AddGoalTags : ComponentSystem
     {
 
         private EntityQuery m_NeedsMoveToGoal, m_RemoveMoveToGoal;

@@ -10,7 +10,7 @@ namespace UnitAgent
 {
 
     [UpdateInGroup(typeof(UnitSystemGroup))]
-    [UpdateAfter(typeof(UnitOrderPreSystem))]
+    [UpdateBefore(typeof(AddGoalTags))]
     public class UnitOrderSystem : JobComponentSystem
     {
         // private EntityQuery m_Group;
