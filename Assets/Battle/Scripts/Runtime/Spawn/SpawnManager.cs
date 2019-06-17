@@ -76,7 +76,7 @@ namespace UnitAgent
         public bool TryAssignSuperior(EntityManager manager, Dictionary<UnitGroupSpawn, Entity> unitGroupSpawnMap, Spawn spawn, Entity childEntity)
         {
 
-            int rank = GetRank(spawn, out UnitGroupSpawn superior);
+            int rank = spawn.GetRankAndSuperior(out UnitGroupSpawn superior);
             manager.AddSharedComponentData(childEntity, new Rank
             {
                 Value = (byte)rank
@@ -108,7 +108,7 @@ namespace UnitAgent
 
 
             //TODO get in correct position
-            int memberIndex = spawn.transform.GetSiblingIndex();
+            int memberIndex = spawn.GetMemberIndex(); //transform.GetSiblingIndex();
             manager.AddComponentData(childEntity, new UnitGroupMember
             {
                 MemberIndex = memberIndex,
@@ -126,14 +126,14 @@ namespace UnitAgent
             return true;
         }
 
-        static int GetRank(Spawn spawn, out UnitGroupSpawn superior)
-        {
-            superior = null;
-            if (spawn.transform.parent != null) superior = spawn.transform.parent.GetComponent<UnitGroupSpawn>();
-            if (superior == null) return 0;
+        // static int GetRank(Spawn spawn, out UnitGroupSpawn superior)
+        // {
+        //     superior = null;
+        //     if (spawn.transform.parent != null) superior = spawn.transform.parent.GetComponent<UnitGroupSpawn>();
+        //     if (superior == null) return 0;
 
 
-            return 1 + GetRank(superior, out UnitGroupSpawn nil);
-        }
+        //     return 1 + GetRank(superior, out UnitGroupSpawn nil);
+        // }
     }
 }

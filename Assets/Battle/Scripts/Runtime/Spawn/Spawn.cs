@@ -74,6 +74,25 @@ namespace UnitAgent
             return entity;
         }
 
+        public int GetMemberIndex()
+        {
+            return transform.GetSiblingIndex();
+        }
+
+        public int GetRank()
+        {
+            return GetRankAndSuperior(out UnitGroupSpawn nil);
+        }
+        public int GetRankAndSuperior(out UnitGroupSpawn superior)
+        {
+            superior = null;
+            if (this.transform.parent != null) superior = this.transform.parent.GetComponent<UnitGroupSpawn>();
+            if (superior == null) return 0;
+
+
+            return 1 + superior.GetRankAndSuperior(out UnitGroupSpawn nil);
+        }
+
         protected void AddOrderableComponents(EntityManager dstManager, Entity entity)
         {
             //TODO check for Goal
