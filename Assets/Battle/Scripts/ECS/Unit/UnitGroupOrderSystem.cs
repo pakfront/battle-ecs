@@ -17,7 +17,7 @@ namespace UnitAgent
     [UpdateInGroup(typeof(UnitSystemGroup))]
     public class UnitGroupOrderSystem : ComponentSystem
     {
-        private EntityQuery allUnitGroups, fmtUnitGroups;
+        private EntityQuery allUnitGroups, UGMTUnitGroups, CFUnitGroups;
 
         public NativeArray<float3> UnitFormationOffsetTable;
         public NativeArray<int> UnitFormationSubIdTable;
@@ -28,37 +28,62 @@ namespace UnitAgent
             UnitFormationSubIdTable = new NativeArray<int>(formationTypes, Allocator.Persistent);
             Debug.Log(this + " FormationOffsetsTable:" + UnitFormationOffsetTable.Length + " SubformationIdsTable:" + UnitFormationSubIdTable.Length);
 
-
-            var rootsQueryDesc = new EntityQueryDesc
-            {
-                All = new ComponentType[]
+            var all = new ComponentType[]
                 {
                     typeof(Goal),
                     ComponentType.ReadOnly<OrderedGoal>(),
                     ComponentType.ReadOnly<UnitGroupLeader>(),
                     ComponentType.ReadOnly<UnitGroupChildren>(),
-                },
-                // None = new ComponentType[]
-                // {
-                //     typeof(UnitGroupMember)
-                // },
+                };
+
+            var allUnitGroupsDesc = new EntityQueryDesc {
+                All = all
             };
+            allUnitGroups = GetEntityQuery(allUnitGroupsDesc);
 
 
-            allUnitGroups = GetEntityQuery(rootsQueryDesc);
+            var CFDesc = new EntityQueryDesc {
+                All = all.Concat(new ComponentType[] { ComponentType.ReadOnly<OrderChangeFormationTag>() }).ToArray()
+            };
+            CFUnitGroups = GetEntityQuery(CFDesc);
 
-            var fmtDesc = rootsQueryDesc;
-            fmtDesc.All = fmtDesc.All.Concat(new ComponentType[] { ComponentType.ReadOnly<OrderUnitGroupMoveToTag>() }).ToArray();
-            fmtUnitGroups = GetEntityQuery(fmtDesc);
+            var UGMTDesc = new EntityQueryDesc {
+                All = all.Concat(new ComponentType[] { ComponentType.ReadOnly<OrderUnitGroupMoveToTag>() }).ToArray()
+            };
+            UGMTUnitGroups = GetEntityQuery(UGMTDesc);
+
 
         }
         protected override void OnUpdate()
         {
-            Entities.With(fmtUnitGroups).ForEach((Entity entity, DynamicBuffer<UnitGroupChildren> children, ref UnitGroupLeader leader, ref OrderedGoal orderedGoal, ref Goal goal, ref OrderedFormation formation) =>
+            Entities.With(UGMTUnitGroups).ForEach((Entity entity, DynamicBuffer<UnitGroupChildren> children, ref UnitGroupLeader leader, ref OrderedGoal orderedGoal, ref Goal goal, ref OrderedFormation formation) =>
             {
-                Debug.Log("OnUpdate " + entity);
+                // Debug.Log("OnUpdate " + entity);
 
                 goal.Value = orderedGoal.Value;
+                for (int i = 0; i < children.Length; i++)
+                {
+                    var child = children[i].Value;
+
+                    if (EntityManager.HasComponent<UnitGroupChildren>(child))
+                    {
+                        ProcessUnitGroup(child, leader, goal.Value);
+                    }
+                    else
+                    {
+                        ProcessUnit(child, leader, goal.Value);//, leader, goal.Value, formation.FormationId);
+                    }
+                }
+            });
+
+            Entities.With(CFUnitGroups).ForEach((Entity entity, DynamicBuffer<UnitGroupChildren> children, ref UnitGroupLeader leader, ref OrderedGoal orderedGoal, ref Goal goal, ref OrderedFormation formation) =>
+            {
+                // Debug.Log("OnUpdate " + entity);
+
+                // use current goal 
+                // TODO or maybe even lead units position
+                orderedGoal.Value = goal.Value;
+
                 for (int i = 0; i < children.Length; i++)
                 {
                     var child = children[i].Value;
@@ -132,35 +157,5 @@ namespace UnitAgent
             // EntityManager.AddComponent(entity, typeof(OrderMoveTo));
             PostUpdateCommands.AddComponent<OrderChangeFormationTag>(entity, new OrderChangeFormationTag { });
         }
-
-        // void ChildAddOrderMoveTo(float4x4 parentXform, Entity entity)
-        // {
-        //     Debug.Log("AddOrderMoveToToChild " + entity);
-
-        //     var unitGroupMember = EntityManager.GetComponentData<UnitGroupMember>(entity);
-
-        //     var orderedGoal = new OrderedGoal();
-        //     Movement.SetGoalToFormationPosition(parentXform, unitGroupMember.PositionOffset, ref orderedGoal.Value);
-        //     EntityManager.SetComponentData(entity, orderedGoal);
-        //     // EntityManager.AddComponent(entity, typeof(OrderMoveTo));
-        //     PostUpdateCommands.AddComponent<OrderMoveToTag>(entity, new OrderMoveToTag { });
-
-        //     // debug set goal
-        //     // var goal = new Goal();
-        //     // Movement.SetGoalToFormationPosition(parentXform, unitGroupMember.PositionOffset, ref goal.Value);
-        //     // EntityManager.SetComponentData(entity, goal);
-
-
-
-        //     if (EntityManager.HasComponent<UnitGroupChildren>(entity))
-        //     {
-        //         var children = EntityManager.GetBuffer<UnitGroupChildren>(entity);
-        //         for (int i = 0; i < children.Length; i++)
-        //         {
-        //             ChildAddOrderMoveTo(orderedGoal.Value, children[i].Value);
-        //             // AddOrderMoveToToChild(order.Goal, children[i].Value);
-        //         }
-        //     }
-        // }
     }
 }

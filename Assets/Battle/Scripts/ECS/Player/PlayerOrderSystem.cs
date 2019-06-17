@@ -65,7 +65,7 @@ namespace UnitAgent
                 // m_NeedsOrderFormationMoveTo.ClearFilter();
                 if (playerPointer.Click == (uint)EClick.MoveTo)
                 {
-                    Debug.Log("Adding FormationMoveTo " + playerPointer.CurrentEntity);
+                    Debug.Log("Adding OrderUnitGroupMoveToTag: " + playerPointer.CurrentEntity);
                     // HACK set both so that it moves an it's xform are correct for children
                     var goal = EntityManager.GetComponentData<OrderedGoal>(playerPointer.CurrentEntity);
                     Movement.SetTranslation(playerPointer.WorldHitPosition, ref goal.Value);
@@ -87,12 +87,12 @@ namespace UnitAgent
 
                 if (playerPointer.FormationId != (int)EFormation.None)
                 {
-                    Debug.Log("Setting UnitGroupLeader Formation " + playerPointer.CurrentEntity + " to " + playerPointer.FormationId + " " + (EFormation)playerPointer.FormationId);
+                    Debug.Log("Adding OrderChangeFormationTag: " + playerPointer.CurrentEntity + " to " + playerPointer.FormationId + " " + (EFormation)playerPointer.FormationId);
+                    EntityManager.AddComponent(playerPointer.CurrentEntity, typeof(OrderChangeFormationTag));                    
                     EntityManager.SetComponentData(playerPointer.CurrentEntity,
-                        new UnitGroupLeader
+                        new OrderedFormation
                         {
-                            CurrentFormation = playerPointer.FormationId,
-                            FormationStartIndex = Formation.CalcUnitFormationStartIndex(playerPointer.FormationId, 0)
+                            FormationId = playerPointer.FormationId,
                         });
                     // m_FormationGroup.SetFilter(new UnitGroup { Parent = playerPointer.CurrentEntity });
                     // EntityManager.AddComponent(m_FormationGroup, typeof(OrderFormationMoveTo));
@@ -106,7 +106,7 @@ namespace UnitAgent
             {
                 if (playerPointer.Click == (uint)EClick.MoveTo)
                 {
-                    Debug.Log("Adding OrderMoveTo " + playerPointer.CurrentEntity + " to " + playerPointer.WorldHitPosition);
+                    Debug.Log("Adding OrderUnitMoveToTag: " + playerPointer.CurrentEntity + " to " + playerPointer.WorldHitPosition);
                     var goal = EntityManager.GetComponentData<Goal>(playerPointer.CurrentEntity);
                     Movement.SetTranslation(playerPointer.WorldHitPosition, ref goal.Value);
 
@@ -122,7 +122,7 @@ namespace UnitAgent
 
                 if (playerPointer.FormationId != (int)EFormation.None)
                 {
-                    Debug.Log("Adding OrderFormation " + playerPointer.CurrentEntity + " to " + playerPointer.WorldHitPosition);
+                    Debug.Log("Adding OrderChangeFormationTag " + playerPointer.CurrentEntity + " to " + playerPointer.WorldHitPosition);
                     EntityManager.AddComponent(playerPointer.CurrentEntity, typeof(OrderChangeFormationTag));
 
                     EntityManager.SetComponentData(playerPointer.CurrentEntity,
