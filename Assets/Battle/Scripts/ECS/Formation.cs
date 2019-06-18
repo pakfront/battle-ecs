@@ -141,5 +141,12 @@ namespace UnitAgent
         {
             return (formationTable * Formation.FormationCount) + formationId * Formation.MaxAgentsPerFormation;
         }
+
+        public static void SetFormation(int formationId, ref UnitGroupLeader unitGroupLeader)
+        {
+            unitGroupLeader.FormationId = formationId;
+            unitGroupLeader.FormationStartIndex = CalcUnitFormationStartIndex(formationId, unitGroupLeader.FormationTable);
+
+        }
     }
 }

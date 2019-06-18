@@ -59,7 +59,7 @@ namespace UnitAgent
             Entities.With(UGMTUnitGroups).ForEach((Entity entity, DynamicBuffer<UnitGroupChildren> children, ref UnitGroupLeader leader, ref OrderedGoal orderedGoal, ref OrderedFormation orderedFormation) =>
             {
 
-                leader.FormationId = orderedFormation.FormationId;
+                Formation.SetFormation(orderedFormation.FormationId, ref leader);
                 for (int i = 0; i < children.Length; i++)
                 {
                     var child = children[i].Value;
@@ -77,7 +77,7 @@ namespace UnitAgent
 
             Entities.With(CFUnitGroups).ForEach((Entity entity, DynamicBuffer<UnitGroupChildren> children, ref UnitGroupLeader leader, ref OrderedGoal orderedGoal, ref OrderedFormation orderedFormation) =>
             {
-                leader.FormationId = orderedFormation.FormationId;
+                Formation.SetFormation(orderedFormation.FormationId, ref leader);
                 for (int i = 0; i < children.Length; i++)
                 {
                     var child = children[i].Value;
@@ -94,25 +94,27 @@ namespace UnitAgent
             });
         }
 
-        void ProcessUnitGroup(Entity entity, UnitGroupLeader leader, float4x4 leaderXform)
+        void ProcessUnitGroup(Entity entity, UnitGroupLeader parent, float4x4 parentXform)
         {
             Debug.Log("ProcessUnitGroup " + entity);
             var unitGroupMember = EntityManager.GetComponentData<UnitGroupMember>(entity);
-
-            int formationTableIndex = leader.FormationStartIndex + unitGroupMember.MemberIndex;
-            int formationId = UnitFormationSubIdTable[formationTableIndex];
+            int formationTableIndex = parent.FormationStartIndex + unitGroupMember.MemberIndex;
+            int formationId =  UnitFormationSubIdTable[formationTableIndex];
             float3 positionOffset = UnitFormationOffsetTable[formationTableIndex];
 
             var orderedGoal = new OrderedGoal();
-            Movement.SetGoalToFormationPosition(leaderXform, positionOffset, ref orderedGoal.Value);
+            Movement.SetGoalToFormationPosition(parentXform, positionOffset, ref orderedGoal.Value);
             EntityManager.SetComponentData(entity, orderedGoal);
-            // EntityManager.SetComponentData(entity, new Goal
-            // {
-            //     Value = orderedGoal.Value
-            // });
+
+            var unitGroupLeader = EntityManager.GetComponentData<UnitGroupLeader>(entity);
+            Formation.SetFormation(formationId, ref unitGroupLeader);
+
 
             EntityManager.SetComponentData(entity, new OrderedFormation { FormationId = formationId });
+            
+            // this is a bit of a hack, it should be set via handling an order if there is a delay
             unitGroupMember.FormationId = formationId;
+
             EntityManager.SetComponentData(entity, unitGroupMember);
 
             var children = EntityManager.GetBuffer<UnitGroupChildren>(entity);
@@ -123,11 +125,11 @@ namespace UnitAgent
 
                 if (EntityManager.HasComponent<UnitGroupChildren>(child))
                 {
-                    ProcessUnitGroup(child, leader, orderedGoal.Value);
+                    ProcessUnitGroup(child, parent, orderedGoal.Value);
                 }
                 else
                 {
-                    ProcessUnit(child, leader, orderedGoal.Value);//, leader, goal.Value, formation.FormationId);
+                    ProcessUnit(child, parent, orderedGoal.Value);//, leader, goal.Value, formation.FormationId);
                 }
             }
         }
