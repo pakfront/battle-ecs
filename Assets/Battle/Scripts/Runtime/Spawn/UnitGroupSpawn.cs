@@ -20,7 +20,7 @@ namespace UnitAgent
             entityManager.SetComponentData(entity,
             new UnitGroupLeader
             {
-                CurrentFormation = (int)initialFormation,
+                FormationId = (int)initialFormation,
                 FormationTable = formationTable,
                 FormationStartIndex = Formation.CalcUnitFormationStartIndex((int)initialFormation, formationTable)
             });

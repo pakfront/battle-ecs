@@ -30,7 +30,7 @@ namespace UnitAgent
 
             var all = new ComponentType[]
                 {
-                    typeof(Goal),
+                    // typeof(Goal),
                     ComponentType.ReadOnly<OrderedGoal>(),
                     ComponentType.ReadOnly<UnitGroupLeader>(),
                     ComponentType.ReadOnly<UnitGroupChildren>(),
@@ -56,45 +56,39 @@ namespace UnitAgent
         }
         protected override void OnUpdate()
         {
-            Entities.With(UGMTUnitGroups).ForEach((Entity entity, DynamicBuffer<UnitGroupChildren> children, ref UnitGroupLeader leader, ref OrderedGoal orderedGoal, ref Goal goal, ref OrderedFormation formation) =>
+            Entities.With(UGMTUnitGroups).ForEach((Entity entity, DynamicBuffer<UnitGroupChildren> children, ref UnitGroupLeader leader, ref OrderedGoal orderedGoal, ref OrderedFormation orderedFormation) =>
             {
-                // Debug.Log("OnUpdate " + entity);
 
-                goal.Value = orderedGoal.Value;
+                leader.FormationId = orderedFormation.FormationId;
                 for (int i = 0; i < children.Length; i++)
                 {
                     var child = children[i].Value;
 
                     if (EntityManager.HasComponent<UnitGroupChildren>(child))
                     {
-                        ProcessUnitGroup(child, leader, goal.Value);
+                        ProcessUnitGroup(child, leader, orderedGoal.Value);
                     }
                     else
                     {
-                        ProcessUnit(child, leader, goal.Value);//, leader, goal.Value, formation.FormationId);
+                        ProcessUnit(child, leader, orderedGoal.Value);//, leader, goal.Value, orderedFormation.FormationId);
                     }
                 }
             });
 
-            Entities.With(CFUnitGroups).ForEach((Entity entity, DynamicBuffer<UnitGroupChildren> children, ref UnitGroupLeader leader, ref OrderedGoal orderedGoal, ref Goal goal, ref OrderedFormation formation) =>
+            Entities.With(CFUnitGroups).ForEach((Entity entity, DynamicBuffer<UnitGroupChildren> children, ref UnitGroupLeader leader, ref OrderedGoal orderedGoal, ref OrderedFormation orderedFormation) =>
             {
-                // Debug.Log("OnUpdate " + entity);
-
-                // use current goal 
-                // TODO or maybe even lead units position
-                orderedGoal.Value = goal.Value;
-
+                leader.FormationId = orderedFormation.FormationId;
                 for (int i = 0; i < children.Length; i++)
                 {
                     var child = children[i].Value;
 
                     if (EntityManager.HasComponent<UnitGroupChildren>(child))
                     {
-                        ProcessUnitGroup(child, leader, goal.Value);
+                        ProcessUnitGroup(child, leader, orderedGoal.Value);
                     }
                     else
                     {
-                        ProcessUnit(child, leader, goal.Value);//, leader, goal.Value, formation.FormationId);
+                        ProcessUnit(child, leader, orderedGoal.Value);//, leader, goal.Value, orderedFormation.FormationId);
                     }
                 }
             });
@@ -112,10 +106,10 @@ namespace UnitAgent
             var orderedGoal = new OrderedGoal();
             Movement.SetGoalToFormationPosition(leaderXform, positionOffset, ref orderedGoal.Value);
             EntityManager.SetComponentData(entity, orderedGoal);
-            EntityManager.SetComponentData(entity, new Goal
-            {
-                Value = orderedGoal.Value
-            });
+            // EntityManager.SetComponentData(entity, new Goal
+            // {
+            //     Value = orderedGoal.Value
+            // });
 
             EntityManager.SetComponentData(entity, new OrderedFormation { FormationId = formationId });
             unitGroupMember.FormationId = formationId;

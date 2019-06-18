@@ -22,7 +22,7 @@ namespace UnitAgent
     public struct UnitGroupLeader : IComponentData
     {
         public int FormationTable;
-        public int CurrentFormation;
+        public int FormationId;
         public int FormationStartIndex;
 
         // could be 3x3 but convience funcs missing
