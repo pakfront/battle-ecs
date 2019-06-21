@@ -7,19 +7,21 @@ namespace UnitAgent
     [Serializable] public struct Agent : IComponentData { }
 
     [Serializable]
-    public struct AgentFormationMember : IComponentData
+    public struct AgentGroupMember : IComponentData
     {
         public int Index;
         public Entity Parent;
         // public float3 Offset; //debug
     }
 
-    //using SCD triggers chunking per unit and chunk data lookup
+    [Serializable]
+    public struct AgentGroupLeader : IComponentData
+    {
+        public int FormationTableId;
+        public int FormationId;
+        public int FormationStartIndex;
 
-
-
-    // [Serializable] public struct Follow : IComponentData {
-    //     public Entity Target;
-    //     public float4 Offset;
-    // }
+        // could be 3x3 but convience funcs missing
+        // public float4x4 Goal;
+    }
 }

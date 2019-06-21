@@ -21,7 +21,7 @@ namespace UnitAgent
             new UnitGroupLeader
             {
                 FormationId = (int)initialFormation,
-                FormationTable = formationTable,
+                FormationTableId = formationTable,
                 FormationStartIndex = Formation.CalcUnitFormationStartIndex((int)initialFormation, formationTable)
             });
 

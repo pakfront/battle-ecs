@@ -27,18 +27,22 @@ namespace UnitAgent
             );
         }
 
-        [RequireComponentTag(typeof(Ranged))]
         [BurstCompile]
-        struct SumDamageJob : IJobForEachWithEntity<Opponent>
+        struct SumDamageJob : IJobForEachWithEntity<Opponent, AgentCount, Ranged>
         {
             public float DeltaTime;
             public NativeMultiHashMap<Entity, float>.Concurrent Damage;
-            public void Execute(Entity entity, int index, [ReadOnly] ref Opponent opponent)
+            public void Execute( Entity entity, int index, [ReadOnly] ref Opponent opponent,
+            [ReadOnly] ref AgentCount agentCount, [ReadOnly] ref Ranged ranged)
             {
-                Damage.Add(opponent.Entity, DeltaTime);
+                if (opponent.DistanceSq < ranged.Range * ranged.Range)
+                {
+                    Damage.Add(opponent.Entity, 0.01f * agentCount.Value * DeltaTime);
+                }
             }
         }
 
+        // these would be moved into a general purpose damage system
         [BurstCompile]
         struct ApplyDamageJob : IJobForEachWithEntity<AgentCount>
         {
@@ -49,10 +53,11 @@ namespace UnitAgent
                 while (found)
                 {
                     agentCount.Value -= item;
-                    found =Damage.TryGetNextValue(out item, ref it);
+                    found = Damage.TryGetNextValue(out item, ref it);
                 }
             }
         }
+
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {

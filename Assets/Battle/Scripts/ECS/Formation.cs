@@ -145,8 +145,13 @@ namespace UnitAgent
         public static void SetFormation(int formationId, ref UnitGroupLeader unitGroupLeader)
         {
             unitGroupLeader.FormationId = formationId;
-            unitGroupLeader.FormationStartIndex = CalcUnitFormationStartIndex(formationId, unitGroupLeader.FormationTable);
+            unitGroupLeader.FormationStartIndex = CalcUnitFormationStartIndex(formationId, unitGroupLeader.FormationTableId);
+        }
 
+        public static void SetFormation(int formationId, ref AgentGroupLeader agentGroupLeader)
+        {
+            agentGroupLeader.FormationId = formationId;
+            agentGroupLeader.FormationStartIndex = CalcAgentFormationStartIndex(formationId, agentGroupLeader.FormationTableId);
         }
     }
 }

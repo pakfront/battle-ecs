@@ -113,10 +113,26 @@ namespace UnitAgent
             {
                 MemberIndex = memberIndex,
                 // FormationTableIndex = memberIndex,//TODO get bases on parent formation
-                FormationId = (int)spawn.initialFormation, //TODO set correctly
+                // FormationId = (int)spawn.initialFormation, //TODO set correctly
                 PositionOffset = new float3(0, 0, memberIndex), //TODO get in correct position
                 Parent = superiorEntity
             });
+
+
+            if (manager.HasComponent<AgentGroupLeader>(childEntity))
+            {
+                var agentGroupLeader = manager.GetComponentData<AgentGroupLeader>(childEntity);
+                Formation.SetFormation((int)spawn.initialFormation, ref agentGroupLeader);
+                manager.SetComponentData(childEntity, agentGroupLeader);
+            } 
+
+
+            if (manager.HasComponent<UnitGroupLeader>(childEntity))
+            {
+                var unitGroupLeader = manager.GetComponentData<UnitGroupLeader>(childEntity);
+                Formation.SetFormation((int)spawn.initialFormation, ref unitGroupLeader);
+                manager.SetComponentData(childEntity, unitGroupLeader);
+            } 
 
             manager.AddSharedComponentData(childEntity, new UnitGroup
             {

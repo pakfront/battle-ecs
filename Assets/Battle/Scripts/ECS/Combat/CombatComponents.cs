@@ -12,6 +12,9 @@ namespace UnitAgent
         public Entity Entity;
     }
 
+    public struct DeadTag : IComponentData {};
+
+
     public struct AgentCount : IComponentData
     {
         public float Value;

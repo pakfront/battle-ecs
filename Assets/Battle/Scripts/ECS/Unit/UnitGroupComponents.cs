@@ -21,7 +21,7 @@ namespace UnitAgent
     [Serializable]
     public struct UnitGroupLeader : IComponentData
     {
-        public int FormationTable;
+        public int FormationTableId;
         public int FormationId;
         public int FormationStartIndex;
 
@@ -44,11 +44,13 @@ namespace UnitAgent
     {
         public int MemberIndex;
         // public int FormationTableIndex;//used for debug only
-        public int FormationId; //corresponds to EFormation
-        public int FormationTableId; //offset into compound table
 
         public Entity Parent;
         public float3 PositionOffset;
+
+        // these maybe should be copied into an AgentGroupLeader for agent stuff
+        // public int FormationId; //corresponds to EFormation
+        // public int FormationTableId; //offset into compound table
     }
 
     [Serializable] public struct DetachedTag : IComponentData { }

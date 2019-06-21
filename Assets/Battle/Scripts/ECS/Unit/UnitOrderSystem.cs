@@ -54,11 +54,13 @@ namespace UnitAgent
 
         [BurstCompile]
         [RequireComponentTag(typeof(OrderChangeFormationTag))]
-        struct OrderChangeFormationJob : IJobForEach<UnitGroupMember, OrderedFormation>
+        struct OrderChangeFormationJob : IJobForEach<AgentGroupLeader, OrderedFormation>
         {
-            public void Execute(ref UnitGroupMember unitFormationMember, [ReadOnly] ref OrderedFormation orderedFormation)
+            public void Execute(ref AgentGroupLeader agentGroupLeader, [ReadOnly] ref OrderedFormation orderedFormation)
             {
-                unitFormationMember.FormationId = orderedFormation.FormationId;
+                Formation.SetFormation(orderedFormation.FormationId, ref agentGroupLeader);
+                // agentGroupLeader.FormationId = orderedFormation.FormationId;
+                // agentGroupLeader.FormationStartIndex = Formation.SetFormation()
             }
         }
 

@@ -13,7 +13,7 @@ namespace UnitAgent
     // https://forum.unity.com/threads/how-do-you-get-a-bufferfromentity-or-componentdatafromentity-without-inject.587857/#post-3924478
     [UpdateAfter(typeof(UnitSystemGroup))]
     [UpdateBefore(typeof(TransformSystemGroup))]
-    public class AgentFormationSystem : JobComponentSystem
+    public class AgentGroupSystem : JobComponentSystem
     {
         public NativeArray<float3> AgentFormationOffsetTable;
         protected override void OnCreate()
@@ -26,20 +26,21 @@ namespace UnitAgent
         // TODO run only when unit has moved
         [BurstCompile]
         [RequireComponentTag(typeof(MoveToGoalTag))]
-        struct SetGoalJob : IJobForEach<Goal, AgentFormationMember>
+        struct SetGoalJob : IJobForEach<Goal, AgentGroupMember>
         {
-            [ReadOnly] public ComponentDataFromEntity<UnitGroupMember> UnitGroupMembers;
+            [ReadOnly] public ComponentDataFromEntity<AgentGroupLeader> AgentGroupLeaders;
             [ReadOnly] public ComponentDataFromEntity<LocalToWorld> Transforms;
             [ReadOnly] public NativeArray<float3> FormationOffsetsTable;
 
-            public void Execute(ref Goal goal, [ReadOnly] ref AgentFormationMember formationMember)
+            public void Execute(ref Goal goal, [ReadOnly] ref AgentGroupMember formationMember)
             {
                 Entity parent = formationMember.Parent;
                 float4x4 xform = Transforms[parent].Value;
 
-                int startIndex = Formation.CalcAgentFormationStartIndex(
-                    UnitGroupMembers[parent].FormationId, UnitGroupMembers[parent].FormationTableId
-                    );
+                int startIndex = AgentGroupLeaders[parent].FormationStartIndex;
+                // int startIndex = Formation.CalcAgentFormationStartIndex(
+                //     AgentGroupLeaders[parent].FormationId, AgentGroupLeaders[parent].FormationTableId
+                //     );
                 //TODO look into caching 
                 float3 offset = FormationOffsetsTable[startIndex + formationMember.Index];
                 Movement.SetGoalToFormationPosition(xform, offset, ref goal.Value);
@@ -57,7 +58,7 @@ namespace UnitAgent
             var setGoalJob = new SetGoalJob()
             {
                 Transforms = GetComponentDataFromEntity<LocalToWorld>(true),
-                UnitGroupMembers = GetComponentDataFromEntity<UnitGroupMember>(true),
+                AgentGroupLeaders = GetComponentDataFromEntity<AgentGroupLeader>(true),
                 FormationOffsetsTable = AgentFormationOffsetTable,
 
             };

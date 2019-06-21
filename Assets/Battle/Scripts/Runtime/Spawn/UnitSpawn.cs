@@ -71,6 +71,14 @@ namespace UnitAgent
                 Value = float4x4.TRS(this.transform.position, this.transform.rotation, Movement.unitScale)
             });
 
+            entityManager.AddComponentData(unitEntity, new AgentGroupLeader
+            {
+                FormationTableId = formationTable,
+                FormationId = (int)this.initialFormation, //TODO set correctly
+            });
+
+            // Formation.SetFormation
+
             switch (unitType)
             {
                 case EUnitType.Foot:
@@ -155,11 +163,10 @@ namespace UnitAgent
                     TranslateSpeed = translationUnitsPerSecond,
                     RotateSpeed = rotationsPerSecond
                 });
-                entityManager.AddComponentData(agents[i], new AgentFormationMember
+                entityManager.AddComponentData(agents[i], new AgentGroupMember
                 {
                     Index = i,
-                    Parent = unit,
-                    // Offset = formationOffset
+                    Parent = unit
                 });
 
                 entityManager.SetComponentData(agents[i], new Translation { Value = spawnPosition });

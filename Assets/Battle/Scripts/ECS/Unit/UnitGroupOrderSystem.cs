@@ -98,6 +98,7 @@ namespace UnitAgent
         {
             Debug.Log("ProcessUnitGroup " + entity);
             var unitGroupMember = EntityManager.GetComponentData<UnitGroupMember>(entity);
+            var unitGroupLeader = EntityManager.GetComponentData<UnitGroupLeader>(entity);
             int formationTableIndex = parent.FormationStartIndex + unitGroupMember.MemberIndex;
             int formationId =  UnitFormationSubIdTable[formationTableIndex];
             float3 positionOffset = UnitFormationOffsetTable[formationTableIndex];
@@ -106,14 +107,12 @@ namespace UnitAgent
             Movement.SetGoalToFormationPosition(parentXform, positionOffset, ref orderedGoal.Value);
             EntityManager.SetComponentData(entity, orderedGoal);
 
-            var unitGroupLeader = EntityManager.GetComponentData<UnitGroupLeader>(entity);
+            // HACK, it should be set via handling an order if there is a delay
             Formation.SetFormation(formationId, ref unitGroupLeader);
-
-
             EntityManager.SetComponentData(entity, new OrderedFormation { FormationId = formationId });
             
             // this is a bit of a hack, it should be set via handling an order if there is a delay
-            unitGroupMember.FormationId = formationId;
+            // unitGroupMember.FormationId = formationId;
 
             EntityManager.SetComponentData(entity, unitGroupMember);
 
