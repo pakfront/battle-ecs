@@ -5,7 +5,7 @@ using Unity.Mathematics;
 namespace UnitAgent
 {
 
-
+    [Serializable] public struct DeadTag : IComponentData {}
     
     [Serializable] public struct MoveSettings : IComponentData { 
         public float TranslateSpeed;

@@ -32,9 +32,9 @@ namespace UnitAgent
             [ReadOnly] public ComponentDataFromEntity<LocalToWorld> Transforms;
             [ReadOnly] public NativeArray<float3> FormationOffsetsTable;
 
-            public void Execute(ref Goal goal, [ReadOnly] ref AgentGroupMember formationMember)
+            public void Execute(ref Goal goal, [ReadOnly] ref AgentGroupMember groupMember)
             {
-                Entity parent = formationMember.Parent;
+                Entity parent = groupMember.Parent;
                 float4x4 xform = Transforms[parent].Value;
 
                 int startIndex = AgentGroupLeaders[parent].FormationStartIndex;
@@ -42,7 +42,7 @@ namespace UnitAgent
                 //     AgentGroupLeaders[parent].FormationId, AgentGroupLeaders[parent].FormationTableId
                 //     );
                 //TODO look into caching 
-                float3 offset = FormationOffsetsTable[startIndex + formationMember.Index];
+                float3 offset = FormationOffsetsTable[startIndex + groupMember.Index];
                 Movement.SetGoalToFormationPosition(xform, offset, ref goal.Value);
 
                 // goal.Position = math.transform(xform, formationElement.Position);

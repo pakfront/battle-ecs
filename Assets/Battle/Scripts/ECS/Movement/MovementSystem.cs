@@ -16,6 +16,7 @@ namespace UnitAgent
     {
         [BurstCompile]
         [RequireComponentTag(typeof(MoveToGoalTag))]
+        [ExcludeComponent(typeof(DeadTag))]
         struct MoveToGoalJob : IJobForEach<Rotation, Translation, MoveSettings, Goal>
         {
             public float DeltaTime;
@@ -63,8 +64,9 @@ namespace UnitAgent
             }
         }
 
-       [BurstCompile]
+        [BurstCompile]
         [RequireComponentTag(typeof(RotateLikeGoalTag))]
+        [ExcludeComponent(typeof(DeadTag))]
         struct RotateLikeGoalJob : IJobForEach<Rotation, Translation, MoveSettings, Goal>
         {
             public float DeltaTime;
