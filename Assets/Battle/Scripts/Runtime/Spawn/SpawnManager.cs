@@ -124,6 +124,9 @@ namespace UnitAgent
                 var agentGroupLeader = manager.GetComponentData<AgentGroupLeader>(childEntity);
                 Formation.SetFormation((int)spawn.initialFormation, ref agentGroupLeader);
                 manager.SetComponentData(childEntity, agentGroupLeader);
+                manager.SetComponentData(childEntity, new OrderedFormation {
+                    FormationId = agentGroupLeader.FormationId
+                });
             } 
 
 
@@ -132,6 +135,9 @@ namespace UnitAgent
                 var unitGroupLeader = manager.GetComponentData<UnitGroupLeader>(childEntity);
                 Formation.SetFormation((int)spawn.initialFormation, ref unitGroupLeader);
                 manager.SetComponentData(childEntity, unitGroupLeader);
+                manager.SetComponentData(childEntity, new OrderedFormation {
+                    FormationId = unitGroupLeader.FormationId
+                });
             } 
 
             manager.AddSharedComponentData(childEntity, new UnitGroup
