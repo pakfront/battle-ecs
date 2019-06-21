@@ -20,7 +20,7 @@ namespace UnitAgent
         {
             Formation.CalcAgentFormationOffsetTable(out float3[] formationOffsets);
             AgentFormationOffsetTable = new NativeArray<float3>(formationOffsets, Allocator.Persistent);
-            Debug.Log("AgentFormationOffsetTable:"+AgentFormationOffsetTable.Length);
+            Debug.Log("AgentFormationOffsetTable:" + AgentFormationOffsetTable.Length);
         }
 
         // TODO run only when unit has moved
@@ -41,7 +41,7 @@ namespace UnitAgent
                     UnitGroupMembers[parent].FormationId, UnitGroupMembers[parent].FormationTableId
                     );
                 //TODO look into caching 
-                float3 offset = FormationOffsetsTable[startIndex + formationMember.Index]; 
+                float3 offset = FormationOffsetsTable[startIndex + formationMember.Index];
                 Movement.SetGoalToFormationPosition(xform, offset, ref goal.Value);
 
                 // goal.Position = math.transform(xform, formationElement.Position);
@@ -49,6 +49,8 @@ namespace UnitAgent
                 // goal.Heading = math.mul( xform, new float4(0,0,1,0) ).xyz;
             }
         }
+
+
 
         protected override JobHandle OnUpdate(JobHandle inputDependencies)
         {
@@ -61,6 +63,11 @@ namespace UnitAgent
             };
 
             return setGoalJob.Schedule(this, inputDependencies);
+        }
+
+        protected override void OnDestroy()
+        {
+            AgentFormationOffsetTable.Dispose();
         }
     }
 }

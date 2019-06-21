@@ -153,5 +153,11 @@ namespace UnitAgent
             // EntityManager.AddComponent(entity, typeof(OrderMoveTo));
             PostUpdateCommands.AddComponent<OrderChangeFormationTag>(entity, new OrderChangeFormationTag { });
         }
+
+        protected override void OnDestroy()
+        {
+            UnitFormationOffsetTable.Dispose();
+            UnitFormationSubIdTable.Dispose();
+        }
     }
 }

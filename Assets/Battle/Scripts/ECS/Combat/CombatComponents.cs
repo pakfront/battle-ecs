@@ -11,4 +11,9 @@ namespace UnitAgent
         public float DistanceSq;
         public Entity Entity;
     }
+
+    public struct AgentCount : IComponentData
+    {
+        public float Value;
+    }
 }

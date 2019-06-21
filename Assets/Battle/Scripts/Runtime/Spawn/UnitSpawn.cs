@@ -93,7 +93,7 @@ namespace UnitAgent
             if (hasMelee) 
                 entityManager.AddComponentData(unitEntity, new Melee());
             
-            if (hasMelee) 
+            if (true) 
                 entityManager.AddComponentData(unitEntity, new Ranged{
                     Range = 80
                 });
@@ -111,6 +111,8 @@ namespace UnitAgent
             //     default:
             //         break;
             // }
+
+
 
             SpawnAgents(unitEntity, entityManager);
 
@@ -136,6 +138,7 @@ namespace UnitAgent
             // SharedComponent placed on Agents o we can process by chunk
             int startIndex = Formation.CalcAgentFormationStartIndex((int)initialFormation, formationTable);
             Debug.Log(name+" Spawning Agents "+initialFormation+" startIndex:"+startIndex);
+            entityManager.AddComponentData(unit, new AgentCount { Value = agentCount});
             for (int i = 0; i < agentCount; i++)
             {
                 // float3 formationPosition = transform.TransformPoint(new float3(x * 1.3F, 0, y * 1.3F));
