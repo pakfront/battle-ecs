@@ -140,7 +140,7 @@ namespace UnitAgent
                 });
             } 
 
-            manager.AddSharedComponentData(childEntity, new UnitGroup
+            manager.AddSharedComponentData(childEntity, new UnitGroupPartition
             {
                 Parent = superiorEntity
             });

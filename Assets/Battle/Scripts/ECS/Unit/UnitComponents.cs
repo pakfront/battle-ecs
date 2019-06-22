@@ -10,7 +10,7 @@ namespace UnitAgent
     [Serializable] public struct UnitGoalMarker : IComponentData { public Entity Unit; }
 
     // [Serializable] public struct TeamMember : IComponentData { public int Value; }
-    [Serializable] public struct TeamGroup : ISharedComponentData { public int Value; }
+    [Serializable] public struct TeamPartition : ISharedComponentData { public int Value; }
 
     // Types
     public enum EUnitType { Foot, Horse, Artillery, Train, HQ }

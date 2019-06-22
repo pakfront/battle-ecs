@@ -7,6 +7,12 @@ namespace UnitAgent
     [Serializable] public struct Agent : IComponentData { }
 
     [Serializable]
+    public struct AgentGroupPartition : ISharedComponentData
+    {
+        public Entity Parent;
+    }
+
+    [Serializable]
     public struct AgentGroupMember : IComponentData
     {
         public int Index;

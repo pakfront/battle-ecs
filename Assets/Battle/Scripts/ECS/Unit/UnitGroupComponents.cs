@@ -5,7 +5,7 @@ using Unity.Mathematics;
 namespace UnitAgent
 {
     [Serializable]
-    public struct UnitGroup : ISharedComponentData
+    public struct UnitGroupPartition : ISharedComponentData
     {
         public Entity Parent;
     }

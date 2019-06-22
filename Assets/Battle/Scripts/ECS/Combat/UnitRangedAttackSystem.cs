@@ -9,8 +9,7 @@ using UnityEngine;
 
 namespace UnitAgent
 {
-    // [DisableAutoCreation]
-    //[UpdateAfter(typeof(MoveToGoal))]
+    [DisableAutoCreation]
     [UpdateInGroup(typeof(CombatSystemGroup))]
     [UpdateAfter(typeof(UnitFindOpponentSystem))]
     public class UnitRangedAttackSystem : JobComponentSystem

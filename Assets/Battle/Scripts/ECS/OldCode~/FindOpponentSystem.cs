@@ -24,7 +24,7 @@ namespace UnitAgent
 
             public ArchetypeChunkComponentType<Opponent> OpponentType;
             [ReadOnly] public ArchetypeChunkComponentType<Translation> TranslationType;
-            [ReadOnly] public ArchetypeChunkSharedComponentType<TeamGroup> TeamType;
+            [ReadOnly] public ArchetypeChunkSharedComponentType<TeamPartition> TeamType;
 
             public void Execute(int chunkIndex)
             {
@@ -99,7 +99,7 @@ namespace UnitAgent
         {
             m_group = GetEntityQuery( new EntityQueryDesc
             {
-                All = new ComponentType[] { typeof(Opponent), ComponentType.ReadOnly<TeamGroup>(), ComponentType.ReadOnly<Translation>(), ComponentType.ReadOnly<Unit>() }
+                All = new ComponentType[] { typeof(Opponent), ComponentType.ReadOnly<TeamPartition>(), ComponentType.ReadOnly<Translation>(), ComponentType.ReadOnly<Unit>() }
             });
         }
 
@@ -107,7 +107,7 @@ namespace UnitAgent
         {
             var opponentType = GetArchetypeChunkComponentType<Opponent>();
             var translationType = GetArchetypeChunkComponentType<Translation>(true);
-            var teamType = GetArchetypeChunkSharedComponentType<TeamGroup>();
+            var teamType = GetArchetypeChunkSharedComponentType<TeamPartition>();
             var chunks = m_group.CreateArchetypeChunkArray(Allocator.TempJob);
 
 

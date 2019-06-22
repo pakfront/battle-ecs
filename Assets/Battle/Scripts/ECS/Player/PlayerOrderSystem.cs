@@ -40,7 +40,7 @@ namespace UnitAgent
             m_FormationGroup = GetEntityQuery(new EntityQueryDesc
             {
                 None = new ComponentType[] { typeof(OrderUnitGroupMoveToTag) },
-                All = new ComponentType[] { ComponentType.ReadOnly<UnitGroup>(), ComponentType.ReadOnly<PlayerOwnedTag>() }
+                All = new ComponentType[] { ComponentType.ReadOnly<UnitGroupPartition>(), ComponentType.ReadOnly<PlayerOwnedTag>() }
             });
 
             m__NeedsSetFormation = GetEntityQuery(new EntityQueryDesc

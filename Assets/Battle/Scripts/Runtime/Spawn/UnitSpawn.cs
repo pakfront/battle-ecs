@@ -147,6 +147,8 @@ namespace UnitAgent
             int startIndex = Formation.CalcAgentFormationStartIndex((int)initialFormation, formationTable);
             Debug.Log(name+" Spawning Agents "+initialFormation+" startIndex:"+startIndex);
             entityManager.AddComponentData(unit, new AgentCount { Value = agentCount});
+            var agentGroupPartition = new AgentGroupPartition { Parent = unit };
+
             for (int i = 0; i < agentCount; i++)
             {
                 // float3 formationPosition = transform.TransformPoint(new float3(x * 1.3F, 0, y * 1.3F));
@@ -168,6 +170,10 @@ namespace UnitAgent
                     Index = i,
                     Parent = unit
                 });
+
+               entityManager.AddComponentData(agents[i], new Opponent{});
+
+                entityManager.AddSharedComponentData(agents[i], agentGroupPartition);
 
                 entityManager.SetComponentData(agents[i], new Translation { Value = spawnPosition });
                 entityManager.SetComponentData(agents[i], new Rotation { Value = Quaternion.identity });
