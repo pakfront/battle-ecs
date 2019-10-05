@@ -60,7 +60,7 @@ namespace UnitAgent
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
-            var opponentCount = opponentGroup.CalculateLength();
+            var opponentCount = opponentGroup.CalculateEntityCount();
             NativeMultiHashMap<Entity, float> damage = new NativeMultiHashMap<Entity, float>(opponentCount, Allocator.TempJob);
             // look into shedule for hashmap
             var outputDeps = inputDeps;
